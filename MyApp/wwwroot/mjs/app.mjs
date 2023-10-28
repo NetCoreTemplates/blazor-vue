@@ -72,13 +72,12 @@ export function mount(sel, component, props) {
 
 async function mountApp(el, props) {
     let appPath = el.getAttribute('data-component')
-    if (!appPath.startsWith('/')) {
+    if (!appPath.startsWith('/') && !appPath.startsWith('.')) {
         appPath = `../${appPath}`
     }
 
     const module = await import(appPath)
     unmount(el)
-    //console.log('vue-app', el.id, appPath, module, props)
     mount(el, module.default, props)
 }
 
@@ -137,6 +136,21 @@ export function mountAll(opt) {
         }
 
         mount(el, component, props)
+    })
+    $$('[data-module]').forEach(async el => {
+        let modulePath = el.getAttribute('data-module')
+        if (!modulePath) return
+        if (!modulePath.startsWith('/') && !modulePath.startsWith('.')) {
+            modulePath = `../${modulePath}`
+        }
+        try {
+            const module = await import(modulePath)
+            if (typeof module.default?.load == 'function') {
+                module.default.load()
+            }
+        } catch(e) {
+            console.error(`Couldn't load module ${el.getAttribute('data-module')}`, e)
+        }
     })
 }
 
