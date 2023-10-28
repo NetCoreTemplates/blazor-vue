@@ -3,11 +3,11 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using MyApp.Components.Pages.Account;
-using MyApp.Components.Pages.Account.Manage;
 using MyApp.Data;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Primitives;
+using MyApp.Pages.Account;
+using MyApp.Pages.Account.Manage;
 
 namespace Microsoft.AspNetCore.Routing;
 
