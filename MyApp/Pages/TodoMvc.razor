@@ -5,7 +5,7 @@
 
     <h1 class="mb-4 @Css.H1">Todos Application</h1>
 
-    <div id="todomvc" data-component="Pages/TodoMvc.mjs" data-props=@((MarkupString)("{todos:" + todosJson?.Value + "}"))></div>
+    <div id="todomvc" data-component="Pages/TodoMvc.mjs" data-props=@BlazorHtml.Raw("{todos:" + todosJson?.Value + "}")></div>
 
     <div>
         <div class="mt-8 flex justify-center gap-x-4">
