@@ -32,7 +32,7 @@
             <BlogPosts Posts=@Blog.GetPosts(year: ForYear) />
 
             <div class="mt-8 text-center">
-                <a class="text-sm font-semibold hover:underline" href="@Blog.GetPosts(year:ForYear)">view all posts</a>
+                <a class="text-sm font-semibold hover:underline" href="@Blog.GetAllPostsLink()">view all posts</a>
             </div>
         </div>
 

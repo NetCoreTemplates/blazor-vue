@@ -63,7 +63,7 @@
                             <div class="max-w-3xl mx-auto">
                                 <div class="mb-6 text-lg text-gray-500">
                                     <time datetime="@Blog.GetDateTimestamp(doc.Date)">@Blog.GetDateLabel(doc.Date)</time>
-                                    <span aria-hidden="true">&middot;</span>
+                                    <span class="px-1" aria-hidden="true">&middot;</span>
                                     <span>@Blog.MinutesToRead(doc.WordCount) min read</span>
                                 </div>
                             </div>
@@ -123,9 +123,10 @@
                         @foreach (var post in authorPosts)
                         {
                             <div>
+                                @* links to other posts requires force load otherwise post Vue App doesn't load *@
                                 <div class="flex flex-col overflow-hidden">
                                     <div class="flex-shrink-0">
-                                        <a href="@Blog.GetPostLink(post)">
+                                        <a href="@Blog.GetPostLink(post)" data-enhance-nav="false">
                                             <img class="h-48 w-full object-cover" src="@Blog.GetSplashImage(post)" alt="">
                                         </a>
                                     </div>
@@ -134,7 +135,7 @@
                                             <p class="text-sm font-medium text-indigo-600 dark:text-indigo-300">
                                                 Article
                                             </p>
-                                            <a href="@Blog.GetPostLink(post)" class="mt-2 block">
+                                            <a href="@Blog.GetPostLink(post)" class="mt-2 block" data-enhance-nav="false">
                                                 <p class="text-xl font-semibold text-gray-900 dark:text-gray-50 whitespace-nowrap overflow-hidden text-ellipsis" title="@post.Title">
                                                     @post.Title
                                                 </p>
@@ -161,7 +162,7 @@
                                                 </p>
                                                 <div class="flex space-x-1 text-sm text-gray-500">
                                                     <time datetime="@Blog.GetDateTimestamp(post.Date)">@Blog.GetDateLabel(post.Date)</time>
-                                                    <span aria-hidden="true">&middot;</span>
+                                                    <span class="px-1" aria-hidden="true">&middot;</span>
                                                     <span>@Blog.MinutesToRead(post.WordCount) min read</span>
                                                 </div>
                                             </div>

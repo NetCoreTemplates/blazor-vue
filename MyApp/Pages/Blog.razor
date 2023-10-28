@@ -89,7 +89,7 @@
                                     </p>
                                     <div class="flex space-x-1 text-sm text-gray-500">
                                         <time datetime="@Posts.GetDateTimestamp(post.Date)">@Posts.GetDateLabel(post.Date)</time>
-                                        <span aria-hidden="true">&middot;</span>
+                                        <span class="px-1" aria-hidden="true">&middot;</span>
                                         <span>@Posts.MinutesToRead(post.WordCount) min read</span>
                                     </div>
                                 </div>
@@ -136,7 +136,7 @@
                                             </p>
                                             <div class="flex space-x-1 text-sm text-gray-500">
                                                 <time datetime="@Posts.GetDateTimestamp(post.Date)">@Posts.GetDateLabel(post.Date)</time>
-                                                <span aria-hidden="true">&middot;</span>
+                                                <span class="px-1" aria-hidden="true">&middot;</span>
                                                 <span>@Posts.MinutesToRead(post.WordCount) min read</span>
                                             </div>
                                         </div>

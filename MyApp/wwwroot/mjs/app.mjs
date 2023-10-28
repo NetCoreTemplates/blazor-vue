@@ -19,6 +19,12 @@ const CustomElements = [
 
 const alreadyMounted = el => el.__vue_app__ 
 
+function hasTemplate(el,component) {
+    return !!(el.firstElementChild
+        || component.template
+        || (component.setup && typeof component.setup({}, {}) == 'function'))
+}
+
 /** Mount Vue3 Component
  * @param sel {string|Element} - Element or Selector where component should be mounted
  * @param component 
@@ -29,6 +35,15 @@ export function mount(sel, component, props) {
     }
     const el = $1(sel)
     if (alreadyMounted(el)) return
+
+    if (!hasTemplate(el, component)) {
+        // Fallback for enhanced navigation clearing HTML DOM template of Vue App, requiring a force reload
+        // Avoid by disabling enhanced navigation to page, e.g. by adding data-enhance-nav="false" to element
+        console.warn('Vue Compontent template is missing, force reloading...', el, component)
+        blazorRefresh()
+        return
+    }
+
     const app = createApp(component, props)
     app.provide('client', client)
     Object.keys(Components).forEach(name => {
@@ -83,6 +98,13 @@ const DefaultApp = {
         }
         return { nav }
     }
+}
+
+function blazorRefresh() {
+    if (globalThis.Blazor)
+        globalThis.Blazor.navigateTo(location.pathname.substring(1), true)
+    else
+        globalThis.location.reload()
 }
 
 export function mountAll(opt) {
