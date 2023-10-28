@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "sourceMap": true,
+    "baseUrl": "./",
+    "typeRoots": ["./wwwroot/lib/typings"],
+    "paths": {
+        "*": [
+            "./wwwroot/lib/*",
+            "./wwwroot/lib/typings/*"
+        ],
+        "vue": [ "./wwwroot/lib/typings/vue/index.d.ts" ],
+        "@servicestack/client": [ "./wwwroot/lib/typings/@servicestack/client/index.d.ts" ],
+        "@servicestack/vue": [ "./wwwroot/lib/typings/@servicestack/vue/index.d.ts" ]
+    }
+  },
+  "exclude": [
+    "node_modules"
+  ]
+}

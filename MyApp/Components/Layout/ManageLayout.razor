@@ -1,0 +1,18 @@
+﻿@inherits LayoutComponentBase
+@layout MainLayout
+
+
+<div class="mt-8 mx-auto max-w-screen-lg">
+    <h1 class="@Css.H1">Manage your account</h1>
+    <h4 class="font-semibold text-lg my-2">Change your account settings</h4>
+    <hr class="dark:border-gray-700" />
+    <div class="flex flex-wrap">
+        <div class="grow-0">
+            <ManageNavMenu />
+        </div>
+        <div class="grow p-4 sm:pl-16">
+            @Body
+        </div>
+    </div>
+</div>
+
