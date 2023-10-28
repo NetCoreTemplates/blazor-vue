@@ -89,7 +89,7 @@ export async function remount() {
     }
 }
 
-//Default Vue App that gets created with [data-component] is empty
+//Default Vue App that gets created with [data-component] is empty, e.g. Blog Posts without Vue components
 const DefaultApp = {
     setup() {
         function nav(url) {
