@@ -16,7 +16,7 @@
     </section>
     <div class="mx-auto">
         <div class="mx-auto prose lg:prose-xl mb-24">
-            @((MarkupString)doc.Preview!)
+            @BlazorHtml.Raw(doc.Preview)
         </div>
     </div>
 }
