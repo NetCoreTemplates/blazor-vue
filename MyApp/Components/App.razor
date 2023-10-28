@@ -5,10 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <base href="/" />
-    <link rel="stylesheet" href="css/app.css" />
-    <link href="css/typography.css" rel="stylesheet">
-    <link href="css/markdown.css" rel="stylesheet">
     <link rel="icon" href="/img/logo.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="css/app.css" />
+    <link rel="stylesheet" href="css/typography.css">
+    <link rel="stylesheet" href="css/highlight.css">
+    <link rel="stylesheet" href="css/lite-yt-embed.css">
     <link rel="stylesheet" href="MyApp.styles.css" />
     @BlazorHtml.ImportMap(new()
     {
@@ -26,6 +27,9 @@
     <script src="_framework/blazor.web.js"></script>
     <script src="js/servicestack-blazor.js"></script>
     <script>JS.init()</script>
+    <script src="lib/js/lite-yt-embed.js"></script>
+    <script src="lib/js/highlight.js"></script>
+    <script>hljs.highlightAll()</script>
 </body>
 
 </html>

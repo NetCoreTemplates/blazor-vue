@@ -1,6 +1,6 @@
 import { ref } from "vue"
 import { useClient } from "@servicestack/vue"
-import { Hello } from "../dtos.mjs"
+import { Hello } from "../../mjs/dtos.mjs"
 
 export default {
     template:/*html*/`<div class="flex flex-wrap justify-center">

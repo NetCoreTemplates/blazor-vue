@@ -1,7 +1,6 @@
 import { createApp, reactive, ref, computed } from "vue"
 import { JsonApiClient, $1, $$ } from "@servicestack/client"
 import ServiceStackVue from "@servicestack/vue"
-import HelloApi from "./components/HelloApi.mjs"
 import GettingStarted from "./components/GettingStarted.mjs"
 
 let client = null, Apps = []
@@ -10,11 +9,13 @@ let AppData = {
 }
 export { client, Apps }
 
-/** Shared Components */
+/** Shared Global Components */
 const Components = {
-    HelloApi,
     GettingStarted,
 }
+const CustomElements = [
+    'lite-youtube'
+]
 
 const alreadyMounted = el => el.__vue_app__ 
 
@@ -27,7 +28,7 @@ export function mount(sel, component, props) {
         init(globalThis)
     }
     const el = $1(sel)
-    if (!el || alreadyMounted(el)) return
+    if (alreadyMounted(el)) return
     const app = createApp(component, props)
     app.provide('client', client)
     Object.keys(Components).forEach(name => {
@@ -35,18 +36,31 @@ export function mount(sel, component, props) {
     })
     app.use(ServiceStackVue)
     app.component('RouterLink', ServiceStackVue.component('RouterLink'))
+    app.directive('hash', (el, binding) => {
+        /** @param {Event} e */
+        el.onclick = (e) => {
+            e.preventDefault()
+            location.hash = binding.value
+        }
+    })
+    if (component.install) {
+        component.install(app)
+    }
+    if (client && !app._context.provides.client) {
+        app.provide('client', client)
+    }
+    app.config.compilerOptions.isCustomElement = tag => CustomElements.includes(tag)
     app.mount(el)
     Apps.push(app)
     return app
 }
 
-async function mountApp(el) {
+async function mountApp(el, props) {
     let appPath = el.getAttribute('data-component')
     if (!appPath.startsWith('/')) {
         appPath = `../${appPath}`
     }
 
-    const props = JSON.parse(el.getAttribute('data-props') ?? 'null')
     const module = await import(appPath)
     unmount(el)
     //console.log('vue-app', el.id, appPath, module, props)
@@ -61,6 +75,16 @@ export async function remount() {
     }
 }
 
+//Default Vue App that gets created with [data-component] is empty
+const DefaultApp = {
+    setup() {
+        function nav(url) {
+            window.open(url)
+        }
+        return { nav }
+    }
+}
+
 export function mountAll(opt) {
     $$('[data-component]').forEach(el => {
 
@@ -71,20 +95,25 @@ export function mountAll(opt) {
         }
 
         let componentName = el.getAttribute('data-component')
-        if (componentName.includes('.')) {
-            mountApp(el)
+        let propsStr = el.getAttribute('data-props')
+        let props = propsStr && new Function(`return (${propsStr})`)() || {}
+
+        if (!componentName) {
+            mount(el, DefaultApp, props)
             return
         }
 
-        if (!componentName) return
+        if (componentName.includes('.')) {
+            mountApp(el, props)
+            return
+        }
+
         let component = Components[componentName] || ServiceStackVue.component(componentName)
         if (!component) {
             console.error(`Component ${componentName} does not exist`)
             return
         }
 
-        let propsStr = el.getAttribute('data-props')
-        let props = propsStr && new Function(`return (${propsStr})`)() || {}
         mount(el, component, props)
     })
 }
@@ -116,5 +145,22 @@ function unmount(el) {
     }
 }
 
+
+/* used in :::sh and :::nuget CopyContainerRenderer */
+globalThis.copy = function (e) {
+    e.classList.add('copying')
+    let $el = document.createElement("textarea")
+    let text = (e.querySelector('code') || e.querySelector('p')).innerHTML
+    $el.innerHTML = text
+    document.body.appendChild($el)
+    $el.select()
+    document.execCommand("copy")
+    document.body.removeChild($el)
+    setTimeout(() => e.classList.remove('copying'), 3000)
+}
+
 document.addEventListener('DOMContentLoaded', () =>
-    Blazor.addEventListener('enhancedload', remount))
+    Blazor.addEventListener('enhancedload', () => {
+        remount()
+        globalThis.hljs?.highlightAll()
+    }))

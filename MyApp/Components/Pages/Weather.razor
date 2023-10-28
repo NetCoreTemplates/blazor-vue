@@ -3,23 +3,31 @@
 
 <PageTitle>Weather</PageTitle>
 
-<h1 class="@Css.H1">Weather</h1>
+<div class="mt-8 mb-20 mx-auto max-w-screen-md">
+    <h1 class="@Css.H1">Weather</h1>
 
-<p class="my-4">This component demonstrates showing data.</p>
+    <p class="my-4">This component demonstrates showing data.</p>
 
-@if (forecasts == null)
-{
-    <Loading />
-}
-else
-{
-    <DataGrid Items=@forecasts class="max-w-screen-md" TableStyle="TableStyle.StripedRows | TableStyle.UppercaseHeadings">
-        <Column Field="(WeatherForecast x) => x.Date" Format="dd/MM/yyyy" />
-        <Column Title="Temp. (C)" Field="(WeatherForecast x) => x.TemperatureC" />
-        <Column Title="Temp. (F)" Field="(WeatherForecast x) => x.TemperatureF" />
-        <Column Field="(WeatherForecast x) => x.Summary" />
-    </DataGrid>
-}
+    @if (forecasts == null)
+    {
+        <Loading />
+    }
+    else
+    {
+        <DataGrid Items=@forecasts class="max-w-screen-md" TableStyle="TableStyle.StripedRows | TableStyle.UppercaseHeadings">
+            <Column Field="(WeatherForecast x) => x.Date" Format="dd/MM/yyyy" />
+            <Column Title="Temp. (C)" Field="(WeatherForecast x) => x.TemperatureC" />
+            <Column Title="Temp. (F)" Field="(WeatherForecast x) => x.TemperatureF" />
+            <Column Field="(WeatherForecast x) => x.Summary" />
+        </DataGrid>
+    }
+
+    <div>
+        <div class="mt-5 flex justify-center gap-x-4">
+            <SrcRazorPage Path="Weather.razor" />
+        </div>
+    </div>
+</div>
 
 @code {
     private WeatherForecast[]? forecasts;

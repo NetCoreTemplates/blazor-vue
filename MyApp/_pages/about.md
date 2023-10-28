@@ -1,9 +1,6 @@
 ---
-title: Hosting Costs
-WARN: During development Browser Cache needs to be disabled to refresh .md changes
+title: App Hosting Costs
 ---
-
-# App Hosting Costs
 
 <a href="https://jamstack.org">
     <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 256 256" class="w-14 h-14 float-left mt-2 mr-4">

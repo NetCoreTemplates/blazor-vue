@@ -2,17 +2,17 @@
 
 <PageTitle>Counter</PageTitle>
 
-<h1 class="@Css.H1">Counter</h1>
+<div class="mt-8 mb-20 mx-auto max-w-fit">
+    <h1 class="@Css.H1">Counter</h1>
 
-<p class="my-4">Current count: @currentCount</p>
+    <div data-component="Pages/Counter.mjs"></div>
 
-<button class="@Css.PrimaryButton" @onclick="IncrementCount">Click me</button>
+    <div>
+        <div class="mt-8 flex justify-center gap-x-4">
+            <SrcRazorPage Path="Counter.razor" />
+            <SrcVuePage Path="Counter.mjs" />
+        </div>
+    </div>
 
-@code {
-    private int currentCount = 0;
+</div>
 
-    private void IncrementCount()
-    {
-        currentCount++;
-    }
-}
