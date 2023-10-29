@@ -6,7 +6,7 @@ export default {
     <div class="flex ml-2 w-full justify-between cursor-pointer" @click="copy">
       <div>
           <span>$ </span>
-          <label class="">
+          <label class="cursor-pointer">
             <slot>{{text}}</slot>
           </label>
       </div>
