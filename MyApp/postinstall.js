@@ -3,9 +3,6 @@
 const writeTo = './wwwroot/lib'
 const defaultPrefix = 'https://unpkg.com'
 const files = {
-  js: {
-      'highlight.js':                    '/@highlightjs/cdn-assets/highlight.min.js',
-  },
   mjs: {
       'vue.mjs':                         '/vue@3/dist/vue.esm-browser.js',
       'vue.min.mjs':                     '/vue@3/dist/vue.esm-browser.prod.js',
