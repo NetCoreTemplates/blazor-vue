@@ -1,8 +1,8 @@
 # ServiceStack mix GitHub Actions
-`release.yml` generated from `x mix release-ghr-vanilla`, this template in designed to help with CI deployment to a dedicated server with SSH access.
+The `release.yml` in designed to help with CI deployment to a dedicated server with SSH access, Docker and Docker Compose.
 
 ## Overview
-`release.yml` is designed to work with a ServiceStack app deploying directly to a single server via SSH. A docker image is built and stored on GitHub's `ghcr.io` docker registry when a GitHub Release is created.
+A docker image is built and stored on GitHub's `ghcr.io` docker registry when a GitHub Release is created.
 
 GitHub Actions specified in `release.yml` then copy files remotely via scp and use `docker-compose` to run the app remotely via SSH.
 
@@ -36,14 +36,7 @@ The `release.yml` uses the following secrets.
 - DEPLOY_KEY - SSH private key used to remotely access deploy server/app host.
 - LETSENCRYPT_EMAIL - Email address, required for Let's Encrypt automated TLS certificates.
 
-These secrets can use the [GitHub CLI](https://cli.github.com/manual/gh_secret_set) for ease of creation. Eg, using the GitHub CLI the following can be set.
-
-```bash
-gh secret set DEPLOY_HOST -b"<DEPLOY_HOST, domain or subdomain for your application and server host.>"
-gh secret set DEPLOY_USERNAME -b"<DEPLOY_USERNAME, the username being logged into via SSH. Eg, `ubuntu`, `ec2-user`, `root` etc.>"
-gh secret set DEPLOY_KEY -b"<DEPLOY_KEY, SSH private key used to remotely access deploy server/app host.>"
-gh secret set LETSENCRYPT_EMAIL -b"<LETSENCRYPT_EMAIL, Email address for your TLS certificate generation, eg me@example.com>"
-```
+These secrets can use the [GitHub CLI](https://cli.github.com/manual/gh_secret_set) for ease of creation.
 
 These secrets are used to populate variables within GitHub Actions and other configuration files.
 
