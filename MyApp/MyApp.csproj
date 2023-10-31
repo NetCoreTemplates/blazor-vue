@@ -6,6 +6,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <UserSecretsId>aspnet-MyApp-7b2ab71a-0b50-423f-969d-e35a9402b1b5</UserSecretsId>
         <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
+        <PublishProfile>DefaultContainer</PublishProfile>
     </PropertyGroup>
     
     <ItemGroup>
@@ -41,5 +42,9 @@
     <ItemGroup>
       <Folder Include="App_Data\" />
     </ItemGroup>
+
+    <Target Name="tailwind" BeforeTargets="Publish">
+        <Exec Command="npm run ui:build" WorkingDirectory="./" />
+    </Target>
 
 </Project>
