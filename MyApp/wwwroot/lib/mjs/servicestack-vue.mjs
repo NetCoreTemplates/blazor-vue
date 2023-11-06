@@ -6882,27 +6882,26 @@ const L0 = { key: 0 }, V0 = { class: "text-red-700" }, S0 = /* @__PURE__ */ s("b
 ], Qm = /* @__PURE__ */ ce({
   __name: "DarkModeToggle",
   setup(e) {
-    const t = typeof document < "u" ? document.querySelector("html") : null;
-    let l = A(t == null ? void 0 : t.classList.contains("dark"));
-    function n() {
-      l.value ? t == null || t.classList.remove("dark") : t == null || t.classList.add("dark"), l.value = !l.value, localStorage.setItem("color-scheme", l.value ? "dark" : "light");
+    const t = typeof document < "u" ? document.documentElement : null, l = () => !!(t != null && t.classList.contains("dark")), n = A(localStorage.getItem("color-scheme") == "dark");
+    function i() {
+      l() ? t == null || t.classList.remove("dark") : t == null || t.classList.add("dark"), n.value = l(), localStorage.setItem("color-scheme", n.value ? "dark" : "light");
     }
-    return (i, r) => (a(), u("button", {
+    return (r, d) => (a(), u("button", {
       type: "button",
       class: "bg-gray-200 dark:bg-gray-700 relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:ring-offset-black",
       role: "switch",
       "aria-checked": "false",
-      onClick: r[0] || (r[0] = (d) => n())
+      onClick: d[0] || (d[0] = (c) => i())
     }, [
       s("span", {
-        class: w(`${o(l) ? "translate-x-0" : "translate-x-5"} pointer-events-none relative inline-block h-5 w-5 rounded-full bg-white dark:bg-black shadow transform ring-0 transition ease-in-out duration-200`)
+        class: w(`${n.value ? "translate-x-0" : "translate-x-5"} pointer-events-none relative inline-block h-5 w-5 rounded-full bg-white dark:bg-black shadow transform ring-0 transition ease-in-out duration-200`)
       }, [
         s("span", {
-          class: w(`${o(l) ? "opacity-100 ease-in duration-200" : "opacity-0 ease-out duration-100"} absolute inset-0 h-full w-full flex items-center justify-center transition-opacity`),
+          class: w(`${n.value ? "opacity-100 ease-in duration-200" : "opacity-0 ease-out duration-100"} absolute inset-0 h-full w-full flex items-center justify-center transition-opacity`),
           "aria-hidden": "true"
         }, Nm, 2),
         s("span", {
-          class: w(`${o(l) ? "opacity-0 ease-out duration-100" : "opacity-100 ease-in duration-200"} absolute inset-0 h-full w-full flex items-center justify-center transition-opacity`),
+          class: w(`${n.value ? "opacity-0 ease-out duration-100" : "opacity-100 ease-in duration-200"} absolute inset-0 h-full w-full flex items-center justify-center transition-opacity`),
           "aria-hidden": "true"
         }, qm, 2)
       ], 2)
