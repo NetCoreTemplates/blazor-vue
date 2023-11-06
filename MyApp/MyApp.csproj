@@ -40,6 +40,12 @@
     </ItemGroup>
 
     <ItemGroup>
+        <Content Include="_pages\**" CopyToPublishDirectory="PreserveNewest"/>
+        <Content Include="_posts\**" CopyToPublishDirectory="PreserveNewest"/>
+        <Content Include="_videos\**" CopyToPublishDirectory="PreserveNewest"/>
+    </ItemGroup>
+    
+    <ItemGroup>
       <Folder Include="App_Data\" />
     </ItemGroup>
 

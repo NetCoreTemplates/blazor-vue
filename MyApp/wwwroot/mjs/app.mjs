@@ -64,6 +64,7 @@ export function mount(sel, component, props) {
     if (client && !app._context.provides.client) {
         app.provide('client', client)
     }
+    app.config.errorHandler = error => { console.log(error) }
     app.config.compilerOptions.isCustomElement = tag => CustomElements.includes(tag)
     app.mount(el)
     Apps.push(app)
@@ -199,4 +200,7 @@ document.addEventListener('DOMContentLoaded', () =>
     Blazor.addEventListener('enhancedload', () => {
         remount()
         globalThis.hljs?.highlightAll()
+        if (localStorage.getItem('color-scheme') == 'dark') {
+            document.documentElement.classList.add('dark')
+        }
     }))
