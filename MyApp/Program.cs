@@ -1,13 +1,14 @@
 using System.Net;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
+using ServiceStack.Blazor;
 using MyApp.Components;
 using MyApp.Data;
 using MyApp.Identity;
-using ServiceStack.Blazor;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +27,8 @@ builder.Services.AddAuthentication(options =>
         options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
     })
     .AddIdentityCookies();
+builder.Services.AddDataProtection()
+    .PersistKeysToFileSystem(new DirectoryInfo("App_Data"));
 
 // $ dotnet ef migrations add CreateIdentitySchema
 // $ dotnet ef database update
