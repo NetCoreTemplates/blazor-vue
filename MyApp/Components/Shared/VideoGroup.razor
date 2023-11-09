@@ -4,8 +4,8 @@
     <div class="@Background py-24 sm:py-32">
         <div class="mx-auto max-w-7xl px-6 lg:px-8">
             <div class="mx-auto max-w-5xl">
-                <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">@Title</h2>
-                <p class="mt-2 text-lg leading-8 text-gray-600">
+                <h2 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-50 sm:text-4xl">@Title</h2>
+                <p class="mt-2 text-lg leading-8 text-gray-600 dark:text-gray-400">
                     @Summary
                     @if (LearnMore != null)
                     {
@@ -31,12 +31,12 @@
                                     }
                                 </div>
                                 <div class="group relative max-w-xl">
-                                    <h3 class="mt-3 text-lg font-semibold leading-6 text-gray-900 group-hover:text-gray-600">
+                                    <h3 class="mt-3 text-lg font-semibold leading-6 text-gray-900 dark:text-gray-50 group-hover:text-gray-600 dark:group-hover:text-gray-400">
                                         <a href="@video.Url">
                                             @video.Title
                                         </a>
                                     </h3>
-                                    <div class="mt-5 text-sm leading-6 text-gray-600">
+                                    <div class="mt-5 text-sm leading-6 text-gray-600 dark:text-gray-400">
                                         <div class="prose">
                                             @BlazorHtml.Raw(video.Preview)
                                         </div>
