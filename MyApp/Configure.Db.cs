@@ -1,8 +1,4 @@
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using ServiceStack;
 using ServiceStack.Data;
-using ServiceStack.DataAnnotations;
 using ServiceStack.OrmLite;
 
 [assembly: HostingStartup(typeof(MyApp.ConfigureDb))]
@@ -20,6 +16,6 @@ public class ConfigureDb : IHostingStartup
         })
         .ConfigureAppHost(appHost => {
             // Enable built-in Database Admin UI at /admin-ui/database
-            // appHost.Plugins.Add(new AdminDatabaseFeature());
+            appHost.Plugins.Add(new AdminDatabaseFeature());
         });
 }
