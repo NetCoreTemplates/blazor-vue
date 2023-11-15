@@ -8,7 +8,7 @@
         <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
         <PublishProfile>DefaultContainer</PublishProfile>
     </PropertyGroup>
-    
+
     <ItemGroup>
         <Using Include="MyApp" />
         <Using Include="ServiceStack" />
@@ -16,16 +16,14 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.0-rc.2.23480.2" />
-        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.0-rc.2.23480.2" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.0-rc.2.23480.1" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0-rc.2.23480.1" />
-        <!-- https://github.com/dotnet/aspnetcore/issues/51302#issue-1938612540 -->
-        <PackageReference Include="Microsoft.Net.Compilers.Razor.Toolset" Version="7.0.0-preview.23512.5">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="Markdig" Version="0.33.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.*" />
+        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.*" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.*" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.*" />
+        <PackageReference Include="Markdig" Version="0.33.*" />
+    </ItemGroup>
+
+    <ItemGroup>
         <PackageReference Include="ServiceStack" Version="6.*" />
         <PackageReference Include="ServiceStack.Blazor" Version="6.*" />
         <PackageReference Include="ServiceStack.Mvc" Version="6.*" />
@@ -44,9 +42,9 @@
         <Content Include="_posts\**" CopyToPublishDirectory="PreserveNewest"/>
         <Content Include="_videos\**" CopyToPublishDirectory="PreserveNewest"/>
     </ItemGroup>
-    
+
     <ItemGroup>
-      <Folder Include="App_Data\" />
+        <Folder Include="App_Data\" />
     </ItemGroup>
 
     <Target Name="tailwind" BeforeTargets="Publish">
