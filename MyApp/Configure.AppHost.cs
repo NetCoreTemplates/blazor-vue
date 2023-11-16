@@ -25,18 +25,7 @@ public class AppHost : AppHostBase, IHostingStartup
     // Configure your AppHost with the necessary configuration and dependencies your App needs
     public override void Configure(Container container)
     {
-        SetConfig(new HostConfig
-        {
-            AdminAuthSecret = "secretz",
+        SetConfig(new HostConfig {
         });
-
-        Plugins.Add(new CorsFeature(new[] {
-            "http://localhost:5173", //vite dev
-        }, allowCredentials: true));
     }
-}
-
-// Add any additional metadata properties you want to store in the Users Typed Session
-public class CustomUserSession : AuthUserSession
-{
 }
