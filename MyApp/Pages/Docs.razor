@@ -8,13 +8,13 @@
 @if (doc != null)
 {
     <PageTitle>@doc.Title</PageTitle>
-    
-    <section class="flex-col md:flex-row flex justify-center mt-16 mb-16 md:mb-12">
-        <h1 class="text-4xl tracking-tight font-extrabold text-gray-900 dark:text-gray-50 sm:text-5xl md:text-6xl">
-            @doc.Title
-        </h1>
-    </section>
+
     <div class="mx-auto">
+        <section class="text-center mt-16 mb-16 md:mb-12">
+            <h1 class="text-4xl tracking-tight font-extrabold text-gray-900 dark:text-gray-50 sm:text-5xl md:text-6xl">
+                @doc.Title
+            </h1>
+        </section>
         <div class="mx-auto prose lg:prose-xl mb-24">
             @BlazorHtml.Raw(doc.Preview)
         </div>
@@ -22,7 +22,7 @@
 }
 else
 {
-    <div class="mt-8 mb-20 mx-auto max-w-screen-md">
+    <div class="mt-3 mb-20 mx-auto max-w-fit">
         @if (error != null)
         {
             <ErrorSummary Status=@error />
