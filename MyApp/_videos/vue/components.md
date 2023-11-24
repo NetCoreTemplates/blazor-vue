@@ -1,7 +1,7 @@
 ---
 title: Vue 3 Tailwind Components Library
 url: https://youtu.be/YIa0w6whe2U
-tags: vue,autoquery
+tags: [vue,autoquery]
 date: 14-02-2023
 order: 2
 ---

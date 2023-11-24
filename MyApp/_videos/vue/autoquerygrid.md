@@ -1,7 +1,7 @@
 ---
 title: Instantly Manage your data using AutoQueryGrid Vue
 url: https://youtu.be/znCoC-Ct0Ps
-tags: vue,autoquery
+tags: [vue,autoquery]
 date: 16-03-2023
 order: 1
 ---

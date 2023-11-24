@@ -1,7 +1,7 @@
 ---
 title: Build beautiful custom .NET Admin UIs in minutes
 url: https://youtu.be/wlRA4_owEsc
-tags: vue,autoquery
+tags: [vue,autoquery]
 date: 14-06-2023
 order: 3
 ---

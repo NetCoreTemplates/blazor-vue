@@ -1,7 +1,7 @@
 ---
 title: Modern Razor Pages & MVC .NET Tailwind templates
 url: https://youtu.be/SyppvQB7IPs
-tags: vue,razor
+tags: [vue,razor]
 date: 08-02-2023
 order: 4
 ---
