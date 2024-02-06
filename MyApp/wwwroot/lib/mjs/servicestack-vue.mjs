@@ -1948,7 +1948,7 @@ function Oi(e) {
 function Pi() {
   ne.user.value = null, ne.events.publish("signOut", null);
 }
-const $n = (e) => e.roles || [], Cn = (e) => e.permissions || [];
+const $n = (e) => (e == null ? void 0 : e.roles) || [], Cn = (e) => (e == null ? void 0 : e.permissions) || [];
 function Us(e) {
   return $n(ne.user.value).indexOf(e) >= 0;
 }

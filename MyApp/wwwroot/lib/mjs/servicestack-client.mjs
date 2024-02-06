@@ -745,8 +745,6 @@ export class JsonServiceClient {
     static toBase64;
     constructor(baseUrl = "/") {
         this.baseUrl = baseUrl;
-        this.replyBaseUrl = combinePaths(baseUrl, "json", "reply") + "/";
-        this.oneWayBaseUrl = combinePaths(baseUrl, "json", "oneway") + "/";
         this.mode = "cors";
         this.credentials = "include";
         this.headers = new Headers();
@@ -754,6 +752,7 @@ export class JsonServiceClient {
         this.manageCookies = typeof document == "undefined"; //because node-fetch doesn't
         this.cookies = {};
         this.enableAutoRefreshToken = true;
+        this.basePath = 'api';
     }
     setCredentials(userName, password) {
         this.userName = userName;
@@ -769,9 +768,6 @@ export class JsonServiceClient {
             this.oneWayBaseUrl = combinePaths(this.baseUrl, "json", "oneway") + "/";
         }
         else {
-            if (path[0] != '/') {
-                path = '/' + path;
-            }
             this.replyBaseUrl = combinePaths(this.baseUrl, path) + "/";
             this.oneWayBaseUrl = combinePaths(this.baseUrl, path) + "/";
         }
@@ -1767,7 +1763,7 @@ export function $1(sel, el) {
 }
 export function $$(sel, el) {
     if (typeof sel === "string")
-        return Array.from((el || document).querySelectorAll(sel));
+        return Array.from((el || typeof document != "undefined" ? document : null)?.querySelectorAll(sel) ?? []);
     if (Array.isArray(sel))
         return sel.flatMap(x => $$(x, el));
     return [sel];
