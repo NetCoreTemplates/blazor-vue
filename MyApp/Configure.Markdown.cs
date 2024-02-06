@@ -25,9 +25,6 @@ public class ConfigureSsg : IHostingStartup
                 var blogPosts = appHost.Resolve<MarkdownBlog>();
 
                 blogPosts.Authors = AppConfig.Instance.Authors;
-                new IMarkdownPages[] { pages, videos, blogPosts }
-                    .Each(x => x.VirtualFiles = appHost.VirtualFiles);
-                
                 pages.LoadFrom("_pages");
                 videos.LoadFrom("_videos");
                 blogPosts.LoadFrom("_posts");

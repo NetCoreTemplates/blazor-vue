@@ -1,5 +1,4 @@
-﻿using ServiceStack;
-using ServiceStack.Data;
+﻿using ServiceStack.Data;
 
 [assembly: HostingStartup(typeof(MyApp.ConfigureAutoQuery))]
 
@@ -11,7 +10,7 @@ public class ConfigureAutoQuery : IHostingStartup
         .ConfigureServices(services => {
             // Enable Audit History
             services.AddSingleton<ICrudEvents>(c =>
-                new OrmLiteCrudEvents(c.Resolve<IDbConnectionFactory>()));
+                new OrmLiteCrudEvents(c.GetRequiredService<IDbConnectionFactory>()));
         })
         .ConfigureAppHost(appHost => {
 
