@@ -109,7 +109,7 @@ This level of throughput is enough to service many kinds of businesses with a dr
 <style>
     table {
         width: 100%;
-        margin-top: 4em;
+        margin-top: 4em;~~~~
         margin-bottom: 4em;
     }
 </style>
