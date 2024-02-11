@@ -47,7 +47,7 @@ We were also testing out [Litestream](https://litestream.io) as a possible solut
 <div class="mx-auto mt-4 mb-4">
   <a href="https://litestream.io">
       <div class="inline-flex justify-center w-full">
-        <img src="./img/posts/hetzner-cloud/litestream.svg" alt="">
+        <img src="https://servicestack.net/img/posts/hetzner-cloud/litestream.svg" alt="">
       </div>
       <div class="text-gray-500 text-center">litestream.io</div>
   </a>
@@ -74,21 +74,21 @@ These series of steps had 2 write requests and 8 read, separated by 2 seconds pe
 
 <div class="mx-auto mt-4 mb-4">
     <div class="inline-flex justify-center w-full">
-      <img src="./img/posts/hetzner-cloud/aws-gatling-result.png" alt="">
+      <img src="https://servicestack.net/img/posts/hetzner-cloud/aws-gatling-result.png" alt="">
     </div>
 <div class="text-gray-500 text-center">AWS Gatling Result.</div>
 </div>
 
 <div class="mx-auto mt-4 mb-4">
     <div class="inline-flex justify-center w-full">
-      <img src="./img/posts/hetzner-cloud/azure-gatling-result.png" alt="">
+      <img src="https://servicestack.net/img/posts/hetzner-cloud/azure-gatling-result.png" alt="">
     </div>
 <div class="text-gray-500 text-center">Azure Gatling Result.</div>
 </div>
 
 <div class="mx-auto mt-4 mb-4">
     <div class="inline-flex justify-center w-full">
-      <img src="./img/posts/hetzner-cloud/hetzner-gatling-result.png" alt="">
+      <img src="https://servicestack.net/img/posts/hetzner-cloud/hetzner-gatling-result.png" alt="">
     </div>
 <div class="text-gray-500 text-center">Hetzner Gatling Result.</div>
 </div>
@@ -98,7 +98,7 @@ The requests throughput of that this test illustrated ~100rps can suit many many
 
 <div class="mx-auto mt-4 mb-4">
     <div class="inline-flex justify-center w-full">
-      <img src="./img/posts/hetzner-cloud/litestream-costs.svg" alt="">
+      <img src="https://servicestack.net/img/posts/hetzner-cloud/litestream-costs.svg" alt="">
     </div>
 <div class="text-gray-500 text-center">Previous test result price comparison without AWS using Provisioned IOPS.</div>
 </div>
@@ -120,7 +120,7 @@ Without provisioned IOPs, it drops to around **$132/month** as an estimated cost
 
 <div class="mx-auto mt-4 mb-4">
     <div class="inline-flex justify-center w-full">
-      <img src="./img/posts/hetzner-cloud/aws-rds-with-provisioned-iops.png" alt="">
+      <img src="https://servicestack.net/img/posts/hetzner-cloud/aws-rds-with-provisioned-iops.png" alt="">
     </div>
 <div class="text-gray-500 text-center">AWS RDS now defaults to provisioned IOPs for a Production setup, drastically increasing costs.</div>
 </div>
@@ -136,7 +136,7 @@ The above specs were provided as "Production" defaults when using a single datab
 
 <div class="mx-auto mt-4 mb-4">
     <div class="inline-flex justify-center w-full">
-      <img src="./img/posts/hetzner-cloud/azure-db-cpu-during-test.png" alt="">
+      <img src="https://servicestack.net/img/posts/hetzner-cloud/azure-db-cpu-during-test.png" alt="">
     </div>
 <div class="text-gray-500 text-center">Azure SQL database without tuning performs poorly for cost, likely due to lack of indexes</div>
 </div>
@@ -155,7 +155,7 @@ While we were primarily looking for one of the lowest cost options with simplifi
 
 <div class="mx-auto mt-4 mb-4">
     <div class="inline-flex justify-center w-full">
-      <img src="./img/posts/hetzner-cloud/hetzner-cloud-buy.png" alt="">
+      <img src="https://servicestack.net/img/posts/hetzner-cloud/hetzner-cloud-buy.png" alt="">
     </div>
 <div class="text-gray-500 text-center">Hetzner Cloud Pricing.</div>
 </div>
@@ -169,7 +169,7 @@ Another part of the responsiveness is their "Live" graphs for monitoring. It is 
 
 <div class="mx-auto mt-4 mb-4">
     <div class="inline-flex justify-center w-full">
-      <img src="./img/posts/hetzner-cloud/hetzner-cloud-live-graphs.gif" alt="">
+      <img src="https://servicestack.net/img/posts/hetzner-cloud/hetzner-cloud-live-graphs.gif" alt="">
     </div>
 <div class="text-gray-500 text-center">Live monitoring updates every 3-5 seconds.</div>
 </div>
