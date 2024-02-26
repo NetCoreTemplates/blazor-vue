@@ -1,4 +1,4 @@
-﻿@page "/posts/{Slug:regex(^[a-z-_]+$)}"
+﻿@page "/posts/{Slug:regex(^[a-z-_-]+$)}"
 @inject MarkdownBlog Blog
 @inject AppConfig AppConfig
 @using ServiceStack.IO
