@@ -1,6 +1,6 @@
 /* Options:
-Date: 2023-05-25 16:12:17
-Version: 6.81
+Date: 2024-03-01 03:34:06
+Version: 8.13
 Tip: To override a DTO option, remove "//" prefix before updating
 BaseUrl: https://localhost:5001
 
@@ -32,14 +32,23 @@ export class QueryBase {
     meta;
 }
 /** @typedef T {any} */
-export class QueryData extends QueryBase {
-    /** @param {{skip?:number,take?:number,orderBy?:string,orderByDesc?:string,include?:string,fields?:string,meta?:{ [index: string]: string; }}} [init] */
-    constructor(init) { super(init); Object.assign(this, init) }
-}
-/** @typedef T {any} */
 export class QueryDb extends QueryBase {
-    /** @param {{skip?:number,take?:number,orderBy?:string,orderByDesc?:string,include?:string,fields?:string,meta?:{ [index: string]: string; }}} [init] */
+    /** @param {{skip?:number,take?:number,orderBy?:string,orderByDesc?:string,include?:string,fields?:string,meta?:{ [index: string]: string; },skip?:number,take?:number,orderBy?:string,orderByDesc?:string,include?:string,fields?:string,meta?:{ [index: string]: string; }}} [init] */
     constructor(init) { super(init); Object.assign(this, init) }
+    /** @type {?number} */
+    skip;
+    /** @type {?number} */
+    take;
+    /** @type {string} */
+    orderBy;
+    /** @type {string} */
+    orderByDesc;
+    /** @type {string} */
+    include;
+    /** @type {string} */
+    fields;
+    /** @type {{ [index: string]: string; }} */
+    meta;
 }
 export class AuditBase {
     /** @param {{createdDate?:string,createdBy?:string,modifiedDate?:string,modifiedBy?:string,deletedDate?:string,deletedBy?:string}} [init] */
@@ -79,7 +88,7 @@ export class Coupon {
     expiryDate;
 }
 export class Booking extends AuditBase {
-    /** @param {{id?:number,name?:string,roomType?:RoomType,roomNumber?:number,bookingStartDate?:string,bookingEndDate?:string,cost?:number,couponId?:string,discount?:Coupon,notes?:string,cancelled?:boolean,createdDate?:string,createdBy?:string,modifiedDate?:string,modifiedBy?:string,deletedDate?:string,deletedBy?:string}} [init] */
+    /** @param {{id?:number,name?:string,roomType?:RoomType,roomNumber?:number,bookingStartDate?:string,bookingEndDate?:string,cost?:number,couponId?:string,discount?:Coupon,notes?:string,cancelled?:boolean,createdDate?:string,createdBy?:string,modifiedDate?:string,modifiedBy?:string,deletedDate?:string,deletedBy?:string,createdDate?:string,createdBy?:string,modifiedDate?:string,modifiedBy?:string,deletedDate?:string,deletedBy?:string}} [init] */
     constructor(init) { super(init); Object.assign(this, init) }
     /** @type {number} */
     id;
@@ -103,6 +112,18 @@ export class Booking extends AuditBase {
     notes;
     /** @type {?boolean} */
     cancelled;
+    /** @type {string} */
+    createdDate;
+    /** @type {string} */
+    createdBy;
+    /** @type {string} */
+    modifiedDate;
+    /** @type {string} */
+    modifiedBy;
+    /** @type {?string} */
+    deletedDate;
+    /** @type {string} */
+    deletedBy;
 }
 export class PageStats {
     /** @param {{label?:string,total?:number}} [init] */
@@ -150,15 +171,35 @@ export class AdminDataResponse {
     /** @type {PageStats[]} */
     pageStats;
 }
-export class Todo {
-    /** @param {{id?:number,text?:string,isFinished?:boolean}} [init] */
+export class AuthenticateResponse {
+    /** @param {{userId?:string,sessionId?:string,userName?:string,displayName?:string,referrerUrl?:string,bearerToken?:string,refreshToken?:string,refreshTokenExpiry?:string,profileUrl?:string,roles?:string[],permissions?:string[],responseStatus?:ResponseStatus,meta?:{ [index: string]: string; }}} [init] */
     constructor(init) { Object.assign(this, init) }
-    /** @type {number} */
-    id;
     /** @type {string} */
-    text;
-    /** @type {boolean} */
-    isFinished;
+    userId;
+    /** @type {string} */
+    sessionId;
+    /** @type {string} */
+    userName;
+    /** @type {string} */
+    displayName;
+    /** @type {string} */
+    referrerUrl;
+    /** @type {string} */
+    bearerToken;
+    /** @type {string} */
+    refreshToken;
+    /** @type {?string} */
+    refreshTokenExpiry;
+    /** @type {string} */
+    profileUrl;
+    /** @type {string[]} */
+    roles;
+    /** @type {string[]} */
+    permissions;
+    /** @type {ResponseStatus} */
+    responseStatus;
+    /** @type {{ [index: string]: string; }} */
+    meta;
 }
 /** @typedef T {any} */
 export class QueryResponse {
@@ -175,82 +216,6 @@ export class QueryResponse {
     /** @type {ResponseStatus} */
     responseStatus;
 }
-export class AuthenticateResponse {
-    /** @param {{userId?:string,sessionId?:string,userName?:string,displayName?:string,referrerUrl?:string,bearerToken?:string,refreshToken?:string,profileUrl?:string,roles?:string[],permissions?:string[],responseStatus?:ResponseStatus,meta?:{ [index: string]: string; }}} [init] */
-    constructor(init) { Object.assign(this, init) }
-    /** @type {string} */
-    userId;
-    /** @type {string} */
-    sessionId;
-    /** @type {string} */
-    userName;
-    /** @type {string} */
-    displayName;
-    /** @type {string} */
-    referrerUrl;
-    /** @type {string} */
-    bearerToken;
-    /** @type {string} */
-    refreshToken;
-    /** @type {string} */
-    profileUrl;
-    /** @type {string[]} */
-    roles;
-    /** @type {string[]} */
-    permissions;
-    /** @type {ResponseStatus} */
-    responseStatus;
-    /** @type {{ [index: string]: string; }} */
-    meta;
-}
-export class AssignRolesResponse {
-    /** @param {{allRoles?:string[],allPermissions?:string[],meta?:{ [index: string]: string; },responseStatus?:ResponseStatus}} [init] */
-    constructor(init) { Object.assign(this, init) }
-    /** @type {string[]} */
-    allRoles;
-    /** @type {string[]} */
-    allPermissions;
-    /** @type {{ [index: string]: string; }} */
-    meta;
-    /** @type {ResponseStatus} */
-    responseStatus;
-}
-export class UnAssignRolesResponse {
-    /** @param {{allRoles?:string[],allPermissions?:string[],meta?:{ [index: string]: string; },responseStatus?:ResponseStatus}} [init] */
-    constructor(init) { Object.assign(this, init) }
-    /** @type {string[]} */
-    allRoles;
-    /** @type {string[]} */
-    allPermissions;
-    /** @type {{ [index: string]: string; }} */
-    meta;
-    /** @type {ResponseStatus} */
-    responseStatus;
-}
-export class RegisterResponse {
-    /** @param {{userId?:string,sessionId?:string,userName?:string,referrerUrl?:string,bearerToken?:string,refreshToken?:string,roles?:string[],permissions?:string[],responseStatus?:ResponseStatus,meta?:{ [index: string]: string; }}} [init] */
-    constructor(init) { Object.assign(this, init) }
-    /** @type {string} */
-    userId;
-    /** @type {string} */
-    sessionId;
-    /** @type {string} */
-    userName;
-    /** @type {string} */
-    referrerUrl;
-    /** @type {string} */
-    bearerToken;
-    /** @type {string} */
-    refreshToken;
-    /** @type {string[]} */
-    roles;
-    /** @type {string[]} */
-    permissions;
-    /** @type {ResponseStatus} */
-    responseStatus;
-    /** @type {{ [index: string]: string; }} */
-    meta;
-}
 export class IdResponse {
     /** @param {{id?:string,responseStatus?:ResponseStatus}} [init] */
     constructor(init) { Object.assign(this, init) }
@@ -265,7 +230,7 @@ export class Hello {
     /** @type {?string} */
     name;
     getTypeName() { return 'Hello' }
-    getMethod() { return 'POST' }
+    getMethod() { return 'GET' }
     createResponse() { return new HelloResponse() }
 }
 export class AdminData {
@@ -274,63 +239,13 @@ export class AdminData {
     getMethod() { return 'GET' }
     createResponse() { return new AdminDataResponse() }
 }
-export class QueryTodos extends QueryData {
-    /** @param {{id?:number,ids?:number[],textContains?:string,skip?:number,take?:number,orderBy?:string,orderByDesc?:string,include?:string,fields?:string,meta?:{ [index: string]: string; }}} [init] */
-    constructor(init) { super(init); Object.assign(this, init) }
-    /** @type {?number} */
-    id;
-    /** @type {?number[]} */
-    ids;
-    /** @type {?string} */
-    textContains;
-    getTypeName() { return 'QueryTodos' }
-    getMethod() { return 'GET' }
-    createResponse() { return new QueryResponse() }
-}
-export class CreateTodo {
-    /** @param {{text?:string}} [init] */
-    constructor(init) { Object.assign(this, init) }
-    /** @type {string} */
-    text;
-    getTypeName() { return 'CreateTodo' }
-    getMethod() { return 'POST' }
-    createResponse() { return new Todo() }
-}
-export class UpdateTodo {
-    /** @param {{id?:number,text?:string,isFinished?:boolean}} [init] */
-    constructor(init) { Object.assign(this, init) }
-    /** @type {number} */
-    id;
-    /** @type {string} */
-    text;
-    /** @type {boolean} */
-    isFinished;
-    getTypeName() { return 'UpdateTodo' }
-    getMethod() { return 'PUT' }
-    createResponse() { return new Todo() }
-}
-export class DeleteTodos {
-    /** @param {{ids?:number[]}} [init] */
-    constructor(init) { Object.assign(this, init) }
-    /** @type {number[]} */
-    ids;
-    getTypeName() { return 'DeleteTodos' }
-    getMethod() { return 'DELETE' }
-    createResponse() { }
-}
 export class Authenticate {
-    /** @param {{provider?:string,state?:string,oauth_token?:string,oauth_verifier?:string,userName?:string,password?:string,rememberMe?:boolean,errorView?:string,nonce?:string,uri?:string,response?:string,qop?:string,nc?:string,cnonce?:string,accessToken?:string,accessTokenSecret?:string,scope?:string,meta?:{ [index: string]: string; }}} [init] */
+    /** @param {{provider?:string,userName?:string,password?:string,rememberMe?:boolean,accessToken?:string,accessTokenSecret?:string,returnUrl?:string,errorView?:string,meta?:{ [index: string]: string; }}} [init] */
     constructor(init) { Object.assign(this, init) }
     /**
      * @type {string}
      * @description AuthProvider, e.g. credentials */
     provider;
-    /** @type {string} */
-    state;
-    /** @type {string} */
-    oauth_token;
-    /** @type {string} */
-    oauth_verifier;
     /** @type {string} */
     userName;
     /** @type {string} */
@@ -338,102 +253,61 @@ export class Authenticate {
     /** @type {?boolean} */
     rememberMe;
     /** @type {string} */
-    errorView;
-    /** @type {string} */
-    nonce;
-    /** @type {string} */
-    uri;
-    /** @type {string} */
-    response;
-    /** @type {string} */
-    qop;
-    /** @type {string} */
-    nc;
-    /** @type {string} */
-    cnonce;
-    /** @type {string} */
     accessToken;
     /** @type {string} */
     accessTokenSecret;
     /** @type {string} */
-    scope;
+    returnUrl;
+    /** @type {string} */
+    errorView;
     /** @type {{ [index: string]: string; }} */
     meta;
     getTypeName() { return 'Authenticate' }
     getMethod() { return 'POST' }
     createResponse() { return new AuthenticateResponse() }
 }
-export class AssignRoles {
-    /** @param {{userName?:string,permissions?:string[],roles?:string[],meta?:{ [index: string]: string; }}} [init] */
-    constructor(init) { Object.assign(this, init) }
-    /** @type {string} */
-    userName;
-    /** @type {string[]} */
-    permissions;
-    /** @type {string[]} */
-    roles;
-    /** @type {{ [index: string]: string; }} */
-    meta;
-    getTypeName() { return 'AssignRoles' }
-    getMethod() { return 'POST' }
-    createResponse() { return new AssignRolesResponse() }
-}
-export class UnAssignRoles {
-    /** @param {{userName?:string,permissions?:string[],roles?:string[],meta?:{ [index: string]: string; }}} [init] */
-    constructor(init) { Object.assign(this, init) }
-    /** @type {string} */
-    userName;
-    /** @type {string[]} */
-    permissions;
-    /** @type {string[]} */
-    roles;
-    /** @type {{ [index: string]: string; }} */
-    meta;
-    getTypeName() { return 'UnAssignRoles' }
-    getMethod() { return 'POST' }
-    createResponse() { return new UnAssignRolesResponse() }
-}
-export class Register {
-    /** @param {{userName?:string,firstName?:string,lastName?:string,displayName?:string,email?:string,password?:string,confirmPassword?:string,autoLogin?:boolean,errorView?:string,meta?:{ [index: string]: string; }}} [init] */
-    constructor(init) { Object.assign(this, init) }
-    /** @type {string} */
-    userName;
-    /** @type {string} */
-    firstName;
-    /** @type {string} */
-    lastName;
-    /** @type {string} */
-    displayName;
-    /** @type {string} */
-    email;
-    /** @type {string} */
-    password;
-    /** @type {string} */
-    confirmPassword;
-    /** @type {?boolean} */
-    autoLogin;
-    /** @type {string} */
-    errorView;
-    /** @type {{ [index: string]: string; }} */
-    meta;
-    getTypeName() { return 'Register' }
-    getMethod() { return 'POST' }
-    createResponse() { return new RegisterResponse() }
-}
 export class QueryBookings extends QueryDb {
-    /** @param {{id?:number,skip?:number,take?:number,orderBy?:string,orderByDesc?:string,include?:string,fields?:string,meta?:{ [index: string]: string; }}} [init] */
+    /** @param {{id?:number,skip?:number,take?:number,orderBy?:string,orderByDesc?:string,include?:string,fields?:string,meta?:{ [index: string]: string; },skip?:number,take?:number,orderBy?:string,orderByDesc?:string,include?:string,fields?:string,meta?:{ [index: string]: string; },skip?:number,take?:number,orderBy?:string,orderByDesc?:string,include?:string,fields?:string,meta?:{ [index: string]: string; }}} [init] */
     constructor(init) { super(init); Object.assign(this, init) }
     /** @type {?number} */
     id;
+    /** @type {?number} */
+    skip;
+    /** @type {?number} */
+    take;
+    /** @type {string} */
+    orderBy;
+    /** @type {string} */
+    orderByDesc;
+    /** @type {string} */
+    include;
+    /** @type {string} */
+    fields;
+    /** @type {{ [index: string]: string; }} */
+    meta;
     getTypeName() { return 'QueryBookings' }
     getMethod() { return 'GET' }
     createResponse() { return new QueryResponse() }
 }
 export class QueryCoupons extends QueryDb {
-    /** @param {{id?:string,skip?:number,take?:number,orderBy?:string,orderByDesc?:string,include?:string,fields?:string,meta?:{ [index: string]: string; }}} [init] */
+    /** @param {{id?:string,skip?:number,take?:number,orderBy?:string,orderByDesc?:string,include?:string,fields?:string,meta?:{ [index: string]: string; },skip?:number,take?:number,orderBy?:string,orderByDesc?:string,include?:string,fields?:string,meta?:{ [index: string]: string; },skip?:number,take?:number,orderBy?:string,orderByDesc?:string,include?:string,fields?:string,meta?:{ [index: string]: string; }}} [init] */
     constructor(init) { super(init); Object.assign(this, init) }
     /** @type {string} */
     id;
+    /** @type {?number} */
+    skip;
+    /** @type {?number} */
+    take;
+    /** @type {string} */
+    orderBy;
+    /** @type {string} */
+    orderByDesc;
+    /** @type {string} */
+    include;
+    /** @type {string} */
+    fields;
+    /** @type {{ [index: string]: string; }} */
+    meta;
     getTypeName() { return 'QueryCoupons' }
     getMethod() { return 'GET' }
     createResponse() { return new QueryResponse() }
