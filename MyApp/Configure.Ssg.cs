@@ -44,30 +44,6 @@ public class ConfigureSsg : IHostingStartup
                 pages.LoadFrom("_pages");
                 videos.LoadFrom("_videos");
                 blogPosts.LoadFrom("_posts");
-            },
-            afterAppHostInit: appHost =>
-            {
-                // prerender with: `$ npm run prerender` 
-                AppTasks.Register("prerender", args =>
-                {
-                    appHost.Resolve<MarkdownMeta>().RenderToAsync(
-                        metaDir: appHost.ContentRootDirectory.RealPath.CombineWith("wwwroot/meta"),
-                        baseUrl: HtmlHelpers.ToAbsoluteContentUrl("")).GetAwaiter().GetResult();
-
-                    var distDir = appHost.ContentRootDirectory.RealPath.CombineWith("dist");
-                    if (Directory.Exists(distDir))
-                        FileSystemVirtualFiles.DeleteDirectory(distDir);
-                    FileSystemVirtualFiles.CopyAll(
-                        new DirectoryInfo(appHost.ContentRootDirectory.RealPath.CombineWith("wwwroot")),
-                        new DirectoryInfo(distDir));
-                    
-                    // Render .html redirect files
-                    RazorSsg.PrerenderRedirectsAsync(appHost.ContentRootDirectory.GetFile("redirects.json"), distDir)
-                        .GetAwaiter().GetResult();
-
-                    var razorFiles = appHost.VirtualFiles.GetAllMatchingFiles("*.cshtml");
-                    RazorSsg.PrerenderAsync(appHost, razorFiles, distDir).GetAwaiter().GetResult();
-                });
             });
 }
 

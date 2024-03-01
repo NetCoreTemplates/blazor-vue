@@ -12,7 +12,6 @@
     <ItemGroup>
         <Using Include="MyApp" />
         <Using Include="ServiceStack" />
-        <Using Include="ServiceStack.Mvc" />
     </ItemGroup>
 
     <ItemGroup>
@@ -32,7 +31,6 @@
     <ItemGroup>
         <PackageReference Include="ServiceStack" Version="8.*" />
         <PackageReference Include="ServiceStack.Blazor" Version="8.*" />
-        <PackageReference Include="ServiceStack.Mvc" Version="8.*" />
         <PackageReference Include="ServiceStack.OrmLite.Sqlite.Data" Version="8.*" />
         <PackageReference Include="ServiceStack.Extensions" Version="8.*" />
         <PackageReference Include="ServiceStack.Server" Version="8.*" />
