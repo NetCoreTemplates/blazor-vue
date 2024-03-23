@@ -1,22 +1,23 @@
-﻿[assembly: HostingStartup(typeof(MyApp.ConfigureOpenApi))]
+﻿using MyApp.Data;
+
+[assembly: HostingStartup(typeof(MyApp.ConfigureOpenApi))]
 
 namespace MyApp;
 
 public class ConfigureOpenApi : IHostingStartup
 {
     public void Configure(IWebHostBuilder builder) => builder
-        .ConfigureServices((context, services) =>
-        {
+        .ConfigureServices((context, services) => {
             if (context.HostingEnvironment.IsDevelopment())
             {
                 services.AddEndpointsApiExplorer();
                 services.AddSwaggerGen();
 
                 services.AddServiceStackSwagger();
-                services.AddBasicAuth<Data.ApplicationUser>();
+                services.AddBasicAuth<ApplicationUser>();
                 //services.AddJwtAuth();
-
-                services.AddTransient<IStartupFilter, StartupFilter>();
+            
+                services.AddTransient<IStartupFilter,StartupFilter>();
             }
         });
 
