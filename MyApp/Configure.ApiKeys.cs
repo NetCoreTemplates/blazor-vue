@@ -14,19 +14,27 @@ public class ConfigureApiKeys : IHostingStartup
         {
             services.AddPlugin(new ApiKeysFeature
             {
-                Features = [
-                    "Tracking"
-                ],
+                // Optional: Limit available Scopes Admin Users can assign to any API Keys
+                // Features = [
+                //     "Paid",
+                //     "Tracking",
+                // ],
+                // Optional: Limit available Features Admin Users can assign to any API Keys
+                // Scopes = [
+                //     "todo:read",
+                //     "todo:write",
+                // ],
                 
-                // Optional: Limit scope of API Key access
-                UserScopes = [
-                    "todo:read",
-                    "todo:write",
-                ],
-                // Optional: Tag API Keys with additional features
-                UserFeatures = [
-                    "Tracking",
-                ],
+                // Optional: Limit available Scopes Users can assign to their own API Keys
+                // UserScopes = [
+                //     "todo:read",
+                //     "todo:write",
+                // ],
+                // Optional: Limit available Features Users can assign to their own API Keys
+                // UserFeatures = [
+                //     "Paid",
+                //     "Tracking",
+                // ],
             });
         })
         .ConfigureAppHost(appHost =>
@@ -35,7 +43,7 @@ public class ConfigureApiKeys : IHostingStartup
             using var db = appHost.Resolve<IDbConnectionFactory>().Open();
             apiKeysFeature.InitSchema(db);
             
-            // Optional, create API Key for specified Users
+            // Optional: Create API Key for specified Users on Startup
             if (apiKeysFeature.ApiKeyCount(db) == 0)
             {
                 var createApiKeysFor = new [] { "admin@email.com", "manager@email.com" };
