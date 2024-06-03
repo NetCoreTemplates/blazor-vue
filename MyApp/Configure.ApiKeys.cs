@@ -39,8 +39,8 @@ public class ConfigureApiKeys : IHostingStartup
         })
         .ConfigureAppHost(appHost =>
         {
-            var apiKeysFeature = appHost.GetPlugin<ApiKeysFeature>();
             using var db = appHost.Resolve<IDbConnectionFactory>().Open();
+            var apiKeysFeature = appHost.GetPlugin<ApiKeysFeature>();
             apiKeysFeature.InitSchema(db);
             
             // Optional: Create API Key for specified Users on Startup
