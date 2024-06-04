@@ -11,7 +11,4 @@
     public MarkupString ToProps() => BlazorHtml.RawJson(new {
         info = HostContext.AppHost.GetPlugin<ApiKeysFeature>()?.GetApiKeyInfo(),
     });
-
-    [CascadingParameter]
-    private HttpContext HttpContext { get; set; } = default!;
 }
