@@ -1,6 +1,6 @@
 # blazor-vue
 
-.NET 8.0 Simple, Server Rendered Blazor Tailwind App with Vue interactivity
+.NET 8.0 Simple, Server Rendered Blazor Tailwind App with Vue interactivity.
 
 [![](https://raw.githubusercontent.com/ServiceStack/Assets/master/csharp-templates/blazor-vue.png)](http://blazor-vue.web-templates.io/)
 
@@ -15,4 +15,3 @@ Alternatively write new project files directly into an empty repository, using t
     $ git clone https://github.com/<User>/<ProjectName>.git
     $ cd <ProjectName>
     $ x new blazor-vue
-
