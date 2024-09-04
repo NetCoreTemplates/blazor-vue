@@ -9,7 +9,7 @@ coverage/
 blog/
 package-lock.json
 App_Data/
-*.secrets.cs
+Configure.secrets.cs
 
 # User-specific files
 *.suo
