@@ -25,7 +25,7 @@ public class ConfigureSmtp : IHostingStartup
             }
             else
             {
-                log.LogWarning("SMTP is configured with <{SmtpConfigFromEmail}> {SmtpConfigFromName}", smtpConfig.FromEmail, smtpConfig.FromName);
+                log.LogWarning("SMTP is configured with <{FromEmail}> {FromName}", smtpConfig.FromEmail, smtpConfig.FromName);
             }
         });
 }
