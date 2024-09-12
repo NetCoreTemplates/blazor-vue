@@ -44,7 +44,7 @@ services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfi
 services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 // Uncomment to send emails with SMTP, configure SMTP with "SmtpConfig" in appsettings.json
 // services.AddSingleton<IEmailSender<ApplicationUser>, EmailSender>();
-services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, AdditionalUserClaimsPrincipalFactory>();
+// services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, AdditionalUserClaimsPrincipalFactory>();
 
 var baseUrl = builder.Configuration["ApiBaseUrl"] ??
     (builder.Environment.IsDevelopment() ? "https://localhost:5001" : "http://" + IPAddress.Loopback);
