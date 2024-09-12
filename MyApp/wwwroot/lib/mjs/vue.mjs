@@ -1,13 +1,14 @@
 /**
-* vue v3.5.1
+* vue v3.5.4
 * (c) 2018-present Yuxi (Evan) You and Vue contributors
 * @license MIT
 **/
 /*! #__NO_SIDE_EFFECTS__ */
 // @__NO_SIDE_EFFECTS__
-function makeMap(str, expectsLowerCase) {
-  const set = new Set(str.split(","));
-  return expectsLowerCase ? (val) => set.has(val.toLowerCase()) : (val) => set.has(val);
+function makeMap(str) {
+  const map = /* @__PURE__ */ Object.create(null);
+  for (const key of str.split(",")) map[key] = 1;
+  return (val) => val in map;
 }
 
 const EMPTY_OBJ = Object.freeze({}) ;
@@ -678,7 +679,7 @@ function cleanupDeps(sub) {
 }
 function isDirty(sub) {
   for (let link = sub.deps; link; link = link.nextDep) {
-    if (link.dep.version !== link.version || link.dep.computed && refreshComputed(link.dep.computed) === false || link.dep.version !== link.version) {
+    if (link.dep.version !== link.version || link.dep.computed && refreshComputed(link.dep.computed) || link.dep.version !== link.version) {
       return true;
     }
   }
@@ -688,9 +689,6 @@ function isDirty(sub) {
   return false;
 }
 function refreshComputed(computed) {
-  if (computed.flags & 2) {
-    return false;
-  }
   if (computed.flags & 4 && !(computed.flags & 16)) {
     return;
   }
@@ -711,7 +709,7 @@ function refreshComputed(computed) {
   shouldTrack = true;
   try {
     prepareDeps(computed);
-    const value = computed.fn();
+    const value = computed.fn(computed._value);
     if (dep.version === 0 || hasChanged(value, computed._value)) {
       computed._value = value;
       dep.version++;
@@ -820,7 +818,7 @@ class Dep {
     }
   }
   track(debugInfo) {
-    if (!activeSub || !shouldTrack) {
+    if (!activeSub || !shouldTrack || activeSub === this.computed) {
       return;
     }
     let link = this.activeLink;
@@ -957,9 +955,23 @@ function trigger(target, type, key, newValue, oldValue, oldTarget) {
     globalVersion++;
     return;
   }
-  let deps = [];
+  const run = (dep) => {
+    if (dep) {
+      {
+        dep.trigger({
+          target,
+          type,
+          key,
+          newValue,
+          oldValue,
+          oldTarget
+        });
+      }
+    }
+  };
+  startBatch();
   if (type === "clear") {
-    deps = [...depsMap.values()];
+    depsMap.forEach(run);
   } else {
     const targetIsArray = isArray(target);
     const isArrayIndex = targetIsArray && isIntegerKey(key);
@@ -967,55 +979,41 @@ function trigger(target, type, key, newValue, oldValue, oldTarget) {
       const newLength = Number(newValue);
       depsMap.forEach((dep, key2) => {
         if (key2 === "length" || key2 === ARRAY_ITERATE_KEY || !isSymbol(key2) && key2 >= newLength) {
-          deps.push(dep);
+          run(dep);
         }
       });
     } else {
-      const push = (dep) => dep && deps.push(dep);
       if (key !== void 0) {
-        push(depsMap.get(key));
+        run(depsMap.get(key));
       }
       if (isArrayIndex) {
-        push(depsMap.get(ARRAY_ITERATE_KEY));
+        run(depsMap.get(ARRAY_ITERATE_KEY));
       }
       switch (type) {
         case "add":
           if (!targetIsArray) {
-            push(depsMap.get(ITERATE_KEY));
+            run(depsMap.get(ITERATE_KEY));
             if (isMap(target)) {
-              push(depsMap.get(MAP_KEY_ITERATE_KEY));
+              run(depsMap.get(MAP_KEY_ITERATE_KEY));
             }
           } else if (isArrayIndex) {
-            push(depsMap.get("length"));
+            run(depsMap.get("length"));
           }
           break;
         case "delete":
           if (!targetIsArray) {
-            push(depsMap.get(ITERATE_KEY));
+            run(depsMap.get(ITERATE_KEY));
             if (isMap(target)) {
-              push(depsMap.get(MAP_KEY_ITERATE_KEY));
+              run(depsMap.get(MAP_KEY_ITERATE_KEY));
             }
           }
           break;
         case "set":
           if (isMap(target)) {
-            push(depsMap.get(ITERATE_KEY));
+            run(depsMap.get(ITERATE_KEY));
           }
           break;
       }
-    }
-  }
-  startBatch();
-  for (const dep of deps) {
-    {
-      dep.trigger({
-        target,
-        type,
-        key,
-        newValue,
-        oldValue,
-        oldTarget
-      });
     }
   }
   endBatch();
@@ -1755,7 +1753,7 @@ function toRaw(observed) {
   return raw ? toRaw(raw) : observed;
 }
 function markRaw(value) {
-  if (Object.isExtensible(value)) {
+  if (!hasOwn(value, "__v_skip") && Object.isExtensible(value)) {
     def(value, "__v_skip", true);
   }
   return value;
@@ -1833,7 +1831,7 @@ function toValue(source) {
   return isFunction(source) ? source() : unref(source);
 }
 const shallowUnwrapHandlers = {
-  get: (target, key, receiver) => unref(Reflect.get(target, key, receiver)),
+  get: (target, key, receiver) => key === "__v_raw" ? target : unref(Reflect.get(target, key, receiver)),
   set: (target, key, value, receiver) => {
     const oldValue = target[key];
     if (isRef(oldValue) && !isRef(value)) {
@@ -1965,8 +1963,8 @@ class ComputedRefImpl {
    * @internal
    */
   notify() {
+    this.flags |= 16;
     if (activeSub !== this) {
-      this.flags |= 16;
       this.dep.notify();
     }
   }
@@ -2535,9 +2533,7 @@ function queueJob(job) {
     } else {
       queue.splice(findInsertionIndex(jobId), 0, job);
     }
-    if (!(job.flags & 4)) {
-      job.flags |= 1;
-    }
+    job.flags |= 1;
     queueFlush();
   }
 }
@@ -2553,9 +2549,7 @@ function queuePostFlushCb(cb) {
       activePostFlushCbs.splice(postFlushIndex + 1, 0, cb);
     } else if (!(cb.flags & 1)) {
       pendingPostFlushCbs.push(cb);
-      if (!(cb.flags & 4)) {
-        cb.flags |= 1;
-      }
+      cb.flags |= 1;
     }
   } else {
     pendingPostFlushCbs.push(...cb);
@@ -2577,6 +2571,9 @@ function flushPreFlushCbs(instance, seen, i = isFlushing ? flushIndex + 1 : 0) {
       }
       queue.splice(i, 1);
       i--;
+      if (cb.flags & 4) {
+        cb.flags &= ~1;
+      }
       cb();
       cb.flags &= ~1;
     }
@@ -2601,6 +2598,9 @@ function flushPostFlushCbs(seen) {
       if (checkRecursiveUpdates(seen, cb)) {
         continue;
       }
+      if (cb.flags & 4) {
+        cb.flags &= ~1;
+      }
       if (!(cb.flags & 8)) cb();
       cb.flags &= ~1;
     }
@@ -2623,6 +2623,9 @@ function flushJobs(seen) {
         if (check(job)) {
           continue;
         }
+        if (job.flags & 4) {
+          job.flags &= ~1;
+        }
         callWithErrorHandling(
           job,
           job.i,
@@ -2632,6 +2635,12 @@ function flushJobs(seen) {
       }
     }
   } finally {
+    for (; flushIndex < queue.length; flushIndex++) {
+      const job = queue[flushIndex];
+      if (job) {
+        job.flags &= ~1;
+      }
+    }
     flushIndex = 0;
     queue.length = 0;
     flushPostFlushCbs(seen);
@@ -2643,23 +2652,19 @@ function flushJobs(seen) {
   }
 }
 function checkRecursiveUpdates(seen, fn) {
-  if (!seen.has(fn)) {
-    seen.set(fn, 1);
-  } else {
-    const count = seen.get(fn);
-    if (count > RECURSION_LIMIT) {
-      const instance = fn.i;
-      const componentName = instance && getComponentName(instance.type);
-      handleError(
-        `Maximum recursive updates exceeded${componentName ? ` in component <${componentName}>` : ``}. This means you have a reactive effect that is mutating its own dependencies and thus recursively triggering itself. Possible sources include component template, render function, updated hook or watcher source function.`,
-        null,
-        10
-      );
-      return true;
-    } else {
-      seen.set(fn, count + 1);
-    }
+  const count = seen.get(fn) || 0;
+  if (count > RECURSION_LIMIT) {
+    const instance = fn.i;
+    const componentName = instance && getComponentName(instance.type);
+    handleError(
+      `Maximum recursive updates exceeded${componentName ? ` in component <${componentName}>` : ``}. This means you have a reactive effect that is mutating its own dependencies and thus recursively triggering itself. Possible sources include component template, render function, updated hook or watcher source function.`,
+      null,
+      10
+    );
+    return true;
   }
+  seen.set(fn, count + 1);
+  return false;
 }
 
 let isHmrUpdating = false;
@@ -3388,6 +3393,7 @@ const BaseTransitionImpl = {
             if (!(instance.job.flags & 8)) {
               instance.update();
             }
+            delete leavingHooks.afterLeave;
           };
           return emptyPlaceholder(child);
         } else if (mode === "in-out" && innerChild.type !== Comment) {
@@ -3610,6 +3616,7 @@ function getInnerChild$1(vnode) {
 }
 function setTransitionHooks(vnode, hooks) {
   if (vnode.shapeFlag & 6 && vnode.component) {
+    vnode.transition = hooks;
     setTransitionHooks(vnode.component.subTree, hooks);
   } else if (vnode.shapeFlag & 128) {
     vnode.ssContent.transition = hooks.clone(vnode.ssContent);
@@ -3654,7 +3661,7 @@ function defineComponent(options, extraOptions) {
 function useId() {
   const i = getCurrentInstance();
   if (i) {
-    return (i.appContext.config.idPrefix || "v") + ":" + i.ids[0] + i.ids[1]++;
+    return (i.appContext.config.idPrefix || "v") + "-" + i.ids[0] + i.ids[1]++;
   } else {
     warn$1(
       `useId() is called when there is no active component instance to be associated with.`
@@ -3663,6 +3670,34 @@ function useId() {
 }
 function markAsyncBoundary(instance) {
   instance.ids = [instance.ids[0] + instance.ids[2]++ + "-", 0, 0];
+}
+
+const knownTemplateRefs = /* @__PURE__ */ new WeakSet();
+function useTemplateRef(key) {
+  const i = getCurrentInstance();
+  const r = shallowRef(null);
+  if (i) {
+    const refs = i.refs === EMPTY_OBJ ? i.refs = {} : i.refs;
+    let desc;
+    if ((desc = Object.getOwnPropertyDescriptor(refs, key)) && !desc.configurable) {
+      warn$1(`useTemplateRef('${key}') already exists.`);
+    } else {
+      Object.defineProperty(refs, key, {
+        enumerable: true,
+        get: () => r.value,
+        set: (val) => r.value = val
+      });
+    }
+  } else {
+    warn$1(
+      `useTemplateRef() is called when there is no active component instance to be associated with.`
+    );
+  }
+  const ret = readonly(r) ;
+  {
+    knownTemplateRefs.add(ret);
+  }
+  return ret;
 }
 
 function setRef(rawRef, oldRawRef, parentSuspense, vnode, isUnmount = false) {
@@ -3693,7 +3728,13 @@ function setRef(rawRef, oldRawRef, parentSuspense, vnode, isUnmount = false) {
   const oldRef = oldRawRef && oldRawRef.r;
   const refs = owner.refs === EMPTY_OBJ ? owner.refs = {} : owner.refs;
   const setupState = owner.setupState;
-  const canSetSetupRef = setupState === EMPTY_OBJ ? () => false : (key) => hasOwn(setupState, key) && !(Object.getOwnPropertyDescriptor(refs, key) || EMPTY_OBJ).get;
+  const rawSetupState = toRaw(setupState);
+  const canSetSetupRef = setupState === EMPTY_OBJ ? () => false : (key) => {
+    if (knownTemplateRefs.has(rawSetupState[key])) {
+      return false;
+    }
+    return hasOwn(rawSetupState, key);
+  };
   if (oldRef != null && oldRef !== ref) {
     if (isString(oldRef)) {
       refs[oldRef] = null;
@@ -4750,7 +4791,7 @@ const KeepAliveImpl = {
     return () => {
       pendingCacheKey = null;
       if (!slots.default) {
-        return null;
+        return current = null;
       }
       const children = slots.default();
       const rawVNode = children[0];
@@ -4977,13 +5018,15 @@ function renderList(source, renderItem, cache, index) {
   const sourceIsArray = isArray(source);
   if (sourceIsArray || isString(source)) {
     const sourceIsReactiveArray = sourceIsArray && isReactive(source);
+    let needsWrap = false;
     if (sourceIsReactiveArray) {
+      needsWrap = !isShallow(source);
       source = shallowReadArray(source);
     }
     ret = new Array(source.length);
     for (let i = 0, l = source.length; i < l; i++) {
       ret[i] = renderItem(
-        sourceIsReactiveArray ? toReactive(source[i]) : source[i],
+        needsWrap ? toReactive(source[i]) : source[i],
         i,
         void 0,
         cached && cached[i]
@@ -7336,7 +7379,7 @@ function baseCreateRenderer(options, createHydrationFns) {
               endMeasure(instance, `hydrate`);
             }
           };
-          if (isAsyncWrapperVNode) {
+          if (isAsyncWrapperVNode && type.__asyncHydrate) {
             type.__asyncHydrate(
               el,
               instance,
@@ -8627,7 +8670,7 @@ function renderComponentRoot(instance) {
         `Component inside <Transition> renders non-element root node that cannot be animated.`
       );
     }
-    root.transition = vnode.transition;
+    setTransitionHooks(root, vnode.transition);
   }
   if (setRoot) {
     setRoot(root);
@@ -9121,7 +9164,7 @@ function createSuspenseBoundary(vnode, parentSuspense, parentComponent, containe
           };
         }
         if (activeBranch) {
-          if (parentNode(activeBranch.el) !== suspense.hiddenContainer) {
+          if (parentNode(activeBranch.el) === container2) {
             anchor = next(activeBranch);
           }
           unmount(activeBranch, parentComponent2, suspense, true);
@@ -10182,29 +10225,6 @@ const computed = (getterOrOptions, debugOptions) => {
   return c;
 };
 
-function useTemplateRef(key) {
-  const i = getCurrentInstance();
-  const r = shallowRef(null);
-  if (i) {
-    const refs = i.refs === EMPTY_OBJ ? i.refs = {} : i.refs;
-    let desc;
-    if ((desc = Object.getOwnPropertyDescriptor(refs, key)) && !desc.configurable) {
-      warn$1(`useTemplateRef('${key}') already exists.`);
-    } else {
-      Object.defineProperty(refs, key, {
-        enumerable: true,
-        get: () => r.value,
-        set: (val) => r.value = val
-      });
-    }
-  } else {
-    warn$1(
-      `useTemplateRef() is called when there is no active component instance to be associated with.`
-    );
-  }
-  return readonly(r) ;
-}
-
 function h(type, propsOrChildren, children) {
   const l = arguments.length;
   if (l === 2) {
@@ -10430,7 +10450,7 @@ function isMemoSame(cached, memo) {
   return true;
 }
 
-const version = "3.5.1";
+const version = "3.5.4";
 const warn = warn$1 ;
 const ErrorTypeStrings = ErrorTypeStrings$1 ;
 const devtools = devtools$1 ;
@@ -10443,7 +10463,9 @@ const _ssrUtils = {
   isVNode: isVNode,
   normalizeVNode,
   getComponentPublicInstance,
-  ensureValidVNode
+  ensureValidVNode,
+  pushWarningContext,
+  popWarningContext
 };
 const ssrUtils = _ssrUtils ;
 const resolveFilter = null;
@@ -13988,7 +14010,7 @@ const tokenizer = new Tokenizer(stack, {
         rawName: raw,
         exp: void 0,
         arg: void 0,
-        modifiers: raw === "." ? ["prop"] : [],
+        modifiers: raw === "." ? [createSimpleExpression("prop")] : [],
         loc: getLoc(start)
       };
       if (name === "pre") {
@@ -14031,7 +14053,8 @@ const tokenizer = new Tokenizer(stack, {
         setLocEnd(arg.loc, end);
       }
     } else {
-      currentProp.modifiers.push(mod);
+      const exp = createSimpleExpression(mod, true, getLoc(start, end));
+      currentProp.modifiers.push(exp);
     }
   },
   onattribdata(start, end) {
@@ -14988,10 +15011,8 @@ function createRootCodegen(root, context) {
     }
   } else if (children.length > 1) {
     let patchFlag = 64;
-    let patchFlagText = PatchFlagNames[64];
     if (children.filter((c) => c.type !== 3).length === 1) {
       patchFlag |= 2048;
-      patchFlagText += `, ${PatchFlagNames[2048]}`;
     }
     root.codegenNode = createVNodeCall(
       context,
@@ -15891,10 +15912,8 @@ function createChildrenCodegenNode(branch, keyIndex, context) {
       return vnodeCall;
     } else {
       let patchFlag = 64;
-      let patchFlagText = PatchFlagNames[64];
       if (!branch.isTemplateIf && children.filter((c) => c.type !== 3).length === 1) {
         patchFlag |= 2048;
-        patchFlagText += `, ${PatchFlagNames[2048]}`;
       }
       return createVNodeCall(
         context,
@@ -15986,7 +16005,7 @@ const transformBind = (dir, _node, context) => {
   } else if (!arg.isStatic) {
     arg.content = `${arg.content} || ""`;
   }
-  if (modifiers.includes("camel")) {
+  if (modifiers.some((mod) => mod.content === "camel")) {
     if (arg.type === 4) {
       if (arg.isStatic) {
         arg.content = camelize(arg.content);
@@ -15999,10 +16018,10 @@ const transformBind = (dir, _node, context) => {
     }
   }
   if (!context.inSSR) {
-    if (modifiers.includes("prop")) {
+    if (modifiers.some((mod) => mod.content === "prop")) {
       injectPrefix(arg, ".");
     }
-    if (modifiers.includes("attr")) {
+    if (modifiers.some((mod) => mod.content === "attr")) {
       injectPrefix(arg, "^");
     }
   }
@@ -16773,7 +16792,7 @@ function buildProps(node, context, props = node.props, isComponent, isDynamicCom
         }
         continue;
       }
-      if (isVBind && modifiers.includes("prop")) {
+      if (isVBind && modifiers.some((mod) => mod.content === "prop")) {
         patchFlag |= 32;
       }
       const directiveTransform = context.directiveTransforms[name];
@@ -17287,7 +17306,7 @@ const transformModel$1 = (dir, node, context) => {
     createObjectProperty(eventName, assignmentExp)
   ];
   if (dir.modifiers.length && node.tagType === 1) {
-    const modifiers = dir.modifiers.map((m) => (isSimpleIdentifier(m) ? m : JSON.stringify(m)) + `: true`).join(`, `);
+    const modifiers = dir.modifiers.map((m) => m.content).map((m) => (isSimpleIdentifier(m) ? m : JSON.stringify(m)) + `: true`).join(`, `);
     const modifiersKey = arg ? isStaticExp(arg) ? `${arg.content}Modifiers` : createCompoundExpression([arg, ' + "Modifiers"']) : `modelModifiers`;
     props.push(
       createObjectProperty(
@@ -17678,22 +17697,19 @@ const isNonKeyModifier = /* @__PURE__ */ makeMap(
   `stop,prevent,self,ctrl,shift,alt,meta,exact,middle`
 );
 const maybeKeyModifier = /* @__PURE__ */ makeMap("left,right");
-const isKeyboardEvent = /* @__PURE__ */ makeMap(
-  `onkeyup,onkeydown,onkeypress`,
-  true
-);
+const isKeyboardEvent = /* @__PURE__ */ makeMap(`onkeyup,onkeydown,onkeypress`);
 const resolveModifiers = (key, modifiers, context, loc) => {
   const keyModifiers = [];
   const nonKeyModifiers = [];
   const eventOptionModifiers = [];
   for (let i = 0; i < modifiers.length; i++) {
-    const modifier = modifiers[i];
+    const modifier = modifiers[i].content;
     if (isEventOptionModifier(modifier)) {
       eventOptionModifiers.push(modifier);
     } else {
       if (maybeKeyModifier(modifier)) {
         if (isStaticExp(key)) {
-          if (isKeyboardEvent(key.content)) {
+          if (isKeyboardEvent(key.content.toLowerCase())) {
             keyModifiers.push(modifier);
           } else {
             nonKeyModifiers.push(modifier);
@@ -17746,7 +17762,7 @@ const transformOn = (dir, node, context) => {
       ]);
     }
     if (keyModifiers.length && // if event name is dynamic, always wrap with keys guard
-    (!isStaticExp(key) || isKeyboardEvent(key.content))) {
+    (!isStaticExp(key) || isKeyboardEvent(key.content.toLowerCase()))) {
       handlerExp = createCallExpression(context.helper(V_ON_WITH_KEYS), [
         handlerExp,
         JSON.stringify(keyModifiers)
