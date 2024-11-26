@@ -30,7 +30,7 @@ public class ConfigureHealthCheck : IHostingStartup
     {
         public Action<IApplicationBuilder> Configure(Action<IApplicationBuilder> next)
             => app => {
-                app.UseEndpoints(endpoints => endpoints.MapHealthChecks("/up"));
+                app.UseHealthChecks("/up");
                 next(app);
             };
     }
