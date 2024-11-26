@@ -1,10 +1,10 @@
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
-[assembly: HostingStartup(typeof(MyApp.ConfigureHealthCheck))]
+[assembly: HostingStartup(typeof(MyApp.HealthChecks))]
 
 namespace MyApp;
 
-public class ConfigureHealthCheck : IHostingStartup
+public class HealthChecks : IHostingStartup
 {
     public class HealthCheck : IHealthCheck
     {
