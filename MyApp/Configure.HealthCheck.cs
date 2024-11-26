@@ -6,21 +6,32 @@ namespace MyApp;
 
 public class ConfigureHealthCheck : IHostingStartup
 {
+    public class HealthCheck : IHealthCheck
+    {
+        public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken token = default)
+        {
+            // Perform health check logic here
+            return HealthCheckResult.Healthy();
+        }
+    }
+
     public void Configure(IWebHostBuilder builder)
     {
         builder.ConfigureServices(services =>
         {
             services.AddHealthChecks()
                 .AddCheck<HealthCheck>("HealthCheck");
+
+            services.AddTransient<IStartupFilter, StartupFilter>();
         });
     }
-}
-
-public class HealthCheck : IHealthCheck
-{
-    public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
+    
+    public class StartupFilter : IStartupFilter
     {
-        // Perform health check logic here
-        return HealthCheckResult.Healthy();
+        public Action<IApplicationBuilder> Configure(Action<IApplicationBuilder> next)
+            => app => {
+                app.UseEndpoints(endpoints => endpoints.MapHealthChecks("/up"));
+                next(app);
+            };
     }
 }
