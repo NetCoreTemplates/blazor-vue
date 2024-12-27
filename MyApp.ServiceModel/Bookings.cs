@@ -14,7 +14,7 @@ public class Booking : AuditBase
 {
     [AutoIncrement]
     public int Id { get; set; }
-    public string Name { get; set; } = default!;
+    public string Name { get; set; }
     public RoomType RoomType { get; set; }
     public int RoomNumber { get; set; }
     [IntlDateTime(DateStyle.Long)]
@@ -32,6 +32,9 @@ public class Booking : AuditBase
     public Coupon Discount { get; set; }
     public string? Notes { get; set; }
     public bool? Cancelled { get; set; }
+    
+    [Reference(SelfId = nameof(CreatedBy), RefId = nameof(User.UserName), RefLabel = nameof(User.DisplayName))]
+    public User Employee { get; set; }
 }
 
 public enum RoomType
