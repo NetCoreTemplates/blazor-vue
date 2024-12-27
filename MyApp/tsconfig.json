@@ -4,6 +4,7 @@
     "sourceMap": true,
     "baseUrl": "./",
     "typeRoots": ["./wwwroot/lib/typings"],
+    "experimentalDecorators": true,
     "paths": {
         "*": [
             "./wwwroot/lib/*",
