@@ -1198,7 +1198,7 @@ export function createErrorStatus(message, errorCode = 'Exception') {
 export function createFieldError(fieldName, message, errorCode = 'Exception') {
     return new ResponseStatus({ errors: [new ResponseError({ fieldName, errorCode, message })] });
 }
-export function isFormData(body) { return typeof window != "undefined" && body instanceof FormData; }
+export function isFormData(body) { return body instanceof FormData; }
 function createErrorResponse(errorCode, message, type = null) {
     const error = apply(new ErrorResponse(), e => {
         if (type != null)
