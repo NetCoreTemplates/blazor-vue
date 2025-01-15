@@ -58,7 +58,9 @@
     </sidebar-layout>
     <main class="lg:pl-72">
         <div v-if="init" class="px-4 sm:px-6 lg:px-8">
-            <sign-in v-if="!user"></sign-in>
+            <div v-if="!user">
+                <sign-in></sign-in>
+            </div>
             <div v-else>
                 <h1 class="hidden lg:block pt-4 mb-2 text-3xl font-bold leading-tight tracking-tight text-gray-900">{{ activeSection.title }}</h1>
                 <component :key="refreshKey" :is="activeSection.component" @nav="navTo" :type="activeSection.type"></component>
@@ -69,7 +71,7 @@
 
 <script type="module">
 import { createApp, ref, onMounted, shallowRef } from "vue"
-import { JsonApiClient, leftPart, rightPart, appendQueryString, humanize } from "@servicestack/client"
+import { JsonApiClient, leftPart, rightPart, appendQueryString, humanize, queryString } from "@servicestack/client"
 import ServiceStackVue, { useClient, useAuth, useMetadata } from "@servicestack/vue"
 import { Authenticate, AdminData } from "dtos.mjs"
 import * as Sections from "./sections/index.mjs"
@@ -167,10 +169,28 @@ const App = {
             window.addEventListener('popstate', event => {
                 navTo(event.state?.section || getSection(), {}, false)
             })
+            
+            // Auto Sign In ?user=...&pass=...
+            if (location.search) {
+                const q = queryString(location.search)
+                if (q.user && q.pass) {
+                    const api = await client.api(new Authenticate({
+                        provider: 'credentials',
+                        userName: q.user,
+                        password: q.pass,
+                    }))
+                    if (api.succeeded) {
+                        signIn(api.response)
+                        history.replaceState({}, null, leftPart(location.href, '?'))
+                    }
+                }
+            }
 
-            const api = await client.api(new Authenticate())
-            if (api.succeeded) {
-                signIn(api.response)
+            if (!user.value) {
+                const api = await client.api(new Authenticate())
+                if (api.succeeded) {
+                    signIn(api.response)
+                }
             }
             init.value = true
         })
