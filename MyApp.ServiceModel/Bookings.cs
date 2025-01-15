@@ -70,7 +70,7 @@ public class QueryBookings : QueryDb<Booking>
 public class CreateBooking : ICreateDb<Booking>, IReturn<IdResponse>
 {
     [Description("Name this Booking is for"), ValidateNotEmpty]
-    public string Name { get; set; } = default!;
+    public string Name { get; set; }
     public RoomType RoomType { get; set; }
     [ValidateGreaterThan(0)]
     public int RoomNumber { get; set; }
@@ -120,8 +120,8 @@ public class DeleteBooking : IDeleteDb<Booking>, IReturnVoid
 [Icon(Svg = Icons.Coupon)]
 public class Coupon
 {
-    public string Id { get; set; } = default!;
-    public string Description { get; set; } = default!;
+    public string Id { get; set; }
+    public string Description { get; set; }
     public int Discount { get; set; }
     public DateTime ExpiryDate { get; set; }
 }
@@ -139,7 +139,9 @@ public class QueryCoupons : QueryDb<Coupon>
 public class CreateCoupon : ICreateDb<Coupon>, IReturn<IdResponse>
 {
     [ValidateNotEmpty]
-    public string Description { get; set; } = default!;
+    public string Id { get; set; }
+    [ValidateNotEmpty]
+    public string Description { get; set; }
     [ValidateGreaterThan(0)]
     public int Discount { get; set; }
     [ValidateNotNull]

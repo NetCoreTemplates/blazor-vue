@@ -1,3 +1,4 @@
+using ServiceStack;
 using ServiceStack.DataAnnotations;
 
 namespace MyApp.ServiceModel;
@@ -5,6 +6,7 @@ namespace MyApp.ServiceModel;
 /// <summary>
 /// Public User DTO
 /// </summary>
+[Icon(Svg = Icons.User)]
 [Alias("AspNetUsers")]
 public class User
 {
