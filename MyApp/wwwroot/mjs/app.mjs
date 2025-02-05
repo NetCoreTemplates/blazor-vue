@@ -2,6 +2,7 @@ import { createApp, reactive, ref, computed } from "vue"
 import { JsonServiceClient, $1, $$ } from "@servicestack/client"
 import ServiceStackVue from "@servicestack/vue"
 import GettingStarted from "./components/GettingStarted.mjs"
+import AuditEvents from "./components/AuditEvents.mjs"
 
 let client = null, Apps = []
 let AppData = {
@@ -12,6 +13,7 @@ export { client, Apps }
 /** Shared Global Components */
 const Components = {
     GettingStarted,
+    AuditEvents,
 }
 const CustomElements = [
     'lite-youtube'
