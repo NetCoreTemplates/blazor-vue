@@ -496,6 +496,93 @@ public class Todo
 }
 ```
 
+### Modifying ApplicationUser
+
+In many cases the AI Models will want to generate a `User` class for their AI models. But as Blazor Apps
+are already configured to use an ApplicationUser Identity Auth User class, the C# code generation only generates
+the User class in a comment so you can merge it with your existing `User` class, e.g:
+
+```csharp
+/* merge with User DTO
+/// <summary>
+/// Interface defining the structure for a JobApplication.
+/// Represents a user's application to a specific job.
+/// </summary>
+public class User
+{
+    [AutoIncrement]
+    public int Id { get; set; }
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
+    public string Email { get; set; }
+    /// <summary>
+    /// Optional URL to the user's resume
+    /// </summary>
+    public string? ResumeUrl { get; set; }
+}
+*/
+```
+
+If you wish to add additional properties, you'll first need to add it your `ApplicationUser` class, e.g:
+
+```csharp
+public class ApplicationUser : IdentityUser
+{
+    public string? FirstName { get; set; }
+    public string? LastName { get; set; }
+    public string? DisplayName { get; set; }
+    public string? ProfileUrl { get; set; }
+    /// <summary>
+    /// Optional URL to the user's resume
+    /// </summary>
+    public string? ResumeUrl { get; set; }
+}
+```
+
+You'll then need to regenerate the EF Migration to update the `AspNetUsers` table with the new columns by
+running the `init-ef` npm script:
+
+:::sh
+npm run init-ef
+:::
+
+Which will delete the existing Migrations and create a new Migration to update the Identity Auth tables:
+
+```json
+{
+    "scripts": {
+        "init-ef": "node -e 'fs.readdirSync(`Migrations`).filter(x => !x.startsWith(`Migration`)).forEach(x => fs.rmSync(`Migrations/${x}`))' && dotnet ef migrations add CreateIdentitySchema",
+    }
+}
+```
+
+You can then delete your Primary Database (e.g. App_Data/app.db) and re-run the `migrate` npm script to recreate it:
+
+:::sh
+npm run migrate
+:::
+
+If you want the additional property to be included in API Responses you'll also need to add it to your `User` DTO, e.g:
+
+```csharp
+/// <summary>
+/// Public User DTO
+/// </summary>
+[Alias("AspNetUsers")]
+public class User
+{
+    public string Id { get; set; }
+    public string UserName { get; set; }
+    public string? FirstName { get; set; }
+    public string? LastName { get; set; }
+    public string? DisplayName { get; set; }
+    public string? ProfileUrl { get; set; }
+    public string? ResumeUrl { get; set; }
+}
+```
+
+Which OrmLite and AutoQuery will use to query Identity Auth's `AspNetUsers` table.
+
 ### Custom APIs
 
 When you need more fine-grained control over the generated APIs, you can "takeover" the generation of
