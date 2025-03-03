@@ -17,3 +17,9 @@ public class User
     public string? DisplayName { get; set; }
     public string? ProfileUrl { get; set; }
 }
+
+[ValidateIsAdmin]
+public class QueryUsers : QueryDb<User>
+{
+    public string? Id { get; set; }
+}
