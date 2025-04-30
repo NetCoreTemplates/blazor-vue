@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using ServiceStack.Configuration;
 using ServiceStack.IO;
+using ServiceStack.Text;
 
 [assembly: HostingStartup(typeof(MyApp.AppHost))]
 
@@ -12,6 +14,22 @@ public class AppHost() : AppHostBase("MyApp"), IHostingStartup
             // Configure ASP.NET Core IOC Dependencies
             context.Configuration.GetSection(nameof(AppConfig)).Bind(AppConfig.Instance);
             services.AddSingleton(AppConfig.Instance);
+            
+            // Enable Managed File Uploads: https://docs.servicestack.net/locode/files-overview
+            var fileFs = new FileSystemVirtualFiles(context.HostingEnvironment.ContentRootPath);
+            services.AddPlugin(new FilesUploadFeature(
+                // User Writable, public readable
+                new UploadLocation("pub", 
+                    fileFs,
+                    readAccessRole: RoleNames.AllowAnon,
+                    maxFileBytes: 10 * 1024 * 1024,
+                    resolvePath:ctx => $"pub/{DateTime.UtcNow.ToUnixTime()}/{ctx.FileName}"),
+                // User Writable, User Readable
+                new UploadLocation("secure", 
+                    fileFs,
+                    maxFileBytes: 10 * 1024 * 1024,
+                    resolvePath:ctx => $"/users/{ctx.UserAuthId}/{ctx.FileName}")
+            ));
         });
 
     public override void Configure()
