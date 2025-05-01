@@ -2124,6 +2124,10 @@ select{
   background-color: rgb(107 114 128 / var(--tw-bg-opacity, 1));
 }
 
+.bg-gray-500\/75 {
+  background-color: rgb(107 114 128 / 0.75);
+}
+
 .bg-gray-700 {
   --tw-bg-opacity: 1;
   background-color: rgb(55 65 81 / var(--tw-bg-opacity, 1));
@@ -3057,6 +3061,10 @@ select{
 .ring-black {
   --tw-ring-opacity: 1;
   --tw-ring-color: rgb(0 0 0 / var(--tw-ring-opacity, 1));
+}
+
+.ring-black\/5 {
+  --tw-ring-color: rgb(0 0 0 / 0.05);
 }
 
 .ring-indigo-500 {
@@ -4233,6 +4241,11 @@ select{
   color: rgb(199 210 254 / var(--tw-text-opacity, 1));
 }
 
+.dark\:hover\:text-indigo-300:hover:is(.dark *) {
+  --tw-text-opacity: 1;
+  color: rgb(165 180 252 / var(--tw-text-opacity, 1));
+}
+
 .dark\:hover\:text-indigo-400:hover:is(.dark *) {
   --tw-text-opacity: 1;
   color: rgb(129 140 248 / var(--tw-text-opacity, 1));
@@ -4276,11 +4289,6 @@ select{
 .dark\:hover\:text-white:hover:is(.dark *) {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity, 1));
-}
-
-.dark\:hover\:text-indigo-300:hover:is(.dark *) {
-  --tw-text-opacity: 1;
-  color: rgb(165 180 252 / var(--tw-text-opacity, 1));
 }
 
 .dark\:hover\:file\:bg-violet-800:is(.dark *)::file-selector-button:hover {
