@@ -68,8 +68,8 @@ async function fetchDownload(url, toFile, retries) {
 }
 
 async function downloadTailwindBinary() {
-    const platform = process.platform; // e.g., 'darwin', 'linux', 'win32'
-    const arch = process.arch;     // e.g., 'arm64', 'x64'
+    const platform = process.platform // e.g., 'darwin', 'linux', 'win32'
+    const arch = process.arch         // e.g., 'arm64', 'x64'
 
     // Check if tailwindcss is already in PATH
     try {
@@ -101,21 +101,21 @@ async function downloadTailwindBinary() {
         // Determine the correct binary file name based on the current OS and architecture
         if (platform === 'darwin') { // macOS
             if (arch === 'arm64') {
-                return 'tailwindcss-macos-arm64';
+                return 'tailwindcss-macos-arm64'
             } else if (arch === 'x64') {
-                return 'tailwindcss-macos-x64';
+                return 'tailwindcss-macos-x64'
             }
         } else if (platform === 'linux') { // Linux
             if (arch === 'arm64') {
-                return 'tailwindcss-linux-arm64';
+                return 'tailwindcss-linux-arm64'
             } else if (arch === 'x64') {
-                return 'tailwindcss-linux-x64';
+                return 'tailwindcss-linux-x64'
             }
         } else if (platform === 'win32') { // Windows
             if (arch === 'arm64') {
-                return 'arm64-windows';
+                return 'arm64-windows'
             } else if (arch === 'x64') {
-                return 'tailwindcss-windows-x64.exe';
+                return 'tailwindcss-windows-x64.exe'
             }
         }
     }
@@ -124,27 +124,27 @@ async function downloadTailwindBinary() {
 
     // If no matching binary is found, exit with an error
     if (!binaryFileName) {
-        console.error(`Error: Unsupported platform/architecture combination: ${platform}/${arch}`);
-        console.error(`Please ensure your system is one of the following:`);
-        console.error(`  macOS (arm64, x64)`);
-        console.error(`  Linux (arm64, x64)`);
-        console.error(`  Windows (arm64, x64)`);
-        process.exit(1);
+        console.error(`Error: Unsupported platform/architecture combination: ${platform}/${arch}`)
+        console.error(`Please ensure your system is one of the following:`)
+        console.error(`  macOS (arm64, x64)`)
+        console.error(`  Linux (arm64, x64)`)
+        console.error(`  Windows (arm64, x64)`)
+        process.exit(1)
     }
 
     // Base URL for Tailwind CSS latest release downloads
-    const downloadTailwindBaseUrl = `https://github.com/tailwindlabs/tailwindcss/releases/latest/download/`;
-    const downloadUrl = `${downloadTailwindBaseUrl}${binaryFileName}`;
+    const downloadTailwindBaseUrl = `https://github.com/tailwindlabs/tailwindcss/releases/latest/download/`
+    const downloadUrl = `${downloadTailwindBaseUrl}${binaryFileName}`
     // Set the output file name. On Windows, it should have a .exe extension.
-    const outputFileName = (platform === 'win32' || platform === 'cygwin' || platform === 'msys') ? 'tailwindcss.exe' : 'tailwindcss';
-    const outputPath = path.join(process.cwd(), outputFileName);
+    const outputFileName = (platform === 'win32' || platform === 'cygwin' || platform === 'msys') ? 'tailwindcss.exe' : 'tailwindcss'
+    const outputPath = path.join(process.cwd(), outputFileName)
 
-    console.log(`Attempting to download the latest Tailwind CSS binary for ${platform}/${arch}...`);
-    console.log(`Downloading ${downloadUrl}...`);
-    // console.log(`Saving to: ${outputPath}`);
+    console.log(`Attempting to download the latest Tailwind CSS binary for ${platform}/${arch}...`)
+    console.log(`Downloading ${downloadUrl}...`)
+    // console.log(`Saving to: ${outputPath}`)
 
     try {
-        const response = await fetch(downloadUrl);
+        const response = await fetch(downloadUrl)
 
         // Check if the response status is not OK (e.g., 404, 500).
         // Fetch automatically handles redirects (3xx status codes).
@@ -159,15 +159,14 @@ async function downloadTailwindBinary() {
             return
         }
 
-        const fileStream = fs.createWriteStream(outputPath);
+        const fileStream = fs.createWriteStream(outputPath)
         // Pipe the readable stream from the fetch response body directly to the file stream
-        await pipe(response.body, fileStream);
-
-        console.log('Download complete.');
+        await pipe(response.body, fileStream)
+        console.log('Download complete.')
 
         // Set executable permissions for non-Windows platforms
         if (platform !== 'win32' && platform !== 'cygwin' && platform !== 'msys') {
-            console.log(`Setting executable permissions (+x) on ${outputPath}...`);
+            console.log(`Setting executable permissions (+x) on ${outputPath}...`)
             // '755' means: owner can read, write, execute; group and others can read and execute.
             fs.chmodSync(outputPath, '755')
             // console.log('Permissions set successfully.')
@@ -194,7 +193,7 @@ async function downloadTailwindBinary() {
                         break
                     }
                     catch (err) {
-                        console.error(`Failed to move ${outputPath} to ${targetPath}: ${err.message}`);
+                        console.error(`Failed to move ${outputPath} to ${targetPath}: ${err.message}`)
                     }
                 }
 
@@ -211,16 +210,16 @@ async function downloadTailwindBinary() {
                 }
             }
         } else {
-            // console.log(`On Windows, executable permissions are typically inferred from the '.exe' extension.`);
+            // console.log(`On Windows, executable permissions are typically inferred from the '.exe' extension.`)
         }
 
-        console.log('\nTailwind CSS binary downloaded and ready!');
-        console.log(`You can now run it from your terminal using:`);
-        console.log(outputFileName === 'tailwindcss.exe' ? `${outputFileName} --help` : `${outputFileName} --help`);
+        console.log('\nTailwind CSS binary downloaded and ready!')
+        console.log(`You can now run it from your terminal using:`)
+        console.log(outputFileName === 'tailwindcss.exe' ? `${outputFileName} --help` : `${outputFileName} --help`)
 
     } catch (error) {
-        console.error(`\nError during download or permission setting:`);
-        console.error(error.message);
-        process.exit(1);
+        console.error(`\nError during download or permission setting:`)
+        console.error(error.message)
+        process.exit(1)
     }
 }
