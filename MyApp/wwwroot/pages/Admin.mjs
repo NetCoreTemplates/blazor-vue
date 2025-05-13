@@ -36,7 +36,7 @@ export default {
                     <span v-if="user" @click="showUserMenu=!showUserMenu" class="flex cursor-pointer bg-gray-50 dark:bg-gray-900 items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-gray-900 dark:text-gray-50 hover:bg-gray-50 dark:hover:bg-gray-900">
                         <img class="h-8 w-8 rounded-full bg-gray-50 dark:bg-gray-900" :src="user.profileUrl" alt="">
                         <span class="sr-only">Your profile</span>
-                        <span aria-hidden="true">{{user.displayName}}</span>
+                        <span aria-hidden="true">{{user.displayName || user.userName}}</span>
                     </span>
                 </li>
             </ul>

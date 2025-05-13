@@ -5,10 +5,11 @@ import GettingStarted from "./components/GettingStarted.mjs"
 import AuditEvents from "./components/AuditEvents.mjs"
 
 let client = null, Apps = []
+let store = reactive({})
 let AppData = {
     init:false
 }
-export { client, Apps }
+export { client, store, Apps }
 
 /** Shared Global Components */
 const Components = {
@@ -49,6 +50,8 @@ export function mount(sel, component, props) {
 
     const app = createApp(component, props)
     app.provide('client', client)
+    app.provide('store', store)
+    app.provide('server', globalThis.Server)
     Object.keys(Components).forEach(name => {
         app.component(name, Components[name])
     })

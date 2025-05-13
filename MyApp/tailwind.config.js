@@ -1,6 +1,4 @@
-module.exports = {
-  content: ["./**/*.{html,js,mjs,md,cshtml,razor,cs}","./Pages/**/*.{cshtml,razor}","./Css.cs"],
-  darkMode: 'class',
+export default {
   theme: {
     extend: {
       colors: {
@@ -10,6 +8,5 @@ module.exports = {
         success: 'rgb(22 101 52)',
       },
     },
-  },
-  plugins: [],
+  }
 }

@@ -3,51 +3,53 @@
 const writeTo = './wwwroot/lib'
 const defaultPrefix = 'https://unpkg.com'
 const files = {
-  mjs: {
-      'vue.mjs':                         '/vue@3/dist/vue.esm-browser.js',
-      'vue.min.mjs':                     '/vue@3/dist/vue.esm-browser.prod.js',
-      'servicestack-client.mjs':         '/@servicestack/client@2/dist/servicestack-client.mjs',
-      'servicestack-client.min.mjs':     '/@servicestack/client@2/dist/servicestack-client.min.mjs',
-      'servicestack-vue.mjs':            '/@servicestack/vue@3/dist/servicestack-vue.mjs',
-      'servicestack-vue.min.mjs':        '/@servicestack/vue@3/dist/servicestack-vue.min.mjs',
-  },
-  typings: {
-      'vue/index.d.ts':                  '/vue@3/dist/vue.d.ts',
-      '@vue/compiler-core.d.ts':         '/@vue/compiler-core@3/dist/compiler-core.d.ts',
-      '@vue/compiler-dom.d.ts':          '/@vue/compiler-dom@3/dist/compiler-dom.d.ts',
-      '@vue/runtime-dom.d.ts':           '/@vue/runtime-dom@3/dist/runtime-dom.d.ts',
-      '@vue/runtime-core.d.ts':          '/@vue/runtime-core@3/dist/runtime-core.d.ts',
-      '@vue/reactivity.d.ts':            '/@vue/reactivity@3/dist/reactivity.d.ts',
-      '@vue/shared.d.ts':                '/@vue/shared@3/dist/shared.d.ts',
-      '@servicestack/client/index.d.ts': '/@servicestack/client/dist/index.d.ts',  
-      '@servicestack/vue/index.d.ts':    '/@servicestack/vue@3/dist/index.d.ts',
-  }
+    mjs: {
+        'vue.mjs':                         '/vue@3/dist/vue.esm-browser.js',
+        'vue.min.mjs':                     '/vue@3/dist/vue.esm-browser.prod.js',
+        'servicestack-client.mjs':         '/@servicestack/client@2/dist/servicestack-client.mjs',
+        'servicestack-client.min.mjs':     '/@servicestack/client@2/dist/servicestack-client.min.mjs',
+        'servicestack-vue.mjs':            '/@servicestack/vue@3/dist/servicestack-vue.mjs',
+        'servicestack-vue.min.mjs':        '/@servicestack/vue@3/dist/servicestack-vue.min.mjs',
+    },
+    typings: {
+        'vue/index.d.ts':                  '/vue@3/dist/vue.d.ts',
+        '@vue/compiler-core.d.ts':         '/@vue/compiler-core@3/dist/compiler-core.d.ts',
+        '@vue/compiler-dom.d.ts':          '/@vue/compiler-dom@3/dist/compiler-dom.d.ts',
+        '@vue/runtime-dom.d.ts':           '/@vue/runtime-dom@3/dist/runtime-dom.d.ts',
+        '@vue/runtime-core.d.ts':          '/@vue/runtime-core@3/dist/runtime-core.d.ts',
+        '@vue/reactivity.d.ts':            '/@vue/reactivity@3/dist/reactivity.d.ts',
+        '@vue/shared.d.ts':                '/@vue/shared@3/dist/shared.d.ts',
+        '@servicestack/client/index.d.ts': '/@servicestack/client/dist/index.d.ts',
+        '@servicestack/vue/index.d.ts':    '/@servicestack/vue@3/dist/index.d.ts',
+    }
 }
 
 const path = require('path')
-const fs = require('fs').promises
-const http = require('http')
-const https = require('https')
-
-const requests = []
-Object.keys(files).forEach(dir => {
-    const dirFiles = files[dir]
-    Object.keys(dirFiles).forEach(name => {
-        let url = dirFiles[name]
-        if (url.startsWith('/'))
-            url = defaultPrefix + url
-        const toFile = path.join(writeTo, dir, name)
-        requests.push(fetchDownload(url, toFile, 5))
-    })
-})
+const fs = require('fs')
+const { pipeline } = require('stream')
+const { promisify } = require('util')
+const pipe = promisify(pipeline)
 
 ;(async () => {
+    const requests = []
+    Object.keys(files).forEach(dir => {
+        const dirFiles = files[dir]
+        Object.keys(dirFiles).forEach(name => {
+            let url = dirFiles[name]
+            if (url.startsWith('/'))
+                url = defaultPrefix + url
+            const toFile = path.join(writeTo, dir, name)
+            requests.push(fetchDownload(url, toFile, 5))
+        })
+    })
+
     await Promise.all(requests)
+    await downloadTailwindBinary()
 })()
 
 async function fetchDownload(url, toFile, retries) {
     const toDir = path.dirname(toFile)
-    await fs.mkdir(toDir, { recursive: true })
+    fs.mkdirSync(toDir, { recursive: true })
     for (let i=retries; i>=0; --i) {
         try {
             let r = await fetch(url)
@@ -56,10 +58,123 @@ async function fetchDownload(url, toFile, retries) {
             }
             let txt = await r.text()
             console.log(`writing ${url} to ${toFile}`)
-            await fs.writeFile(toFile, txt)
+            await fs.writeFileSync(toFile, txt)
             return
         } catch (e) {
             console.log(`get ${url} failed: ${e}${i > 0 ? `, ${i} retries remaining...` : ''}`)
         }
+    }
+}
+
+async function downloadTailwindBinary() {
+    const platform = process.platform; // e.g., 'darwin', 'linux', 'win32'
+    const arch = process.arch;     // e.g., 'arm64', 'x64'
+
+    // Check if tailwindcss is already in PATH
+    try {
+        const { execSync } = require('child_process');
+        const command = platform === 'win32' ? 'where tailwindcss' : 'which tailwindcss';
+        const result = execSync(command, { stdio: 'pipe' });
+        if (result) {
+            console.log('tailwindcss already exists in PATH, skipping download.');
+            return;
+        }
+    } catch (e) {
+        // Command failed, tailwindcss not in PATH
+    }
+    
+    // if file already exists, exit
+    const tailwindcssPath = path.join(process.cwd(), 'tailwindcss')
+    if (fs.existsSync(tailwindcssPath)) {
+        console.log(`${tailwindcssPath} already exists, skipping download.`)
+        return
+    }
+
+    function getBinaryFileName() {
+        // Determine the correct binary file name based on the current OS and architecture
+        if (platform === 'darwin') { // macOS
+            if (arch === 'arm64') {
+                return 'tailwindcss-macos-arm64';
+            } else if (arch === 'x64') {
+                return 'tailwindcss-macos-x64';
+            }
+        } else if (platform === 'linux') { // Linux
+            if (arch === 'arm64') {
+                return 'tailwindcss-linux-arm64';
+            } else if (arch === 'x64') {
+                return 'tailwindcss-linux-x64';
+            }
+        } else if (platform === 'win32') { // Windows
+            if (arch === 'arm64') {
+                return 'arm64-windows';
+            } else if (arch === 'x64') {
+                return 'tailwindcss-windows-x64.exe';
+            }
+        }
+    }
+
+    let binaryFileName = getBinaryFileName()
+
+    // If no matching binary is found, exit with an error
+    if (!binaryFileName) {
+        console.error(`Error: Unsupported platform/architecture combination: ${platform}/${arch}`);
+        console.error(`Please ensure your system is one of the following:`);
+        console.error(`  macOS (arm64, x64)`);
+        console.error(`  Linux (arm64, x64)`);
+        console.error(`  Windows (arm64, x64)`);
+        process.exit(1);
+    }
+
+    // Base URL for Tailwind CSS latest release downloads
+    const downloadTailwindBaseUrl = `https://github.com/tailwindlabs/tailwindcss/releases/latest/download/`;
+    const downloadUrl = `${downloadTailwindBaseUrl}${binaryFileName}`;
+    // Set the output file name. On Windows, it should have a .exe extension.
+    const outputFileName = (platform === 'win32' || platform === 'cygwin' || platform === 'msys') ? 'tailwindcss.exe' : 'tailwindcss';
+    const outputPath = path.join(process.cwd(), outputFileName);
+
+    console.log(`Attempting to download the latest Tailwind CSS binary for ${platform}/${arch}...`);
+    console.log(`Source URL: ${downloadUrl}`);
+    console.log(`Saving to: ${outputPath}`);
+
+    try {
+        const response = await fetch(downloadUrl);
+
+        // Check if the response status is not OK (e.g., 404, 500).
+        // Fetch automatically handles redirects (3xx status codes).
+        if (!response.ok) {
+            console.error(`Failed to download: HTTP Status Code ${response.status} - ${response.statusText}`)
+            return
+        }
+
+        // Ensure there's a readable stream body
+        if (!response.body) {
+            console.error('No response body received from the download URL.')
+            return
+        }
+
+        const fileStream = fs.createWriteStream(outputPath);
+        // Pipe the readable stream from the fetch response body directly to the file stream
+        await pipe(response.body, fileStream);
+
+        console.log('Download complete.');
+
+        // Set executable permissions for non-Windows platforms
+        if (platform !== 'win32' && platform !== 'cygwin' && platform !== 'msys') {
+            console.log(`Setting executable permissions (+x) on ${outputPath}...`);
+            // '755' means: owner can read, write, execute; group and others can read and execute.
+            fs.chmodSync(outputPath, '755');
+            console.log('Permissions set successfully.');
+        } else {
+            console.log(`On Windows, executable permissions are typically inferred from the '.exe' extension.`);
+        }
+
+        console.log('\nTailwind CSS binary downloaded and ready!');
+        console.log(`You can now run it from your terminal using:`);
+        console.log(outputFileName === 'tailwindcss.exe' ? `.\\${outputFileName} --help` : `./${outputFileName} --help`);
+
+    } catch (error) {
+        console.error(`\nError during download or permission setting:`);
+        console.error(error.message);
+        process.exit(1);
     }
 }

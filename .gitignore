@@ -10,6 +10,8 @@ blog/
 package-lock.json
 App_Data/
 MyApp/Configure.secrets.cs
+tailwindcss
+tailwindcss.exe
 
 # User-specific files
 *.suo
