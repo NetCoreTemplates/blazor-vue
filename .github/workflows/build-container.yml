@@ -64,8 +64,9 @@ jobs:
       - name: Install tailwindcss
         if: steps.check_client.outputs.requires_tailwind == 'true'
         run: |
-          curl -o "./MyApp/tailwindcss" -L "https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-linux-x64"
-          chmod +x "./MyApp/tailwindcss"
+          echo $PATH
+          ls ~/
+          curl -o "~/.local/bin/tailwindcss" -L "https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-linux-x64"
 
       - name: Install x tool
         run: dotnet tool install -g x
