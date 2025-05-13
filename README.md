@@ -1,6 +1,6 @@
 # blazor-vue
 
-.NET 8.0 Simple, Server Rendered Blazor Tailwind App with Vue interactivity.
+.NET 8.0 Simple, Server Rendered Blazor Tailwind App with Vue interactivity
 
 [![](https://raw.githubusercontent.com/ServiceStack/Assets/master/csharp-templates/blazor-vue.png)](http://blazor-vue.web-templates.io/)
 
