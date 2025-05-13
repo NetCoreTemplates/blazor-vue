@@ -94,9 +94,10 @@ async function downloadTailwindBinary() {
     const tailwindcssPath = path.join(process.cwd(), 'tailwindcss')
     if (fs.existsSync(tailwindcssPath)) {
         console.log(`${tailwindcssPath} already exists, skipping download.`)
-        // return
+        return
     }
 
+    console.log()
     function getBinaryFileName() {
         // Determine the correct binary file name based on the current OS and architecture
         if (platform === 'darwin') { // macOS
@@ -141,7 +142,6 @@ async function downloadTailwindBinary() {
 
     console.log(`Attempting to download the latest Tailwind CSS binary for ${platform}/${arch}...`)
     console.log(`Downloading ${downloadUrl}...`)
-    // console.log(`Saving to: ${outputPath}`)
 
     try {
         const response = await fetch(downloadUrl)
@@ -162,7 +162,6 @@ async function downloadTailwindBinary() {
         const fileStream = fs.createWriteStream(outputPath)
         // Pipe the readable stream from the fetch response body directly to the file stream
         await pipe(response.body, fileStream)
-        console.log('Download complete.')
 
         // Set executable permissions for non-Windows platforms
         if (platform !== 'win32' && platform !== 'cygwin' && platform !== 'msys') {
@@ -189,7 +188,7 @@ async function downloadTailwindBinary() {
                 if (fs.accessSync(folder, fs.constants.W_OK)) {
                     try {
                         fs.renameSync(outputPath, targetPath)
-                        console.log(`Moved to ${targetPath}`)
+                        console.log(`Saved to ${targetPath}`)
                         break
                     }
                     catch (err) {
@@ -200,7 +199,7 @@ async function downloadTailwindBinary() {
                 try {
                     // try using sudo with process exec
                     execSync(`sudo mv ${outputPath} ${targetPath}`)
-                    console.log(`Moved to ${targetPath}`)
+                    console.log(`Saved to ${targetPath}`)
                     break
                 }
                 catch (err) {
@@ -209,11 +208,35 @@ async function downloadTailwindBinary() {
                     break
                 }
             }
-        } else {
-            // console.log(`On Windows, executable permissions are typically inferred from the '.exe' extension.`)
+        } else if (platform === 'win32') {
+            let moved = false
+            // Move the binary to a common location in PATH for .NET Devs
+            const tryFolders = [
+                `${process.env.APPDATA}/npm`,
+                `${process.env.USERPROFILE}/.dotnet/tools`,
+            ]
+            for (const folder of tryFolders) {
+                if (!fs.existsSync(folder)) {
+                    continue
+                }
+                const targetPath = path.join(folder, outputFileName)
+                try {
+                    fs.renameSync(outputPath, targetPath)
+                    console.log(`Saved to ${targetPath}`)
+                    moved = true
+                    break
+                }
+                catch (err) {
+                }
+            }
+            if (!moved) {
+                console.log()
+                console.log(`Saved to ${outputPath}`)
+                console.log(`Tip: Make ${outputFileName} globally accessible by moving it to a folder in your PATH`)
+            }
         }
 
-        console.log('\nTailwind CSS binary downloaded and ready!')
+        console.log()
         console.log(`You can now run it from your terminal using:`)
         console.log(outputFileName === 'tailwindcss.exe' ? `${outputFileName} --help` : `${outputFileName} --help`)
 
