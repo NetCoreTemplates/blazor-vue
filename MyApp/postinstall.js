@@ -73,11 +73,18 @@ async function downloadTailwindBinary() {
 
     // Check if tailwindcss is already in PATH
     try {
-        const command = platform === 'win32' ? 'where tailwindcss' : 'which tailwindcss';
-        const result = execSync(command, { stdio: 'pipe' });
+        const command = platform === 'win32' ? 'where tailwindcss' : 'which tailwindcss'
+        const result = execSync(command, { stdio: 'pipe' })
         if (result) {
-            console.log('tailwindcss already exists in PATH, skipping download.');
-            return;
+            // Check version of tailwindcss by looking for 'tailwindcss v4' in `taildwindcss --help`
+            const helpResult = execSync('tailwindcss --help', { stdio: 'pipe' })
+            const helpOutput = helpResult.toString()
+            if (helpOutput.includes('tailwindcss v1') || helpOutput.includes('tailwindcss v2') || helpOutput.includes('tailwindcss v3')) {
+                console.log('old version of tailwindcss detected, please uninstall and rerun this script.')
+            } else {
+                console.log('tailwindcss is already installed.')
+            }
+            return
         }
     } catch (e) {
         // Command failed, tailwindcss not in PATH
