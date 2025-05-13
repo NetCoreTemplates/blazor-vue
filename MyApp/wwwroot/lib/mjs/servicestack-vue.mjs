@@ -3576,7 +3576,7 @@ const ni = { key: 0 }, oi = { class: "md:p-4" }, ro = /* @__PURE__ */ ue({
         class: y(`block text-sm font-medium text-gray-700 dark:text-gray-300 ${p.labelClass ?? ""}`)
       }, I(d.value), 11, Hd)) : x("", !0),
       l("div", {
-        class: y(f("mt-1 relative shadow-sm rounded-md"))
+        class: y(f("mt-1 relative"))
       }, [
         l("input", Ae({
           ref_key: "inputElement",
@@ -3611,7 +3611,7 @@ const ni = { key: 0 }, oi = { class: "md:p-4" }, ro = /* @__PURE__ */ ue({
       }, p.$attrs))
     ], 2));
   }
-}), Zd = ["for"], Wd = { class: "mt-1 relative rounded-md shadow-sm" }, Gd = ["name", "id", "placeholder", "aria-invalid", "aria-describedby"], Jd = ["id"], Xd = ["id"], Yd = {
+}), Zd = ["for"], Wd = { class: "mt-1 relative" }, Gd = ["name", "id", "placeholder", "aria-invalid", "aria-describedby"], Jd = ["id"], Xd = ["id"], Yd = {
   inheritAttrs: !1
 }, ec = /* @__PURE__ */ ue({
   ...Yd,
@@ -3692,8 +3692,8 @@ const ni = { key: 0 }, oi = { class: "md:p-4" }, ro = /* @__PURE__ */ ue({
         id: d.id,
         name: d.id,
         class: [
-          "mt-1 block w-full pl-3 pr-10 py-2 text-base focus:outline-none sm:text-sm rounded-md dark:text-white dark:bg-gray-900 dark:border-gray-600",
-          i.value ? "border-red-300 text-red-900 focus:ring-red-500 focus:border-red-500" : "border-gray-300 text-gray-900 focus:ring-indigo-500 focus:border-indigo-500",
+          "mt-1 block w-full pl-3 pr-10 py-2 text-base focus:outline-none sm:text-sm rounded-md dark:text-white dark:bg-gray-900 dark:border-gray-600 disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none",
+          i.value ? "border-red-300 text-red-900 focus:ring-red-500 focus:border-red-500" : "shadow-sm border-gray-300 text-gray-900 focus:ring-indigo-500 focus:border-indigo-500",
           d.inputClass
         ],
         value: d.modelValue,
@@ -3761,7 +3761,7 @@ const ni = { key: 0 }, oi = { class: "md:p-4" }, ro = /* @__PURE__ */ ue({
       ])
     ], 2));
   }
-}), mc = ["id"], hc = ["for"], gc = { class: "mt-1 relative rounded-md shadow-sm" }, yc = ["id", "name", "value"], bc = { class: "flex flex-wrap pb-1.5" }, wc = { class: "pt-1.5 pl-1" }, kc = { class: "inline-flex rounded-full items-center py-0.5 pl-2.5 pr-1 text-sm font-medium bg-indigo-100 dark:bg-indigo-800 text-indigo-700 dark:text-indigo-300" }, _c = ["onClick"], $c = /* @__PURE__ */ l("svg", {
+}), mc = ["id"], hc = ["for"], gc = { class: "mt-1 relative" }, yc = ["id", "name", "value"], bc = { class: "flex flex-wrap pb-1.5" }, wc = { class: "pt-1.5 pl-1" }, kc = { class: "inline-flex rounded-full items-center py-0.5 pl-2.5 pr-1 text-sm font-medium bg-indigo-100 dark:bg-indigo-800 text-indigo-700 dark:text-indigo-300" }, _c = ["onClick"], $c = /* @__PURE__ */ l("svg", {
   class: "h-2 w-2",
   stroke: "currentColor",
   fill: "none",
