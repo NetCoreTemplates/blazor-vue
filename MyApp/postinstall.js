@@ -28,6 +28,7 @@ const path = require('path')
 const fs = require('fs')
 const { pipeline } = require('stream')
 const { promisify } = require('util')
+const { execSync } = require('child_process')
 const pipe = promisify(pipeline)
 
 ;(async () => {
@@ -72,7 +73,6 @@ async function downloadTailwindBinary() {
 
     // Check if tailwindcss is already in PATH
     try {
-        const { execSync } = require('child_process');
         const command = platform === 'win32' ? 'where tailwindcss' : 'which tailwindcss';
         const result = execSync(command, { stdio: 'pipe' });
         if (result) {
@@ -87,7 +87,7 @@ async function downloadTailwindBinary() {
     const tailwindcssPath = path.join(process.cwd(), 'tailwindcss')
     if (fs.existsSync(tailwindcssPath)) {
         console.log(`${tailwindcssPath} already exists, skipping download.`)
-        return
+        // return
     }
 
     function getBinaryFileName() {
@@ -133,8 +133,8 @@ async function downloadTailwindBinary() {
     const outputPath = path.join(process.cwd(), outputFileName);
 
     console.log(`Attempting to download the latest Tailwind CSS binary for ${platform}/${arch}...`);
-    console.log(`Source URL: ${downloadUrl}`);
-    console.log(`Saving to: ${outputPath}`);
+    console.log(`Downloading ${downloadUrl}...`);
+    // console.log(`Saving to: ${outputPath}`);
 
     try {
         const response = await fetch(downloadUrl);
@@ -162,15 +162,54 @@ async function downloadTailwindBinary() {
         if (platform !== 'win32' && platform !== 'cygwin' && platform !== 'msys') {
             console.log(`Setting executable permissions (+x) on ${outputPath}...`);
             // '755' means: owner can read, write, execute; group and others can read and execute.
-            fs.chmodSync(outputPath, '755');
-            console.log('Permissions set successfully.');
+            fs.chmodSync(outputPath, '755')
+            // console.log('Permissions set successfully.')
+
+            const tryFolders = [
+                `${process.env.HOME}/.local/bin`,
+                `${process.env.HOME}/.npm-global/bin`,
+                '/usr/local/bin', 
+                '/usr/bin', 
+                '/usr/sbin'
+            ]
+
+            // Move the binary to a common location in PATH
+            for (const folder of tryFolders) {
+                if (!fs.existsSync(folder)) {
+                    // console.log(`Folder ${folder} does not exist, skipping...`);
+                    continue
+                }
+                const targetPath = path.join(folder, outputFileName)
+                if (fs.accessSync(folder, fs.constants.W_OK)) {
+                    try {
+                        fs.renameSync(outputPath, targetPath)
+                        console.log(`Moved to ${targetPath}`)
+                        break
+                    }
+                    catch (err) {
+                        console.error(`Failed to move ${outputPath} to ${targetPath}: ${err.message}`);
+                    }
+                }
+
+                try {
+                    // try using sudo with process exec
+                    execSync(`sudo mv ${outputPath} ${targetPath}`)
+                    console.log(`Moved to ${targetPath}`)
+                    break
+                }
+                catch (err) {
+                    console.log(`Manually move tailwindcss to ${targetPath} by running:`)
+                    console.log(`sudo mv ${outputPath} ${targetPath}`)
+                    break
+                }
+            }
         } else {
-            console.log(`On Windows, executable permissions are typically inferred from the '.exe' extension.`);
+            // console.log(`On Windows, executable permissions are typically inferred from the '.exe' extension.`);
         }
 
         console.log('\nTailwind CSS binary downloaded and ready!');
         console.log(`You can now run it from your terminal using:`);
-        console.log(outputFileName === 'tailwindcss.exe' ? `.\\${outputFileName} --help` : `./${outputFileName} --help`);
+        console.log(outputFileName === 'tailwindcss.exe' ? `${outputFileName} --help` : `${outputFileName} --help`);
 
     } catch (error) {
         console.error(`\nError during download or permission setting:`);
