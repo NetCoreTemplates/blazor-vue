@@ -46,8 +46,6 @@ jobs:
         run: |
           if [ -d "MyApp.Client" ] && [ -f "MyApp.Client/package.json" ]; then
             echo "requires_npm=true" >> $GITHUB_OUTPUT
-          elif [ -f "MyApp/package.json" ] && grep -q "tailwindcss -i" "MyApp/package.json"; then
-            echo "requires_tailwind=true" >> $GITHUB_OUTPUT
           fi
 
       - name: Setup Node.js
@@ -62,11 +60,10 @@ jobs:
         run: npm install
 
       - name: Install tailwindcss
-        if: steps.check_client.outputs.requires_tailwind == 'true'
         run: |
-          mkdir -p ~/.local/bin
-          curl -o "~/.local/bin/tailwindcss" -L "https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-linux-x64"
-          chmod +x ~/.local/bin/tailwindcss
+          mkdir -p /home/runner/.local/bin
+          curl -o "/home/runner/.local/bin/tailwindcss" -L "https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-linux-x64"
+          chmod +x /home/runner/.local/bin/tailwindcss
 
       - name: Install x tool
         run: dotnet tool install -g x
