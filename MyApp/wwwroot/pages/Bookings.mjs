@@ -1,10 +1,13 @@
 import { ref } from "vue"
-import { useClient, useFormatters } from "@servicestack/vue"
+import { useClient, useFormatters, AutoQueryGrid } from "@servicestack/vue"
 import { QueryCoupons } from "/mjs/dtos.mjs"
 
 export default {
+  components: {
+    AutoQueryGrid,
+  },
   template:/*html*/`
-    <auto-query-grid type="Booking" :visible-from="{ name:'xl', bookingStartDate:'sm', bookingEndDate:'xl', createdBy:'2xl' }">
+    <AutoQueryGrid type="Booking" :visible-from="{ name:'xl', bookingStartDate:'sm', bookingEndDate:'xl', createdBy:'2xl' }">
         <template #id="{ id }">
             <span class="text-gray-900" v-html="id"></span>
         </template>
@@ -34,13 +37,13 @@ export default {
         <template #createdBy="{ createdBy }" v-html="createdBy"></template>
 
         <template #discount="{ discount }">
-            <text-link v-if="discount" class="flex items-end" @click.stop="showCoupon(discount.id)" :title="discount.id">
-                <icon class="w-5 h-5 mr-1" type="Coupon"></icon>
-                <preview-format :value="discount.description"></preview-format>
-            </text-link>
+            <TextLink v-if="discount" class="flex items-end" @click.stop="showCoupon(discount.id)" :title="discount.id">
+                <Icon class="w-5 h-5 mr-1" type="Coupon" />
+                <PreviewFormat :value="discount.description" />
+            </TextLink>
         </template>
-    </auto-query-grid>
-    <auto-edit-form v-if="coupon" type="UpdateCoupon" v-model="coupon" v-on:done="close" v-on:save="close"></auto-edit-form>
+    </AutoQueryGrid>
+    <AutoEditForm v-if="coupon" type="UpdateCoupon" v-model="coupon" v-on:done="close" v-on:save="close" />
   `,
   props: { bookings:Array },
     setup() {
