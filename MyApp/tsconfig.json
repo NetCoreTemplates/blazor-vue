@@ -22,7 +22,8 @@
         "@servicestack/vue": [ "./wwwroot/lib/typings/@servicestack/vue/index.d.ts" ]
     }
   },
-  "files": [
+  "include": [
+    "./wwwroot/**/*",
     "./components.d.ts"
   ],
   "exclude": [

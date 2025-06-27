@@ -1,13 +1,13 @@
-import { createApp, ref, onMounted, shallowRef } from "vue"
-import { JsonApiClient, leftPart, rightPart, appendQueryString, humanize, queryString } from "@servicestack/client"
-import ServiceStackVue, { useClient, useAuth, useMetadata } from "@servicestack/vue"
-import { Authenticate, AdminData } from "dtos.mjs"
-import * as Sections from "/admin/sections/index.mjs"
+import { ref, onMounted, shallowRef } from "vue"
+import { leftPart, rightPart, appendQueryString, humanize, queryString } from "@servicestack/client"
+import { useClient, useAuth, useMetadata } from "@servicestack/vue"
+import { Authenticate, AdminData } from "../mjs/dtos.mjs"
+import * as Sections from "../admin/sections/index.mjs"
 
 export default {
     template:`
 <div id="app" v-cloak>
-    <sidebar-layout ref="sidebar">
+    <SidebarLayout ref="sidebar">
         <div class="flex h-16 shrink-0 items-center">
             <a href="/admin" class="text-2xl whitespace-nowrap overflow-x-hidden flex items-center">
                 <img class="mr-1 h-8 w-auto text-indigo-600 dark:text-indigo-300" src="/img/logo.svg" alt="Logo">
@@ -23,7 +23,7 @@ export default {
                             <a @click.prevent="navTo(section.id)" :class="[activeSection.id === section.id 
                                 ? 'bg-gray-50 dark:bg-gray-900 text-indigo-600 dark:text-indigo-300' : 'cursor-pointer text-gray-700 dark:text-gray-200 hover:text-indigo-600 dark:hover:text-indigo-300 hover:bg-gray-50 dark:hover:bg-gray-900', 
                                 'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold select-none']" @click="$forceUpdate()">
-                                <icon :svg="section.icon" class="h-6 w-6 shrink-0 text-indigo-600 dark:text-indigo-300"></icon>
+                                <Icon :svg="section.icon" class="h-6 w-6 shrink-0 text-indigo-600 dark:text-indigo-300" />
                                 {{section.label}}
                             </a>
                         </li>
@@ -48,11 +48,11 @@ export default {
                 <img class="h-8 w-8 rounded-full bg-gray-50 dark:bg-gray-900" :src="user.profileUrl" alt="">
             </span>
         </template>
-    </sidebar-layout>
+    </SidebarLayout>
     <main class="lg:pl-72">
         <div v-if="init" class="px-4 sm:px-6 lg:px-8">
             <div v-if="!user">
-                <sign-in @login="onLogin()"></sign-in>
+                <SignIn @login="onLogin()" />
                 <!-- TODO: Remove auto login convenience button -->
                 <div class="flex justify-center">
                     <div>

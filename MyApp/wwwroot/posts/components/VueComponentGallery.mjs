@@ -1,5 +1,5 @@
 export default {
-    template:/*html*/`
+    template:`
     <div class="not-prose">
         <div class="mt-16 mx-auto flex justify-center">
             <div class="flex items-center">

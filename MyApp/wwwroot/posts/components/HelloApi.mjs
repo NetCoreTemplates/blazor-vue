@@ -3,7 +3,7 @@ import { useClient } from "@servicestack/vue"
 import { Hello } from "../../mjs/dtos.mjs"
 
 export default {
-    template:/*html*/`<div class="flex flex-wrap justify-center">
+    template:`<div class="flex flex-wrap justify-center">
         <TextInput v-model="name" @keyup="update" />
         <div class="ml-3 mt-2 text-lg">{{ result }}</div>
     </div>`,

@@ -1,5 +1,5 @@
 export default {
-    template:/*html*/`
+    template:`
     <div class="not-prose">
         <div class="text-center">
             <h1 class="mt-2 text-4xl font-bold tracking-tight text-gray-900 dark:text-gray-100 sm:text-5xl">

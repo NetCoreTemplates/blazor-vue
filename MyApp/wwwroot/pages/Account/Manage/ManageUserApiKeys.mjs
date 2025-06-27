@@ -1,6 +1,6 @@
-import { ref, computed, onMounted, inject } from "vue"
+import { ref, computed, onMounted } from "vue"
 import { ApiResult, toDate } from "@servicestack/client"
-import { useClient, useUtils, useFormatters, useMetadata, css } from "@servicestack/vue"
+import { useClient, useUtils, useFormatters, css } from "@servicestack/vue"
 import { QueryUserApiKeys, CreateUserApiKey, UpdateUserApiKey, DeleteUserApiKey } from "./apikeys-apis.mjs"
 
 function arraysAreEqual(a, b) {

@@ -5,7 +5,7 @@ export default {
     components: {
         ShellCommand,
     },
-    template:/*html*/`
+    template:`
     <div class="flex flex-col w-96">
         <h4 class="py-6 text-center text-xl">Create New Project</h4>
 

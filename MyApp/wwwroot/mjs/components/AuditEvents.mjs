@@ -18,7 +18,7 @@ export class GetCrudEvents extends QueryDb
 }
 
 export const AuditEvents = {
-    template:/*html*/`
+    template:`
   <div v-if="events.length">
       <div class="flex justify-center">
         <button type="button" @click="open=!open"

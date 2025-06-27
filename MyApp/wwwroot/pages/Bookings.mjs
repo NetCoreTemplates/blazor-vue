@@ -1,12 +1,9 @@
 import { ref } from "vue"
 import { useClient, useFormatters, AutoQueryGrid } from "@servicestack/vue"
-import { QueryCoupons } from "/mjs/dtos.mjs"
+import { QueryCoupons } from "../mjs/dtos.mjs"
 
 export default {
-  components: {
-    AutoQueryGrid,
-  },
-  template:/*html*/`
+  template:`
     <AutoQueryGrid type="Booking" :visible-from="{ name:'xl', bookingStartDate:'sm', bookingEndDate:'xl', createdBy:'2xl' }">
         <template #id="{ id }">
             <span class="text-gray-900" v-html="id"></span>

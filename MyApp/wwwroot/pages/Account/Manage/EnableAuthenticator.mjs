@@ -1,5 +1,5 @@
 import { addScript, $1 } from "@servicestack/client"
-const loadJs = addScript('lib/js/qrcode.min.js')
+const loadJs = addScript('../../../lib/js/qrcode.min.js')
 
 export default {
     async load() {

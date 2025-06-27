@@ -234,7 +234,7 @@ import { useClient } from "@servicestack/vue"
 import { Hello } from "../dtos.mjs"
 
 export default {
-    template:/*html*/`<div class="flex flex-wrap justify-center">
+    template:`<div class="flex flex-wrap justify-center">
         <TextInput v-model="name" @keyup="update" />
         <div class="ml-3 mt-2 text-lg">{{ result }}</div>
     </div>`,
@@ -387,7 +387,7 @@ Contacts page which doesn't do any manual error handling:
 
 ```js
 const Edit = {
-    template:/*html*/`<SlideOver @done="close" title="Edit Contact">
+    template:`<SlideOver @done="close" title="Edit Contact">
     <form @submit.prevent="submit">
       <input type="submit" class="hidden">
       <fieldset>
