@@ -25,6 +25,7 @@
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.*" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.*" />
         <PackageReference Include="Markdig" Version="0.40.*" />
+        <PackageReference Include="ServiceStack.AI.Chat" Version="8.*" />
     </ItemGroup>
     
     <ItemGroup>
