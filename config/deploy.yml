@@ -7,6 +7,7 @@ image: my-user/myapp
 # Required for use of ASP.NET Core with Kamal-Proxy.
 env:
   ASPNETCORE_FORWARDEDHEADERS_ENABLED: true
+  SERVICESTACK_LICENSE: $SERVICESTACK_LICENSE
 
 # Deploy to these servers.
 servers:
