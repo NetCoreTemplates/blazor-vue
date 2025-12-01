@@ -49,12 +49,23 @@
         <Content Include="_videos\**" CopyToPublishDirectory="PreserveNewest" />
     </ItemGroup>
 
-    <ItemGroup>
-        <Folder Include="App_Data\" />
-    </ItemGroup>
+  <PropertyGroup>
+    <DefaultItemExcludes>$(DefaultItemExcludes);App_Data\**;node_modules\**</DefaultItemExcludes>
+  </PropertyGroup>
 
-    <Target Name="tailwind" BeforeTargets="Publish">
-        <Exec Command="npm run ui:build" WorkingDirectory="./" />
-    </Target>
+  <Target Name="CreateWwwrootFolderBuild" AfterTargets="AfterBuild">
+    <MakeDir Directories="$(BuildDir)wwwroot" Condition="!Exists('$(BuildDir)wwwroot')" />
+  </Target>
+
+  <Target Name="CreateAppDataFolder" BeforeTargets="Publish">
+    <MakeDir Directories="$(PublishDir)App_Data" Condition="!Exists('$(PublishDir)App_Data')" />
+    <Exec Command="npm install" />
+    <Exec Command="npm run ui:build" />
+    <RemoveDir Directories="$(PublishDir)wwwroot" />
+    <ItemGroup>
+      <CopyDist Include="./wwwroot/**/*.*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(CopyDist)" DestinationFiles="@(CopyDist->'$(PublishDir)wwwroot\%(RecursiveDir)%(Filename)%(Extension)')" />
+  </Target>
 
 </Project>
