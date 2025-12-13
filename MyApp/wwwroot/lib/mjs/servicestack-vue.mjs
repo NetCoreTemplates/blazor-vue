@@ -454,17 +454,21 @@ async function Ja(e) {
     (!r || (/* @__PURE__ */ new Date()).getTime() - r.getTime() > t) && (o = !1);
   }
   if (!o) {
-    if ((l || n) && (await Ws(l || Wt, n), N.metadata.value != null))
-      return;
-    const r = Ne("client");
-    if (r != null) {
-      const u = await r.api(new Ra());
-      u.succeeded && ol(u.response);
-    }
-    if (N.metadata.value != null) return;
-    await Ws(Wt);
+    const r = e.client ?? Ne("client");
+    await Xa({ client: r, resolvePath: l, resolve: n });
   }
   return N.metadata.value;
+}
+async function Xa(e) {
+  const { client: t, resolvePath: l, resolve: n } = e;
+  if (!((l || n) && (await Ws(l || Wt, n), N.metadata.value != null))) {
+    if (t != null) {
+      const o = await t.api(new Ra());
+      o.succeeded && ol(o.response);
+    }
+    if (N.metadata.value == null)
+      return await Ws(Wt), N.metadata.value;
+  }
 }
 function Je(e, t) {
   if (N.config.typeResolver) {
@@ -488,7 +492,7 @@ function It(e) {
   let t = N.metadata.value?.api;
   return t ? t.operations.find((n) => n.request.name.toLowerCase() === e.toLowerCase()) : null;
 }
-function Xa({ dataModel: e }) {
+function Ya({ dataModel: e }) {
   const t = N.metadata.value?.api;
   if (!t) return [];
   let l = t.operations;
@@ -504,7 +508,7 @@ function ws(e) {
 function wn(e, t) {
   return e && t && e.name === t.name && (!e.namespace || !t.namespace || e.namespace === t.namespace);
 }
-function Ya(e, t) {
+function eo(e, t) {
   let l = Je(e);
   return l && l.properties && l.properties.find((o) => o.name.toLowerCase() === t.toLowerCase());
 }
@@ -552,7 +556,7 @@ function xs(e) {
   const t = [];
   return Object.keys(e).forEach((l) => t.push({ key: l, value: e[l] })), t;
 }
-function eo(e, t) {
+function to(e, t) {
   const n = ((o, r) => Object.assign({
     id: o,
     name: o,
@@ -560,13 +564,13 @@ function eo(e, t) {
   }, t))(e.name, t?.type || qa(e) || "text");
   return e.isEnum && (n.type = "select", n.allowableEntries = xs(Cn(e))), n;
 }
-function to(e) {
+function lo(e) {
   let t = [];
   if (e) {
     const l = et(e), n = It(e.name), o = ws(n?.dataModel);
     l.forEach((r) => {
       if (!bn(r)) return;
-      const u = eo(r, r.input);
+      const u = to(r, r.input);
       if (u.id = ya(u.id), u.type == "file" && r.uploadTo && !u.accept) {
         const d = N.metadata.value?.plugins.filesUpload?.locations.find((f) => f.name == r.uploadTo);
         d && !u.accept && d.allowExtensions && (u.accept = d.allowExtensions.map((f) => f.startsWith(".") ? f : `.${f}`).join(","));
@@ -640,13 +644,13 @@ function Ln(e, t) {
   }
   return o || null;
 }
-function lo(e, t) {
+function so(e, t) {
   return Ee(Jt(e), (l) => ye(t, l.name));
 }
 function Vn(e, t, l) {
-  return e && e.valueType === "none" ? "" : l.key === "%In" || l.key === "%Between" ? `(${l.value})` : so(t, l.value);
+  return e && e.valueType === "none" ? "" : l.key === "%In" || l.key === "%Between" ? `(${l.value})` : no(t, l.value);
 }
-function so(e, t) {
+function no(e, t) {
   return e ? (e = pn(e), ts(e) || e === "Boolean" ? t : Ka(e) ? `[${t}]` : `'${t}'`) : t;
 }
 function ht(e, t) {
@@ -681,20 +685,20 @@ function vt() {
     typeOfRef: ws,
     typeEquals: wn,
     apiOf: It,
-    findApis: Xa,
+    findApis: Ya,
     typeName: Ua,
     typeName2: gn,
-    property: Ya,
+    property: eo,
     enumOptions: xn,
     propertyOptions: Cn,
-    createFormLayout: to,
+    createFormLayout: lo,
     typeProperties: et,
     supportsProp: bn,
     Crud: Re,
     Apis: bt,
     getPrimaryKey: Jt,
     getPrimaryKeyByProps: Ln,
-    getId: lo,
+    getId: so,
     createDto: al,
     makeDto: _a,
     toFormValues: sl,
@@ -764,7 +768,7 @@ class We {
     }
   }
 }
-let ls = () => (/* @__PURE__ */ new Date()).getTime(), no = ["/", "T", ":", "-"], dt = {
+let ls = () => (/* @__PURE__ */ new Date()).getTime(), ao = ["/", "T", ":", "-"], dt = {
   //locale: null,
   assumeUtc: !0,
   //number: null,
@@ -775,7 +779,7 @@ let ls = () => (/* @__PURE__ */ new Date()).getTime(), no = ["/", "T", ":", "-"]
   maxFieldLength: 150,
   maxNestedFields: 2,
   maxNestedFieldLength: 30
-}, ao = new Intl.RelativeTimeFormat(dt.locale, {}), Gs = 1440 * 60 * 1e3 * 365, Kl = {
+}, oo = new Intl.RelativeTimeFormat(dt.locale, {}), Gs = 1440 * 60 * 1e3 * 365, Kl = {
   year: Gs,
   month: Gs / 12,
   day: 1440 * 60 * 1e3,
@@ -800,7 +804,7 @@ let ls = () => (/* @__PURE__ */ new Date()).getTime(), no = ["/", "T", ":", "-"]
   formatNumber: Cs
 };
 "iconOnError" in globalThis || (globalThis.iconOnError = Il);
-class oo {
+class io {
   static currency = { method: "currency" };
   static bytes = { method: "bytes" };
   static link = { method: "link" };
@@ -817,10 +821,10 @@ class oo {
   static hidden = { method: "hidden" };
   static enumFlags = { method: "enumFlags" };
 }
-function io(e) {
+function ro(e) {
   dt = Object.assign({}, dt, e);
 }
-function ro(e) {
+function uo(e) {
   Object.keys(e || {}).forEach((t) => {
     typeof e[t] == "function" && (Ft[t] = e[t]);
   });
@@ -885,7 +889,7 @@ function xl(e) {
   const t = Math.floor(e / 1e3), l = Math.floor(t / 60), n = Math.floor(l / 60), o = Math.floor(n / 24);
   return o > 0 ? `${o}d ${xl(e - o * 24 * 60 * 6e4)}` : n > 0 ? `${n}h ${xl(e - n * 60 * 6e4)}` : l > 0 ? `${l}m ${xl(e - l * 6e4)}` : t > 0 ? `${t}s` : `${e}ms`;
 }
-function uo(e) {
+function co(e) {
   return e >= 1e9 ? (e / 1e9).toFixed(1) + "b" : e >= 1e6 ? (e / 1e6).toFixed(1) + "m" : e >= 1e3 ? (e / 1e3).toFixed(1) + "k" : e.toLocaleString();
 }
 function Rn(e, t, l) {
@@ -904,9 +908,9 @@ function Rn(e, t, l) {
   return r ?? "";
 }
 function il(e, t, l) {
-  return Bt(e) ? Rn(e, t, l) : go(e, t, l);
+  return Bt(e) ? Rn(e, t, l) : po(e, t, l);
 }
-function co(e) {
+function fo(e) {
   if (e == null) return NaN;
   if (typeof e == "number")
     return e;
@@ -918,7 +922,7 @@ function co(e) {
       return t;
     if (e[0] === "P" || e.startsWith("-P"))
       return nn(e) * 1e3 * -1;
-    if (ka(e, no) >= 0)
+    if (ka(e, ao) >= 0)
       return gt(e).getTime() - ls();
   }
   return NaN;
@@ -926,13 +930,13 @@ function co(e) {
 function Dl(e, t) {
   for (let l in Kl)
     if (Math.abs(e) > Kl[l] || l === "second")
-      return (t || ao).format(Math.round(e / Kl[l]), l);
+      return (t || oo).format(Math.round(e / Kl[l]), l);
 }
 function $s(e, t) {
-  let l = co(e);
+  let l = fo(e);
   return isNaN(l) ? "" : Dl(l, t);
 }
-function fo(e, t) {
+function vo(e, t) {
   return Dl(e.getTime() - (t ? t.getTime() : ls()));
 }
 function En(e, t) {
@@ -967,7 +971,7 @@ function Nn(e, t) {
 function zn(e) {
   return e.substring(0, 6) === "/Date(" ? Xt(gt(e)) : e;
 }
-function vo(e) {
+function mo(e) {
   return Ls(Gt(e)).replace(/"/g, "");
 }
 function Un(e) {
@@ -983,7 +987,7 @@ function Un(e) {
 function Ls(e, t = 4) {
   return e = Un(e), typeof e != "object" ? typeof e == "string" ? e : `${e}` : JSON.stringify(e, void 0, t);
 }
-function mo(e) {
+function go(e) {
   return e = Un(e), typeof e != "object" ? typeof e == "string" ? e : `${e}` : (e = Object.assign({}, e), e = Gt(e), Ls(e));
 }
 function Gt(e) {
@@ -1000,7 +1004,7 @@ function Gt(e) {
   }
   return e;
 }
-function go(e, t, l) {
+function po(e, t, l) {
   let n = e;
   if (Array.isArray(e)) {
     if (Bt(e[0]))
@@ -1014,14 +1018,14 @@ function go(e, t, l) {
     let d = o[u], f = `${Gt(n[d])}`;
     r.push(`<b class="font-medium">${d}</b>: ${Wl(Nn(zn(f), dt.maxNestedFieldLength))}`);
   }
-  return o.length > 2 && r.push("..."), ct("span", "{ " + r.join(", ") + " }", Object.assign({ title: Wl(vo(e)) }, l));
+  return o.length > 2 && r.push("..."), ct("span", "{ " + r.join(", ") + " }", Object.assign({ title: Wl(mo(e)) }, l));
 }
-function Dm() {
+function Bm() {
   return {
-    Formats: oo,
-    setDefaultFormats: io,
+    Formats: io,
+    setDefaultFormats: ro,
     getFormatters: Sn,
-    setFormatters: ro,
+    setFormatters: uo,
     formatValue: il,
     formatter: Bl,
     dateInputFormat: jl,
@@ -1036,22 +1040,22 @@ function Dm() {
     hidden: On,
     time: Hn,
     relativeTime: $s,
-    relativeTimeFromDate: fo,
+    relativeTimeFromDate: vo,
     relativeTimeFromMs: Dl,
     enumFlags: En,
     formatDate: Xt,
     formatNumber: Cs,
     humanifyMs: xl,
-    humanifyNumber: uo,
+    humanifyNumber: co,
     indentJson: Ls,
-    prettyJson: mo,
+    prettyJson: go,
     scrub: Gt,
     truncate: Nn,
     apiValueFmt: Rn,
     iconOnError: Il
   };
 }
-const po = ["title"], yo = /* @__PURE__ */ ue({
+const yo = ["title"], ho = /* @__PURE__ */ ue({
   __name: "RouterLink",
   props: {
     to: {}
@@ -1064,10 +1068,10 @@ const po = ["title"], yo = /* @__PURE__ */ ue({
       href: "javascript:void(0)"
     }, o.$attrs), [
       O(o.$slots, "default")
-    ], 16, po));
+    ], 16, yo));
   }
 });
-class ho {
+class bo {
   callbacks = {};
   register(t, l) {
     this.callbacks[t] = l;
@@ -1080,7 +1084,7 @@ class ho {
     typeof n == "function" && n(t, l);
   }
 }
-class bo {
+class wo {
   get length() {
     return typeof localStorage > "u" ? 0 : localStorage.length;
   }
@@ -1107,7 +1111,7 @@ class N {
     navigate: (t) => location.href = t,
     assetsPathResolver: (t) => t,
     fallbackPathResolver: (t) => t,
-    storage: new bo(),
+    storage: new wo(),
     tableIcon: { svg: "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><g fill='none' stroke='currentColor' stroke-width='1.5'><path d='M5 12v6s0 3 7 3s7-3 7-3v-6'/><path d='M5 6v6s0 3 7 3s7-3 7-3V6'/><path d='M12 3c7 0 7 3 7 3s0 3-7 3s-7-3-7-3s0-3 7-3Z'/></g></svg>" },
     scopeWhitelist: {
       enumFlagsConverter: $n,
@@ -1126,7 +1130,7 @@ class N {
   static user = A(null);
   static metadata = Zl(null);
   static components = {
-    RouterLink: yo
+    RouterLink: ho
   };
   static component(t) {
     const l = N.components[t];
@@ -1134,21 +1138,21 @@ class N {
     const n = Qs(t), o = Object.keys(N.components).find((r) => Qs(r) === n);
     return o && N.components[o] || null;
   }
-  static interceptors = new ho();
-}
-function wo(e) {
-  N.config = Object.assign(N.config, e);
+  static interceptors = new bo();
 }
 function xo(e) {
+  N.config = Object.assign(N.config, e);
+}
+function ko(e) {
   N.autoQueryGridDefaults = Object.assign(N.autoQueryGridDefaults, e);
 }
 function Vs(e) {
   return e && N.config.assetsPathResolver ? N.config.assetsPathResolver(e) : e;
 }
-function ko(e) {
+function Co(e) {
   return e && N.config.fallbackPathResolver ? N.config.fallbackPathResolver(e) : e;
 }
-function Co(e, t) {
+function $o(e, t) {
   N.interceptors.register(e, t);
 }
 function Ot() {
@@ -1156,13 +1160,13 @@ function Ot() {
   return {
     Sole: N,
     config: e,
-    setConfig: wo,
+    setConfig: xo,
     events: l,
     autoQueryGridDefaults: t,
-    setAutoQueryGridDefaults: xo,
+    setAutoQueryGridDefaults: ko,
     assetsPathResolver: Vs,
-    fallbackPathResolver: ko,
-    registerInterceptor: Co
+    fallbackPathResolver: Co,
+    registerInterceptor: $o
   };
 }
 function jl(e) {
@@ -1232,9 +1236,9 @@ function Ol(e) {
 function Kt(e) {
   return Vs(e);
 }
-let $o = ["string", "number", "boolean", "null", "undefined"];
+let Lo = ["string", "number", "boolean", "null", "undefined"];
 function Bt(e) {
-  return $o.indexOf(typeof e) >= 0 || e instanceof Date;
+  return Lo.indexOf(typeof e) >= 0 || e instanceof Date;
 }
 function rl(e) {
   return !Bt(e);
@@ -1267,7 +1271,7 @@ function Ss(e) {
 function Rl(e, t) {
   return Zt(`swr.${La(e)}`, t ? Object.assign({}, e, t) : e);
 }
-function Lo(e) {
+function Vo(e) {
   if (e.request) {
     const t = Rl(e.request, e.args);
     N.config.storage.removeItem(t);
@@ -1299,7 +1303,7 @@ function At(e, t) {
   const l = _t(t);
   return e.reduce((n, o) => (n[o] = !l.includes(o), n), {});
 }
-function Vo(e) {
+function Mo(e) {
   return new Promise((t) => setTimeout(t, e));
 }
 function Wn(e) {
@@ -1332,12 +1336,12 @@ function Gn() {
     copyText: as,
     fromCache: Ss,
     swrCacheKey: Rl,
-    swrClear: Lo,
+    swrClear: Vo,
     swrApi: _n,
     asStrings: _t,
     asOptions: At,
     createDebounce: Zn,
-    delay: Vo,
+    delay: Mo,
     uniqueIgnoreCase: Wn
   };
 }
@@ -1399,17 +1403,17 @@ function fl(e) {
 function Jn(e) {
   return e && e.SessionId ? Sa(e) : e;
 }
-function Mo(e) {
+function So(e) {
   N.user.value = Jn(e), N.events.publish("signIn", e);
 }
-function So() {
+function To() {
   N.user.value = null, N.events.publish("signOut", null);
 }
 const Ts = (e) => e?.roles || [], Fs = (e) => e?.permissions || [];
 function Xn(e) {
   return Ts(N.user.value).indexOf(e) >= 0;
 }
-function To(e) {
+function Fo(e) {
   return Fs(N.user.value).indexOf(e) >= 0;
 }
 function As() {
@@ -1432,7 +1436,7 @@ function nl(e) {
   ];
   return !(!o.every((f) => l.indexOf(f) >= 0) || u.length > 0 && !u.some((f) => l.indexOf(f) >= 0) || !r.every((f) => n.indexOf(f) >= 0) || d.length > 0 && !d.every((f) => n.indexOf(f) >= 0));
 }
-function Fo(e) {
+function Ao(e) {
   if (!e || !e.requiresAuth) return null;
   const t = N.user.value;
   if (!t)
@@ -1452,7 +1456,7 @@ function Fo(e) {
 }
 function Is() {
   const e = c(() => N.user.value || null), t = c(() => N.user.value != null);
-  return { signIn: Mo, signOut: So, user: e, toAuth: Jn, isAuthenticated: t, hasRole: Xn, hasPermission: To, isAdmin: As, canAccess: nl, invalidAccessMessage: Fo };
+  return { signIn: So, signOut: To, user: e, toAuth: Jn, isAuthenticated: t, hasRole: Xn, hasPermission: Fo, isAdmin: As, canAccess: nl, invalidAccessMessage: Ao };
 }
 function Ze(e, t) {
   return Array.isArray(e) ? e.indexOf(t) >= 0 : e == t || e.includes(t);
@@ -1543,56 +1547,56 @@ const Ml = {
   theadRowClass: "select-none",
   theadCellClass: "px-6 py-4 text-left text-sm font-medium tracking-wider whitespace-nowrap",
   toolbarButtonClass: "inline-flex items-center px-2.5 py-1.5 border border-gray-300 dark:border-gray-700 shadow-sm text-sm font-medium rounded text-gray-700 dark:text-gray-300 bg-white dark:bg-black hover:bg-gray-50 dark:hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:ring-offset-black"
-}, Ao = {
+}, Io = {
   colspans: "col-span-3 sm:col-span-3"
 };
 function Ct(e, t, l) {
   const n = e.filter((o) => o).join(" ");
   return l ??= N.config.filterInputClass == null ? void 0 : (o) => N.config.filterInputClass(o, t), l ? l(n) : n;
 }
-const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const jm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   a: Ml,
   card: tl,
-  dummy: Ao,
+  dummy: Io,
   filterClass: Ct,
   form: Oe,
   grid: ge,
   input: rt,
   modal: os,
   slideOver: Qt
-}, Symbol.toStringTag, { value: "Module" })), Io = { class: "flex items-center" }, Po = {
+}, Symbol.toStringTag, { value: "Module" })), Po = { class: "flex items-center" }, Do = {
   key: 0,
   class: "flex-shrink-0 mr-3"
-}, Do = {
+}, Bo = {
   key: 0,
   class: "h-5 w-5 text-yellow-400",
   xmlns: "http://www.w3.org/2000/svg",
   viewBox: "0 0 20 20",
   fill: "currentColor",
   "aria-hidden": "true"
-}, Bo = {
+}, jo = {
   key: 1,
   class: "h-5 w-5 text-red-400",
   xmlns: "http://www.w3.org/2000/svg",
   viewBox: "0 0 20 20",
   fill: "currentColor",
   "aria-hidden": "true"
-}, jo = {
+}, Oo = {
   key: 2,
   class: "h-5 w-5 text-blue-400",
   xmlns: "http://www.w3.org/2000/svg",
   viewBox: "0 0 20 20",
   fill: "currentColor",
   "aria-hidden": "true"
-}, Oo = {
+}, Ho = {
   key: 3,
   class: "h-5 w-5 text-green-400",
   xmlns: "http://www.w3.org/2000/svg",
   viewBox: "0 0 20 20",
   fill: "currentColor",
   "aria-hidden": "true"
-}, Ho = /* @__PURE__ */ ue({
+}, Ro = /* @__PURE__ */ ue({
   __name: "Alert",
   props: {
     type: { default: "warn" },
@@ -1603,27 +1607,27 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
     return (r, u) => (a(), i("div", {
       class: g([l.value, n.value, "border-l-4 p-4"])
     }, [
-      s("div", Io, [
-        e.hideIcon ? x("", !0) : (a(), i("div", Po, [
-          e.type == "warn" ? (a(), i("svg", Do, [...u[0] || (u[0] = [
+      s("div", Po, [
+        e.hideIcon ? x("", !0) : (a(), i("div", Do, [
+          e.type == "warn" ? (a(), i("svg", Bo, [...u[0] || (u[0] = [
             s("path", {
               "fill-rule": "evenodd",
               d: "M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z",
               "clip-rule": "evenodd"
             }, null, -1)
-          ])])) : e.type == "error" ? (a(), i("svg", Bo, [...u[1] || (u[1] = [
+          ])])) : e.type == "error" ? (a(), i("svg", jo, [...u[1] || (u[1] = [
             s("path", {
               "fill-rule": "evenodd",
               d: "M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z",
               "clip-rule": "evenodd"
             }, null, -1)
-          ])])) : e.type == "info" ? (a(), i("svg", jo, [...u[2] || (u[2] = [
+          ])])) : e.type == "info" ? (a(), i("svg", Oo, [...u[2] || (u[2] = [
             s("path", {
               "fill-rule": "evenodd",
               d: "M19 10.5a8.5 8.5 0 11-17 0 8.5 8.5 0 0117 0zM8.25 9.75A.75.75 0 019 9h.253a1.75 1.75 0 011.709 2.13l-.46 2.066a.25.25 0 00.245.304H11a.75.75 0 010 1.5h-.253a1.75 1.75 0 01-1.709-2.13l.46-2.066a.25.25 0 00-.245-.304H9a.75.75 0 01-.75-.75zM10 7a1 1 0 100-2 1 1 0 000 2z",
               "clip-rule": "evenodd"
             }, null, -1)
-          ])])) : e.type == "success" ? (a(), i("svg", Oo, [...u[3] || (u[3] = [
+          ])])) : e.type == "success" ? (a(), i("svg", Ho, [...u[3] || (u[3] = [
             s("path", {
               "fill-rule": "evenodd",
               d: "M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z",
@@ -1641,19 +1645,19 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
       ])
     ], 2));
   }
-}), Ro = {
+}), Eo = {
   key: 0,
   class: "rounded-md bg-green-50 dark:bg-green-200 p-4",
   role: "alert"
-}, Eo = { class: "flex" }, No = { class: "ml-3" }, zo = { class: "text-sm font-medium text-green-800" }, Uo = { key: 0 }, qo = { class: "ml-auto pl-3" }, Qo = { class: "-mx-1.5 -my-1.5" }, Ko = /* @__PURE__ */ ue({
+}, No = { class: "flex" }, zo = { class: "ml-3" }, Uo = { class: "text-sm font-medium text-green-800" }, qo = { key: 0 }, Qo = { class: "ml-auto pl-3" }, Ko = { class: "-mx-1.5 -my-1.5" }, _o = /* @__PURE__ */ ue({
   __name: "AlertSuccess",
   props: {
     message: {}
   },
   setup(e) {
     const t = A(!1);
-    return (l, n) => t.value ? x("", !0) : (a(), i("div", Ro, [
-      s("div", Eo, [
+    return (l, n) => t.value ? x("", !0) : (a(), i("div", Eo, [
+      s("div", No, [
         n[2] || (n[2] = s("div", { class: "flex-shrink-0" }, [
           s("svg", {
             class: "h-5 w-5 text-green-400 dark:text-green-500",
@@ -1670,13 +1674,13 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
             })
           ])
         ], -1)),
-        s("div", No, [
-          s("h3", zo, [
-            e.message ? (a(), i("span", Uo, T(e.message), 1)) : O(l.$slots, "default", { key: 1 })
+        s("div", zo, [
+          s("h3", Uo, [
+            e.message ? (a(), i("span", qo, T(e.message), 1)) : O(l.$slots, "default", { key: 1 })
           ])
         ]),
-        s("div", qo, [
-          s("div", Qo, [
+        s("div", Qo, [
+          s("div", Ko, [
             s("button", {
               type: "button",
               class: "inline-flex rounded-md bg-green-50 dark:bg-green-200 p-1.5 text-green-500 dark:text-green-600 hover:bg-green-100 dark:hover:bg-green-800 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-green-600 dark:focus:ring-green-300 focus:ring-offset-2 focus:ring-offset-green-50 dark:ring-offset-green-900",
@@ -1698,7 +1702,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
       ])
     ]));
   }
-}), _o = { class: "flex" }, Zo = { class: "ml-3" }, Wo = { class: "text-sm text-red-700 dark:text-red-200" }, Go = /* @__PURE__ */ ue({
+}), Zo = { class: "flex" }, Wo = { class: "ml-3" }, Go = { class: "text-sm text-red-700 dark:text-red-200" }, Jo = /* @__PURE__ */ ue({
   __name: "ErrorSummary",
   props: {
     status: {},
@@ -1713,7 +1717,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
       key: 0,
       class: g(`bg-red-50 dark:bg-red-900 border-l-4 border-red-400 p-4 ${o.$props.class}`)
     }, [
-      s("div", _o, [
+      s("div", Zo, [
         r[0] || (r[0] = s("div", { class: "flex-shrink-0" }, [
           s("svg", {
             class: "h-5 w-5 text-red-400",
@@ -1726,13 +1730,13 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
             })
           ])
         ], -1)),
-        s("div", Zo, [
-          s("p", Wo, T(n.value), 1)
+        s("div", Wo, [
+          s("p", Go, T(n.value), 1)
         ])
       ])
     ], 2)) : x("", !0);
   }
-}), Jo = ["id", "aria-describedby"], Xo = /* @__PURE__ */ ue({
+}), Xo = ["id", "aria-describedby"], Yo = /* @__PURE__ */ ue({
   __name: "InputDescription",
   props: {
     id: {},
@@ -1746,7 +1750,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
       "aria-describedby": `${e.id}-description`
     }, [
       s("div", null, T(e.description), 1)
-    ], 8, Jo)) : x("", !0);
+    ], 8, Xo)) : x("", !0);
   }
 }), Yn = ue({
   inheritAttrs: !1,
@@ -1782,14 +1786,14 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
         });
     };
   }
-}), Yo = { class: "text-2xl font-semibold text-gray-900 dark:text-gray-300" }, ei = { class: "flex" }, ti = /* @__PURE__ */ ue({
+}), ei = { class: "text-2xl font-semibold text-gray-900 dark:text-gray-300" }, ti = { class: "flex" }, li = /* @__PURE__ */ ue({
   __name: "Loading",
   props: {
     imageClass: { default: "w-6 h-6" }
   },
   setup(e) {
-    return (t, l) => (a(), i("div", Yo, [
-      s("div", ei, [
+    return (t, l) => (a(), i("div", ei, [
+      s("div", ti, [
         (a(), i("svg", {
           class: g(["self-center inline mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-gray-600 dark:fill-gray-300", e.imageClass]),
           role: "status",
@@ -1812,7 +1816,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
       ])
     ]));
   }
-}), li = ["href", "onClick"], si = ["type"], Js = "inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 disabled:text-gray-400 bg-white dark:bg-black hover:bg-gray-50 hover:dark:bg-gray-900 disabled:hover:bg-white dark:disabled:hover:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:ring-offset-black", ni = /* @__PURE__ */ ue({
+}), si = ["href", "onClick"], ni = ["type"], Js = "inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 disabled:text-gray-400 bg-white dark:bg-black hover:bg-gray-50 hover:dark:bg-gray-900 disabled:hover:bg-white dark:disabled:hover:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:ring-offset-black", ai = /* @__PURE__ */ ue({
   __name: "OutlineButton",
   props: {
     type: { default: "submit" },
@@ -1832,7 +1836,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
             onClick: o
           }, [
             O(t.$slots, "default")
-          ], 8, li)
+          ], 8, si)
         ]),
         _: 3
       }, 8, ["to"])) : (a(), i("button", Ce({
@@ -1841,10 +1845,10 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
         class: Js
       }, t.$attrs), [
         O(t.$slots, "default")
-      ], 16, si));
+      ], 16, ni));
     };
   }
-}), ai = ["href", "onClick"], oi = ["type"], ii = /* @__PURE__ */ ue({
+}), oi = ["href", "onClick"], ii = ["type"], ri = /* @__PURE__ */ ue({
   __name: "PrimaryButton",
   props: {
     type: { default: "submit" },
@@ -1874,7 +1878,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
             onClick: d
           }, [
             O(o.$slots, "default")
-          ], 10, ai)
+          ], 10, oi)
         ]),
         _: 3
       }, 8, ["to"])) : (a(), i("button", Ce({
@@ -1883,10 +1887,10 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
         class: n.value
       }, o.$attrs), [
         O(o.$slots, "default")
-      ], 16, oi));
+      ], 16, ii));
     };
   }
-}), ri = ["type", "href", "onClick"], ui = ["type"], Xs = "inline-flex justify-center rounded-md border border-gray-300 py-2 px-4 text-sm font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-400 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700 focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:ring-offset-black", di = /* @__PURE__ */ ue({
+}), ui = ["type", "href", "onClick"], di = ["type"], Xs = "inline-flex justify-center rounded-md border border-gray-300 py-2 px-4 text-sm font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-400 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700 focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:ring-offset-black", ci = /* @__PURE__ */ ue({
   __name: "SecondaryButton",
   props: {
     type: {},
@@ -1907,7 +1911,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
             onClick: o
           }, [
             O(t.$slots, "default")
-          ], 8, ri)
+          ], 8, ui)
         ]),
         _: 3
       }, 8, ["to"])) : (a(), i("button", Ce({
@@ -1916,10 +1920,10 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
         class: Xs
       }, t.$attrs), [
         O(t.$slots, "default")
-      ], 16, ui));
+      ], 16, di));
     };
   }
-}), ci = /* @__PURE__ */ ue({
+}), fi = /* @__PURE__ */ ue({
   __name: "TextLink",
   props: {
     color: { default: "blue" }
@@ -1932,21 +1936,21 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
       O(o.$slots, "default")
     ], 2));
   }
-}), fi = {
+}), vi = {
   class: "flex",
   "aria-label": "Breadcrumb"
-}, vi = {
+}, mi = {
   role: "list",
   class: "flex items-center space-x-4"
-}, mi = ["href", "title"], gi = { class: "sr-only" }, pi = /* @__PURE__ */ ue({
+}, gi = ["href", "title"], pi = { class: "sr-only" }, yi = /* @__PURE__ */ ue({
   __name: "Breadcrumbs",
   props: {
     homeHref: { default: "/" },
     homeLabel: { default: "Home" }
   },
   setup(e) {
-    return (t, l) => (a(), i("nav", fi, [
-      s("ol", vi, [
+    return (t, l) => (a(), i("nav", vi, [
+      s("ol", mi, [
         s("li", null, [
           s("div", null, [
             s("a", {
@@ -1967,15 +1971,15 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                   "clip-rule": "evenodd"
                 })
               ], -1)),
-              s("span", gi, T(e.homeLabel), 1)
-            ], 8, mi)
+              s("span", pi, T(e.homeLabel), 1)
+            ], 8, gi)
           ])
         ]),
         O(t.$slots, "default")
       ])
     ]));
   }
-}), yi = { class: "flex items-center" }, hi = ["href", "title"], bi = ["title"], wi = /* @__PURE__ */ ue({
+}), hi = { class: "flex items-center" }, bi = ["href", "title"], wi = ["title"], xi = /* @__PURE__ */ ue({
   __name: "Breadcrumb",
   props: {
     href: {},
@@ -1983,7 +1987,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   },
   setup(e) {
     return (t, l) => (a(), i("li", null, [
-      s("div", yi, [
+      s("div", hi, [
         l[0] || (l[0] = s("svg", {
           class: "h-6 w-6 flex-shrink-0 text-gray-400 dark:text-gray-500",
           xmlns: "http://www.w3.org/2000/svg",
@@ -2004,36 +2008,36 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
           title: e.title
         }, [
           O(t.$slots, "default")
-        ], 8, hi)) : (a(), i("span", {
+        ], 8, bi)) : (a(), i("span", {
           key: 1,
           class: "ml-4 text-lg font-medium text-gray-700 dark:text-gray-300",
           title: e.title
         }, [
           O(t.$slots, "default")
-        ], 8, bi))
+        ], 8, wi))
       ])
     ]));
   }
-}), xi = {
+}), ki = {
   key: 0,
   class: "text-base font-semibold text-gray-500 dark:text-gray-400"
-}, ki = {
+}, Ci = {
   role: "list",
   class: "mt-4 divide-y divide-gray-200 dark:divide-gray-800 border-t border-b border-gray-200 dark:border-gray-800"
-}, Ci = /* @__PURE__ */ ue({
+}, $i = /* @__PURE__ */ ue({
   __name: "NavList",
   props: {
     title: {}
   },
   setup(e) {
     return (t, l) => (a(), i("div", null, [
-      e.title ? (a(), i("h2", xi, T(e.title), 1)) : x("", !0),
-      s("ul", ki, [
+      e.title ? (a(), i("h2", ki, T(e.title), 1)) : x("", !0),
+      s("ul", Ci, [
         O(t.$slots, "default")
       ])
     ]));
   }
-}), $i = { class: "relative flex items-start space-x-4 py-6" }, Li = { class: "flex-shrink-0" }, Vi = { class: "flex h-12 w-12 items-center justify-center rounded-lg bg-indigo-50 dark:bg-indigo-900" }, Mi = { class: "min-w-0 flex-1" }, Si = { class: "text-base font-medium text-gray-900 dark:text-gray-100" }, Ti = { class: "rounded-sm focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2" }, Fi = ["href"], Ai = { class: "text-base text-gray-500" }, Ii = /* @__PURE__ */ ue({
+}), Li = { class: "relative flex items-start space-x-4 py-6" }, Vi = { class: "flex-shrink-0" }, Mi = { class: "flex h-12 w-12 items-center justify-center rounded-lg bg-indigo-50 dark:bg-indigo-900" }, Si = { class: "min-w-0 flex-1" }, Ti = { class: "text-base font-medium text-gray-900 dark:text-gray-100" }, Fi = { class: "rounded-sm focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2" }, Ai = ["href"], Ii = { class: "text-base text-gray-500" }, Pi = /* @__PURE__ */ ue({
   __name: "NavListItem",
   props: {
     title: {},
@@ -2046,9 +2050,9 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   setup(e) {
     return (t, l) => {
       const n = U("Icon");
-      return a(), i("li", $i, [
-        s("div", Li, [
-          s("span", Vi, [
+      return a(), i("li", Li, [
+        s("div", Vi, [
+          s("span", Mi, [
             pe(n, {
               class: "w-6 h-6 text-indigo-700 dark:text-indigo-300",
               image: e.icon,
@@ -2058,9 +2062,9 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
             }, null, 8, ["image", "src", "svg", "alt"])
           ])
         ]),
-        s("div", Mi, [
-          s("h3", Si, [
-            s("span", Ti, [
+        s("div", Si, [
+          s("h3", Ti, [
+            s("span", Fi, [
               s("a", {
                 href: e.href,
                 class: "focus:outline-none"
@@ -2070,10 +2074,10 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                   "aria-hidden": "true"
                 }, null, -1)),
                 he(" " + T(e.title), 1)
-              ], 8, Fi)
+              ], 8, Ai)
             ])
           ]),
-          s("p", Ai, [
+          s("p", Ii, [
             O(t.$slots, "default")
           ])
         ]),
@@ -2095,7 +2099,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
       ]);
     };
   }
-}), Pi = { key: 0 }, Di = { class: "md:p-4" }, ea = /* @__PURE__ */ ue({
+}), Di = { key: 0 }, Bi = { class: "md:p-4" }, ea = /* @__PURE__ */ ue({
   __name: "EnsureAccess",
   props: {
     invalidAccess: {},
@@ -2114,12 +2118,12 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
     };
     return (r, u) => {
       const d = U("Alert"), f = U("SecondaryButton");
-      return e.invalidAccess ? (a(), i("div", Pi, [
+      return e.invalidAccess ? (a(), i("div", Di, [
         pe(d, {
           class: g(e.alertClass),
           innerHTML: e.invalidAccess
         }, null, 8, ["class", "innerHTML"]),
-        s("div", Di, [
+        s("div", Bi, [
           G(t) ? (a(), X(f, {
             key: 1,
             onClick: o
@@ -2141,7 +2145,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
       ])) : x("", !0);
     };
   }
-}), Bi = { class: "absolute top-0 right-0 bg-white dark:bg-black border dark:border-gray-800 rounded normal-case text-sm shadow w-80" }, ji = { class: "p-4" }, Oi = { class: "flex w-full justify-center" }, Hi = { key: 0 }, Ri = ["id", "value"], Ei = ["for"], Ni = { key: 1 }, zi = { class: "mb-2" }, Ui = { class: "inline-flex rounded-full items-center py-0.5 pl-2.5 pr-1 text-sm font-medium bg-indigo-100 text-indigo-700" }, qi = ["onClick"], Qi = { class: "flex" }, Ki = { class: "bg-gray-50 dark:bg-gray-900 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse" }, Ps = /* @__PURE__ */ ue({
+}), ji = { class: "absolute top-0 right-0 bg-white dark:bg-black border dark:border-gray-800 rounded normal-case text-sm shadow w-80" }, Oi = { class: "p-4" }, Hi = { class: "flex w-full justify-center" }, Ri = { key: 0 }, Ei = ["id", "value"], Ni = ["for"], zi = { key: 1 }, Ui = { class: "mb-2" }, qi = { class: "inline-flex rounded-full items-center py-0.5 pl-2.5 pr-1 text-sm font-medium bg-indigo-100 text-indigo-700" }, Qi = ["onClick"], Ki = { class: "flex" }, _i = { class: "bg-gray-50 dark:bg-gray-900 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse" }, Ps = /* @__PURE__ */ ue({
   __name: "FilterColumn",
   props: {
     definitions: {},
@@ -2208,10 +2212,10 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
           onClick: L[5] || (L[5] = He(() => {
           }, ["stop"]))
         }, [
-          s("div", Bi, [
-            s("div", ji, [
+          s("div", ji, [
+            s("div", Oi, [
               L[10] || (L[10] = s("h3", { class: "text-base font-medium mb-3 dark:text-gray-100" }, "Sort", -1)),
-              s("div", Oi, [
+              s("div", Hi, [
                 s("button", {
                   type: "button",
                   title: "Sort Ascending",
@@ -2243,7 +2247,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                 ])], 2)
               ]),
               L[11] || (L[11] = s("h3", { class: "text-base font-medium mt-4 mb-2" }, " Filter ", -1)),
-              f.value ? (a(), i("div", Hi, [
+              f.value ? (a(), i("div", Ri, [
                 (a(!0), i(Ve, null, Se(p.value, (_) => (a(), i("div", {
                   key: _.key,
                   class: "flex items-center"
@@ -2254,17 +2258,17 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                     value: _.key,
                     "onUpdate:modelValue": L[2] || (L[2] = (te) => d.value = te),
                     class: "h-4 w-4 border-gray-300 rounded text-indigo-600 focus:ring-indigo-500"
-                  }, null, 8, Ri), [
+                  }, null, 8, Ei), [
                     [rs, d.value]
                   ]),
                   s("label", {
                     for: _.key,
                     class: "ml-3"
-                  }, T(_.value), 9, Ei)
+                  }, T(_.value), 9, Ni)
                 ]))), 128))
-              ])) : (a(), i("div", Ni, [
-                (a(!0), i(Ve, null, Se(y.value, (_, te) => (a(), i("div", zi, [
-                  s("span", Ui, [
+              ])) : (a(), i("div", zi, [
+                (a(!0), i(Ve, null, Se(y.value, (_, te) => (a(), i("div", Ui, [
+                  s("span", qi, [
                     he(T(e.column.name) + " " + T(_.name) + " " + T(Y(_)) + " ", 1),
                     s("button", {
                       type: "button",
@@ -2283,10 +2287,10 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                           d: "M1 1l6 6m0-6L1 7"
                         })
                       ], -1)
-                    ])], 8, qi)
+                    ])], 8, Qi)
                   ])
                 ]))), 256)),
-                s("div", Qi, [
+                s("div", Ki, [
                   pe(le, {
                     id: "filterRule",
                     class: "w-32 mr-1",
@@ -2333,7 +2337,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                 ])
               ]))
             ]),
-            s("div", Ki, [
+            s("div", _i, [
               pe(j, {
                 onClick: Q,
                 color: "red",
@@ -2356,10 +2360,10 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
       ], 512);
     };
   }
-}), _i = { class: "px-4 sm:px-6 lg:px-8 text-sm" }, Zi = { class: "flex flex-wrap" }, Wi = { class: "group pr-4 sm:pr-6 lg:pr-8" }, Gi = { class: "flex justify-between w-full font-medium" }, Ji = { class: "w-6 flex justify-end" }, Xi = { class: "hidden group-hover:inline" }, Yi = ["onClick", "title"], er = {
+}), Zi = { class: "px-4 sm:px-6 lg:px-8 text-sm" }, Wi = { class: "flex flex-wrap" }, Gi = { class: "group pr-4 sm:pr-6 lg:pr-8" }, Ji = { class: "flex justify-between w-full font-medium" }, Xi = { class: "w-6 flex justify-end" }, Yi = { class: "hidden group-hover:inline" }, er = ["onClick", "title"], tr = {
   key: 0,
   class: "pt-2"
-}, tr = { class: "ml-2" }, lr = { key: 1 }, sr = { class: "pt-2" }, nr = { class: "inline-flex rounded-full items-center py-0.5 pl-2.5 pr-1 text-sm font-medium bg-indigo-100 text-indigo-700" }, ar = ["onClick"], Ds = /* @__PURE__ */ ue({
+}, lr = { class: "ml-2" }, sr = { key: 1 }, nr = { class: "pt-2" }, ar = { class: "inline-flex rounded-full items-center py-0.5 pl-2.5 pr-1 text-sm font-medium bg-indigo-100 text-indigo-700" }, or = ["onClick"], Ds = /* @__PURE__ */ ue({
   __name: "FilterViews",
   props: {
     definitions: {},
@@ -2392,13 +2396,13 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
         b.settings.filters = [], n("change", b);
       }), n("done");
     }
-    return (b, y) => (a(), i("div", _i, [
-      s("div", Zi, [
-        (a(!0), i(Ve, null, Se(o.value, (h) => (a(), i("fieldset", Wi, [
-          s("legend", Gi, [
+    return (b, y) => (a(), i("div", Zi, [
+      s("div", Wi, [
+        (a(!0), i(Ve, null, Se(o.value, (h) => (a(), i("fieldset", Gi, [
+          s("legend", Ji, [
             s("span", null, T(G(De)(h.name)), 1),
-            s("span", Ji, [
-              s("span", Xi, [
+            s("span", Xi, [
+              s("span", Yi, [
                 s("button", {
                   onClick: (k) => v(h),
                   title: `Clear all ${G(De)(h.name)} filters`,
@@ -2416,20 +2420,20 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                       d: "M1 1l6 6m0-6L1 7"
                     })
                   ], -1)
-                ])], 8, Yi)
+                ])], 8, er)
               ])
             ])
           ]),
-          h.meta.isEnum ? (a(), i("div", er, [
+          h.meta.isEnum ? (a(), i("div", tr, [
             (a(!0), i(Ve, null, Se(r(h.settings.filters), (k) => (a(), i("div", {
               key: k,
               class: "flex items-center"
             }, [
-              s("label", tr, T(k), 1)
+              s("label", lr, T(k), 1)
             ]))), 128))
-          ])) : (a(), i("div", lr, [
-            (a(!0), i(Ve, null, Se(h.settings.filters, (k, V) => (a(), i("div", sr, [
-              s("span", nr, [
+          ])) : (a(), i("div", sr, [
+            (a(!0), i(Ve, null, Se(h.settings.filters, (k, V) => (a(), i("div", nr, [
+              s("span", ar, [
                 he(T(h.name) + " " + T(k.name) + " " + T(f(h, k)) + " ", 1),
                 s("button", {
                   type: "button",
@@ -2448,7 +2452,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                       d: "M1 1l6 6m0-6L1 7"
                     })
                   ], -1)
-                ])], 8, ar)
+                ])], 8, or)
               ])
             ]))), 256))
           ]))
@@ -2465,7 +2469,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
       ])
     ]));
   }
-}), or = { class: "bg-white dark:bg-black px-4 pt-5 pb-4 sm:p-6 sm:pb-4" }, ir = { class: "" }, rr = { class: "mt-3 text-center sm:mt-0 sm:mx-4 sm:text-left" }, ur = { class: "mt-4" }, dr = ["for"], cr = ["id"], fr = ["value", "selected"], vr = { class: "mt-4 flex items-center py-4 border-b border-gray-200 dark:border-gray-800" }, mr = ["id", "checked"], gr = ["for"], pr = { class: "mt-4" }, yr = { class: "pb-2 px-4" }, hr = { class: "" }, br = ["id", "value"], wr = ["for"], xr = { class: "bg-gray-50 dark:bg-gray-900 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse" }, Bs = /* @__PURE__ */ ue({
+}), ir = { class: "bg-white dark:bg-black px-4 pt-5 pb-4 sm:p-6 sm:pb-4" }, rr = { class: "" }, ur = { class: "mt-3 text-center sm:mt-0 sm:mx-4 sm:text-left" }, dr = { class: "mt-4" }, cr = ["for"], fr = ["id"], vr = ["value", "selected"], mr = { class: "mt-4 flex items-center py-4 border-b border-gray-200 dark:border-gray-800" }, gr = ["id", "checked"], pr = ["for"], yr = { class: "mt-4" }, hr = { class: "pb-2 px-4" }, br = { class: "" }, wr = ["id", "value"], xr = ["for"], kr = { class: "bg-gray-50 dark:bg-gray-900 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse" }, Bs = /* @__PURE__ */ ue({
   __name: "QueryPrefs",
   props: {
     id: { default: "QueryPrefs" },
@@ -2495,15 +2499,15 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
         "size-class": "w-full sm:max-w-prose"
       }, {
         default: we(() => [
-          s("div", or, [
-            s("div", ir, [
-              s("div", rr, [
+          s("div", ir, [
+            s("div", rr, [
+              s("div", ur, [
                 p[3] || (p[3] = s("h3", { class: "text-lg leading-6 font-medium text-gray-900 dark:text-gray-100" }, "Query Preferences", -1)),
-                s("div", ur, [
+                s("div", dr, [
                   s("label", {
                     for: `${e.id}-take`,
                     class: "block text-sm font-medium text-gray-700 dark:text-gray-300"
-                  }, "Results per page", 8, dr),
+                  }, "Results per page", 8, cr),
                   Pt(s("select", {
                     id: `${e.id}-take`,
                     "onUpdate:modelValue": p[0] || (p[0] = (h) => r.value.take = h),
@@ -2512,27 +2516,27 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                     (a(!0), i(Ve, null, Se(u.filter((h) => n.maxLimit == null || h <= n.maxLimit), (h) => (a(), i("option", {
                       value: h,
                       selected: h === r.value.take
-                    }, T(h), 9, fr))), 256))
-                  ], 8, cr), [
+                    }, T(h), 9, vr))), 256))
+                  ], 8, fr), [
                     [fa, r.value.take]
                   ])
                 ]),
-                s("div", vr, [
+                s("div", mr, [
                   s("input", {
                     type: "radio",
                     id: `${e.id}-allColumns`,
                     onClick: p[1] || (p[1] = (h) => r.value.selectedColumns = []),
                     checked: r.value.selectedColumns.length === 0,
                     class: "focus:ring-indigo-500 h-4 w-4 bg-white dark:bg-black text-indigo-600 dark:text-indigo-400 border-gray-300 dark:border-gray-700"
-                  }, null, 8, mr),
+                  }, null, 8, gr),
                   s("label", {
                     class: "ml-3 block text-gray-700 dark:text-gray-300",
                     for: `${e.id}-allColumns`
-                  }, "View all columns", 8, gr)
+                  }, "View all columns", 8, pr)
                 ]),
-                s("div", pr, [
-                  s("div", yr, [
-                    s("div", hr, [
+                s("div", yr, [
+                  s("div", hr, [
+                    s("div", br, [
                       (a(!0), i(Ve, null, Se(e.columns, (h) => (a(), i("div", {
                         key: h.name,
                         class: "flex items-center"
@@ -2543,13 +2547,13 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                           value: h.name,
                           "onUpdate:modelValue": p[2] || (p[2] = (k) => r.value.selectedColumns = k),
                           class: "h-4 w-4 bg-white dark:bg-black border-gray-300 dark:border-gray-700 rounded text-indigo-600 dark:text-indigo-400 focus:ring-indigo-500"
-                        }, null, 8, br), [
+                        }, null, 8, wr), [
                           [rs, r.value.selectedColumns]
                         ]),
                         s("label", {
                           for: h.name,
                           class: "ml-3"
-                        }, T(h.name), 9, wr)
+                        }, T(h.name), 9, xr)
                       ]))), 128))
                     ])
                   ])
@@ -2557,7 +2561,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
               ])
             ])
           ]),
-          s("div", xr, [
+          s("div", kr, [
             pe($, {
               onClick: f,
               color: "red",
@@ -2580,63 +2584,63 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
       }, 8, ["id"]);
     };
   }
-}), kr = { key: 0 }, Cr = { key: 1 }, $r = {
+}), Cr = { key: 0 }, $r = { key: 1 }, Lr = {
   key: 2,
   class: "pt-1"
-}, Lr = { key: 0 }, Vr = { key: 1 }, Mr = { key: 2 }, Sr = { key: 4 }, Tr = { class: "pl-1 pt-1 flex flex-wrap" }, Fr = { class: "flex mt-1" }, Ar = ["title"], Ir = ["disabled"], Pr = ["disabled"], Dr = ["disabled"], Br = ["disabled"], jr = {
+}, Vr = { key: 0 }, Mr = { key: 1 }, Sr = { key: 2 }, Tr = { key: 4 }, Fr = { class: "pl-1 pt-1 flex flex-wrap" }, Ar = { class: "flex mt-1" }, Ir = ["title"], Pr = ["disabled"], Dr = ["disabled"], Br = ["disabled"], jr = ["disabled"], Or = {
   key: 0,
   class: "flex mt-1"
-}, Or = { class: "px-4 text-lg text-black dark:text-white" }, Hr = { key: 0 }, Rr = { key: 1 }, Er = { key: 2 }, Nr = { class: "flex flex-wrap" }, zr = {
+}, Hr = { class: "px-4 text-lg text-black dark:text-white" }, Rr = { key: 0 }, Er = { key: 1 }, Nr = { key: 2 }, zr = { class: "flex flex-wrap" }, Ur = {
   key: 0,
   class: "pl-2 mt-1"
-}, Ur = {
+}, qr = {
   key: 1,
   class: "pl-2 mt-1"
-}, qr = {
+}, Qr = {
   key: 2,
   class: "pl-2 mt-1"
-}, Qr = {
+}, Kr = {
   key: 0,
   class: "w-5 h-5 mr-1 text-green-600 dark:text-green-400",
   fill: "none",
   stroke: "currentColor",
   viewBox: "0 0 24 24",
   xmlns: "http://www.w3.org/2000/svg"
-}, Kr = {
+}, _r = {
   key: 1,
   class: "w-5 h-5 mr-1",
   xmlns: "http://www.w3.org/2000/svg",
   viewBox: "0 0 24 24"
-}, _r = {
+}, Zr = {
   key: 3,
   class: "pl-2 mt-1"
-}, Zr = {
+}, Wr = {
   key: 4,
   class: "pl-2 mt-1"
-}, Wr = { class: "mr-1" }, Gr = {
+}, Gr = { class: "mr-1" }, Jr = {
   key: 0,
-  class: "h-5 w-5 text-gray-400 dark:text-gray-500 group-hover:text-gray-500",
-  xmlns: "http://www.w3.org/2000/svg",
-  viewBox: "0 0 20 20",
-  fill: "currentColor",
-  "aria-hidden": "true"
-}, Jr = {
-  key: 1,
   class: "h-5 w-5 text-gray-400 dark:text-gray-500 group-hover:text-gray-500",
   xmlns: "http://www.w3.org/2000/svg",
   viewBox: "0 0 20 20",
   fill: "currentColor",
   "aria-hidden": "true"
 }, Xr = {
+  key: 1,
+  class: "h-5 w-5 text-gray-400 dark:text-gray-500 group-hover:text-gray-500",
+  xmlns: "http://www.w3.org/2000/svg",
+  viewBox: "0 0 20 20",
+  fill: "currentColor",
+  "aria-hidden": "true"
+}, Yr = {
   key: 5,
   class: "pl-2 mt-1"
-}, Yr = ["title"], eu = { class: "whitespace-nowrap" }, tu = { key: 8 }, lu = {
+}, eu = ["title"], tu = { class: "whitespace-nowrap" }, lu = { key: 8 }, su = {
   key: 0,
   class: "cursor-pointer flex justify-between items-center hover:text-gray-900 dark:hover:text-gray-50"
-}, su = { class: "mr-1 select-none" }, nu = {
+}, nu = { class: "mr-1 select-none" }, au = {
   key: 1,
   class: "flex justify-between items-center"
-}, au = { class: "mr-1 select-none" }, hl = 25, ou = /* @__PURE__ */ ue({
+}, ou = { class: "mr-1 select-none" }, hl = 25, iu = /* @__PURE__ */ ue({
   __name: "AutoQueryGrid",
   props: {
     filterDefinitions: {},
@@ -2927,12 +2931,12 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
       Us(), await wt(), await st();
     }), (F, I) => {
       const be = U("Alert"), re = U("EnsureAccessDialog"), Te = U("AutoCreateForm"), ke = U("AutoEditForm"), _e = U("AutoViewForm"), Ut = U("ErrorSummary"), qs = U("Loading"), Mt = U("SettingsIcons"), ua = U("DataGrid");
-      return Rs.value ? (a(), i("div", kr, [
+      return Rs.value ? (a(), i("div", Cr, [
         pe(be, { innerHTML: Rs.value }, null, 8, ["innerHTML"])
-      ])) : Es.value ? (a(), i("div", Cr, [
+      ])) : Es.value ? (a(), i("div", $r, [
         pe(ea, { "invalid-access": Es.value }, null, 8, ["invalid-access"])
-      ])) : (a(), i("div", $r, [
-        V("forms") && ve.value && Le.value.Create ? (a(), i("div", Lr, [
+      ])) : (a(), i("div", Lr, [
+        V("forms") && ve.value && Le.value.Create ? (a(), i("div", Vr, [
           Ns.value ? (a(), X(re, {
             key: 0,
             title: `Create ${Yt.value}`,
@@ -2974,7 +2978,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
             ]),
             _: 3
           }, 8, ["type", "configure"]))
-        ])) : V("forms") && z.value && Le.value.AnyUpdate ? (a(), i("div", Vr, [
+        ])) : V("forms") && z.value && Le.value.AnyUpdate ? (a(), i("div", Mr, [
           zs.value ? (a(), X(re, {
             key: 0,
             title: `Update ${Yt.value}`,
@@ -3026,7 +3030,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
             ]),
             _: 3
           }, 8, ["modelValue", "type", "deleteType", "configure"]))
-        ])) : V("forms") && z.value ? (a(), i("div", Mr, [
+        ])) : V("forms") && z.value ? (a(), i("div", Sr, [
           G(K).viewform ? O(F.$slots, "viewform", {
             key: 0,
             model: z.value,
@@ -3042,7 +3046,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
             onDelete: zt
           }, null, 8, ["model", "apis", "deleteType"]))
         ])) : x("", !0),
-        G(K).toolbar ? O(F.$slots, "toolbar", { key: 3 }) : V("toolbar") ? (a(), i("div", Sr, [
+        G(K).toolbar ? O(F.$slots, "toolbar", { key: 3 }) : V("toolbar") ? (a(), i("div", Tr, [
           B.value ? (a(), X(Bs, {
             key: 0,
             columns: C.value,
@@ -3050,8 +3054,8 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
             onDone: I[1] || (I[1] = (Ue) => B.value = !1),
             onSave: Rt
           }, null, 8, ["columns", "prefs"])) : x("", !0),
-          s("div", Tr, [
-            s("div", Fr, [
+          s("div", Fr, [
+            s("div", Ar, [
               V("preferences") ? (a(), i("button", {
                 key: 0,
                 type: "button",
@@ -3074,7 +3078,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                     })
                   ])
                 ], -1)
-              ])], 8, Ar)) : x("", !0),
+              ])], 8, Ir)) : x("", !0),
               V("pagingNav") ? (a(), i("button", {
                 key: 1,
                 type: "button",
@@ -3093,7 +3097,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                     fill: "currentColor"
                   })
                 ], -1)
-              ])], 10, Ir)) : x("", !0),
+              ])], 10, Pr)) : x("", !0),
               V("pagingNav") ? (a(), i("button", {
                 key: 2,
                 type: "button",
@@ -3112,7 +3116,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                     fill: "currentColor"
                   })
                 ], -1)
-              ])], 10, Pr)) : x("", !0),
+              ])], 10, Dr)) : x("", !0),
               V("pagingNav") ? (a(), i("button", {
                 key: 3,
                 type: "button",
@@ -3131,7 +3135,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                     fill: "currentColor"
                   })
                 ], -1)
-              ])], 10, Dr)) : x("", !0),
+              ])], 10, Br)) : x("", !0),
               V("pagingNav") ? (a(), i("button", {
                 key: 4,
                 type: "button",
@@ -3150,20 +3154,20 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                     fill: "currentColor"
                   })
                 ], -1)
-              ])], 10, Br)) : x("", !0)
+              ])], 10, jr)) : x("", !0)
             ]),
-            V("pagingInfo") ? (a(), i("div", jr, [
-              s("div", Or, [
-                me.value ? (a(), i("span", Hr, "Querying...")) : x("", !0),
-                $e.value.length ? (a(), i("span", Rr, [
+            V("pagingInfo") ? (a(), i("div", Or, [
+              s("div", Hr, [
+                me.value ? (a(), i("span", Rr, "Querying...")) : x("", !0),
+                $e.value.length ? (a(), i("span", Er, [
                   I[14] || (I[14] = s("span", { class: "hidden xl:inline" }, " Showing Results ", -1)),
                   he(" " + T(ie.value + 1) + " - " + T(Math.min(ie.value + $e.value.length, Me.value)) + " ", 1),
                   s("span", null, " of " + T(Me.value), 1)
-                ])) : w.value.completed ? (a(), i("span", Er, "No Results")) : x("", !0)
+                ])) : w.value.completed ? (a(), i("span", Nr, "No Results")) : x("", !0)
               ])
             ])) : x("", !0),
-            s("div", Nr, [
-              V("refresh") ? (a(), i("div", zr, [
+            s("div", zr, [
+              V("refresh") ? (a(), i("div", Ur, [
                 s("button", {
                   type: "button",
                   onClick: ta,
@@ -3186,7 +3190,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                   ], -1)
                 ])], 2)
               ])) : x("", !0),
-              V("downloadCsv") ? (a(), i("div", Ur, [
+              V("downloadCsv") ? (a(), i("div", qr, [
                 s("button", {
                   type: "button",
                   onClick: sa,
@@ -3196,21 +3200,21 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                   Sl('<svg class="w-5 h-5 mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M28.781 4.405h-10.13V2.018L2 4.588v22.527l16.651 2.868v-3.538h10.13A1.162 1.162 0 0 0 30 25.349V5.5a1.162 1.162 0 0 0-1.219-1.095zm.16 21.126H18.617l-.017-1.889h2.487v-2.2h-2.506l-.012-1.3h2.518v-2.2H18.55l-.012-1.3h2.549v-2.2H18.53v-1.3h2.557v-2.2H18.53v-1.3h2.557v-2.2H18.53v-2h10.411z" fill="#20744a" fill-rule="evenodd"></path><path fill="#20744a" d="M22.487 7.439h4.323v2.2h-4.323z"></path><path fill="#20744a" d="M22.487 10.94h4.323v2.2h-4.323z"></path><path fill="#20744a" d="M22.487 14.441h4.323v2.2h-4.323z"></path><path fill="#20744a" d="M22.487 17.942h4.323v2.2h-4.323z"></path><path fill="#20744a" d="M22.487 21.443h4.323v2.2h-4.323z"></path><path fill="#fff" fill-rule="evenodd" d="M6.347 10.673l2.146-.123l1.349 3.709l1.594-3.862l2.146-.123l-2.606 5.266l2.606 5.279l-2.269-.153l-1.532-4.024l-1.533 3.871l-2.085-.184l2.422-4.663l-2.238-4.993z"></path></svg><span class="text-green-900 dark:text-green-100">Excel</span>', 2)
                 ])], 2)
               ])) : x("", !0),
-              V("copyApiUrl") ? (a(), i("div", qr, [
+              V("copyApiUrl") ? (a(), i("div", Qr, [
                 s("button", {
                   type: "button",
                   onClick: na,
                   title: "Copy API URL",
                   class: g(ee.value)
                 }, [
-                  ae.value ? (a(), i("svg", Qr, [...I[17] || (I[17] = [
+                  ae.value ? (a(), i("svg", Kr, [...I[17] || (I[17] = [
                     s("path", {
                       "stroke-linecap": "round",
                       "stroke-linejoin": "round",
                       "stroke-width": "2",
                       d: "M5 13l4 4L19 7"
                     }, null, -1)
-                  ])])) : (a(), i("svg", Kr, [...I[18] || (I[18] = [
+                  ])])) : (a(), i("svg", _r, [...I[18] || (I[18] = [
                     s("g", { fill: "none" }, [
                       s("path", {
                         d: "M8 4v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7.242a2 2 0 0 0-.602-1.43L16.083 2.57A2 2 0 0 0 14.685 2H10a2 2 0 0 0-2 2z",
@@ -3231,7 +3235,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                   I[19] || (I[19] = s("span", { class: "whitespace-nowrap" }, "Copy URL", -1))
                 ], 2)
               ])) : x("", !0),
-              ce.value && V("resetPreferences") ? (a(), i("div", _r, [
+              ce.value && V("resetPreferences") ? (a(), i("div", Zr, [
                 s("button", {
                   type: "button",
                   onClick: aa,
@@ -3251,7 +3255,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                   ], -1)
                 ])], 2)
               ])) : x("", !0),
-              V("filtersView") && fe.value > 0 ? (a(), i("div", Zr, [
+              V("filtersView") && fe.value > 0 ? (a(), i("div", Wr, [
                 s("button", {
                   type: "button",
                   onClick: I[7] || (I[7] = (Ue) => W.value = W.value == "filters" ? null : "filters"),
@@ -3271,14 +3275,14 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                       "clip-rule": "evenodd"
                     })
                   ], -1)),
-                  s("span", Wr, T(fe.value) + " " + T(fe.value == 1 ? "Filter" : "Filters"), 1),
-                  W.value != "filters" ? (a(), i("svg", Gr, [...I[21] || (I[21] = [
+                  s("span", Gr, T(fe.value) + " " + T(fe.value == 1 ? "Filter" : "Filters"), 1),
+                  W.value != "filters" ? (a(), i("svg", Jr, [...I[21] || (I[21] = [
                     s("path", {
                       "fill-rule": "evenodd",
                       d: "M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z",
                       "clip-rule": "evenodd"
                     }, null, -1)
-                  ])])) : (a(), i("svg", Jr, [...I[22] || (I[22] = [
+                  ])])) : (a(), i("svg", Xr, [...I[22] || (I[22] = [
                     s("path", {
                       "fill-rule": "evenodd",
                       d: "M5 10a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1z",
@@ -3287,7 +3291,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                   ])]))
                 ], 2)
               ])) : x("", !0),
-              V("newItem") && Le.value.Create && ra.value ? (a(), i("div", Xr, [
+              V("newItem") && Le.value.Create && ra.value ? (a(), i("div", Yr, [
                 s("button", {
                   type: "button",
                   onClick: oa,
@@ -3304,8 +3308,8 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                       fill: "currentColor"
                     })
                   ], -1)),
-                  s("span", eu, T(ia.value), 1)
-                ], 10, Yr)
+                  s("span", tu, T(ia.value), 1)
+                ], 10, eu)
               ])) : x("", !0),
               G(K).toolbarbuttons ? O(F.$slots, "toolbarbuttons", {
                 key: 6,
@@ -3329,7 +3333,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
           key: 7,
           class: "p-2"
         })) : x("", !0),
-        ne.value ? (a(), i("div", tu, [
+        ne.value ? (a(), i("div", lu, [
           pe(Ps, {
             definitions: Hs.value,
             column: ne.value.column,
@@ -3365,14 +3369,14 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
           onHeaderSelected: Ae
         }, us({
           header: we(({ column: Ue, label: gl }) => [
-            k("filtering") && ze(Ue) ? (a(), i("div", lu, [
-              s("span", su, T(gl), 1),
+            k("filtering") && ze(Ue) ? (a(), i("div", su, [
+              s("span", nu, T(gl), 1),
               pe(Mt, {
                 column: de.value.find((da) => da.name.toLowerCase() === Ue.toLowerCase()),
                 "is-open": ne.value?.column.name === Ue
               }, null, 8, ["column", "is-open"])
-            ])) : (a(), i("div", nu, [
-              s("span", au, T(gl), 1)
+            ])) : (a(), i("div", au, [
+              s("span", ou, T(gl), 1)
             ]))
           ]),
           _: 2
@@ -3387,30 +3391,30 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
       ]));
     };
   }
-}), iu = { class: "flex" }, ru = {
+}), ru = { class: "flex" }, uu = {
   key: 0,
   class: "w-4 h-4",
   xmlns: "http://www.w3.org/2000/svg",
   viewBox: "0 0 24 24"
-}, uu = {
+}, du = {
   key: 2,
   class: "w-4 h-4",
   xmlns: "http://www.w3.org/2000/svg",
   viewBox: "0 0 20 20"
-}, du = {
+}, cu = {
   key: 3,
   class: "w-4 h-4",
   xmlns: "http://www.w3.org/2000/svg",
   viewBox: "0 0 20 20"
-}, cu = /* @__PURE__ */ ue({
+}, fu = /* @__PURE__ */ ue({
   __name: "SettingsIcons",
   props: {
     column: {},
     isOpen: { type: Boolean }
   },
   setup(e) {
-    return (t, l) => (a(), i("div", iu, [
-      e.column?.settings?.filters?.length ? (a(), i("svg", ru, [...l[0] || (l[0] = [
+    return (t, l) => (a(), i("div", ru, [
+      e.column?.settings?.filters?.length ? (a(), i("svg", uu, [...l[0] || (l[0] = [
         s("g", { fill: "none" }, [
           s("path", {
             d: "M3 4a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v2.586a1 1 0 0 1-.293.707l-6.414 6.414a1 1 0 0 0-.293.707V17l-4 4v-6.586a1 1 0 0 0-.293-.707L3.293 7.293A1 1 0 0 1 3 6.586V4z",
@@ -3435,14 +3439,14 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
           fill: "currentColor"
         }, null, -1)
       ])], 2)),
-      e.column?.settings?.sort === "ASC" ? (a(), i("svg", uu, [...l[2] || (l[2] = [
+      e.column?.settings?.sort === "ASC" ? (a(), i("svg", du, [...l[2] || (l[2] = [
         s("g", { fill: "none" }, [
           s("path", {
             d: "M8.998 4.71L6.354 7.354a.5.5 0 1 1-.708-.707L9.115 3.18A.499.499 0 0 1 9.498 3H9.5a.5.5 0 0 1 .354.147l.01.01l3.49 3.49a.5.5 0 1 1-.707.707l-2.65-2.649V16.5a.5.5 0 0 1-1 0V4.71z",
             fill: "currentColor"
           })
         ], -1)
-      ])])) : e.column?.settings?.sort === "DESC" ? (a(), i("svg", du, [...l[3] || (l[3] = [
+      ])])) : e.column?.settings?.sort === "DESC" ? (a(), i("svg", cu, [...l[3] || (l[3] = [
         s("g", { fill: "none" }, [
           s("path", {
             d: "M10.002 15.29l2.645-2.644a.5.5 0 0 1 .707.707L9.886 16.82a.5.5 0 0 1-.384.179h-.001a.5.5 0 0 1-.354-.147l-.01-.01l-3.49-3.49a.5.5 0 1 1 .707-.707l2.648 2.649V3.5a.5.5 0 0 1 1 0v11.79z",
@@ -3452,7 +3456,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
       ])])) : x("", !0)
     ]));
   }
-}), fu = /* @__PURE__ */ ue({
+}), vu = /* @__PURE__ */ ue({
   __name: "EnsureAccessDialog",
   props: {
     title: {},
@@ -3488,13 +3492,13 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
       ]), 1032, ["title"])) : x("", !0);
     };
   }
-}), vu = ["for"], mu = ["type", "name", "id", "placeholder", "value", "aria-invalid", "aria-describedby"], gu = {
+}), mu = ["for"], gu = ["type", "name", "id", "placeholder", "value", "aria-invalid", "aria-describedby"], pu = {
   key: 0,
   class: "absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none"
-}, pu = ["id"], yu = ["id"], hu = {
+}, yu = ["id"], hu = ["id"], bu = {
   inheritAttrs: !1
-}, bu = /* @__PURE__ */ ue({
-  ...hu,
+}, wu = /* @__PURE__ */ ue({
+  ...bu,
   __name: "TextInput",
   props: {
     status: {},
@@ -3540,7 +3544,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
         key: 0,
         for: e.id,
         class: g(`block text-sm font-medium text-gray-700 dark:text-gray-300 ${e.labelClass ?? ""}`)
-      }, T(d.value), 11, vu)) : x("", !0),
+      }, T(d.value), 11, mu)) : x("", !0),
       s("div", {
         class: g(v("mt-1 relative"))
       }, [
@@ -3557,8 +3561,8 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
           "aria-invalid": $.value != null,
           "aria-describedby": `${e.id}-error`,
           step: "any"
-        }, G(ft)(y.$attrs, ["class", "value"])), null, 16, mu),
-        $.value ? (a(), i("div", gu, [...h[1] || (h[1] = [
+        }, G(ft)(y.$attrs, ["class", "value"])), null, 16, gu),
+        $.value ? (a(), i("div", pu, [...h[1] || (h[1] = [
           s("svg", {
             class: "h-5 w-5 text-red-500",
             xmlns: "http://www.w3.org/2000/svg",
@@ -3578,11 +3582,11 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
         key: 1,
         class: "mt-2 text-sm text-red-500",
         id: `${e.id}-error`
-      }, T($.value), 9, pu)) : e.help ? (a(), i("p", {
+      }, T($.value), 9, yu)) : e.help ? (a(), i("p", {
         key: 2,
         class: "mt-2 text-sm text-gray-500",
         id: `${e.id}-description`
-      }, T(e.help), 9, yu)) : x("", !0),
+      }, T(e.help), 9, hu)) : x("", !0),
       O(y.$slots, "footer", Ce({
         inputElement: o.value,
         id: e.id,
@@ -3591,10 +3595,10 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
       }, y.$attrs))
     ], 2));
   }
-}), wu = ["for"], xu = { class: "mt-1 relative" }, ku = ["name", "id", "placeholder", "aria-invalid", "aria-describedby"], Cu = ["id"], $u = ["id"], Lu = {
+}), xu = ["for"], ku = { class: "mt-1 relative" }, Cu = ["name", "id", "placeholder", "aria-invalid", "aria-describedby"], $u = ["id"], Lu = ["id"], Vu = {
   inheritAttrs: !1
-}, Vu = /* @__PURE__ */ ue({
-  ...Lu,
+}, Mu = /* @__PURE__ */ ue({
+  ...Vu,
   __name: "TextareaInput",
   props: {
     status: {},
@@ -3622,8 +3626,8 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
         key: 0,
         for: e.id,
         class: g(`block text-sm font-medium text-gray-700 dark:text-gray-300 ${e.labelClass ?? ""}`)
-      }, T(n.value), 11, wu)) : x("", !0),
-      s("div", xu, [
+      }, T(n.value), 11, xu)) : x("", !0),
+      s("div", ku, [
         s("textarea", Ce({
           name: e.id,
           id: e.id,
@@ -3632,23 +3636,23 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
           onInput: v[0] || (v[0] = (p) => f.$emit("update:modelValue", t(p.target))),
           "aria-invalid": u.value != null,
           "aria-describedby": `${e.id}-error`
-        }, G(ft)(f.$attrs, ["class"])), T(e.modelValue), 17, ku)
+        }, G(ft)(f.$attrs, ["class"])), T(e.modelValue), 17, Cu)
       ]),
       u.value ? (a(), i("p", {
         key: 1,
         class: "mt-2 text-sm text-red-500",
         id: `${e.id}-error`
-      }, T(u.value), 9, Cu)) : e.help ? (a(), i("p", {
+      }, T(u.value), 9, $u)) : e.help ? (a(), i("p", {
         key: 2,
         class: "mt-2 text-sm text-gray-500",
         id: `${e.id}-description`
-      }, T(e.help), 9, $u)) : x("", !0)
+      }, T(e.help), 9, Lu)) : x("", !0)
     ], 2));
   }
-}), Mu = ["for"], Su = ["id", "name", "value", "aria-invalid", "aria-describedby"], Tu = ["value"], Fu = ["id"], Au = {
+}), Su = ["for"], Tu = ["id", "name", "value", "aria-invalid", "aria-describedby"], Fu = ["value"], Au = ["id"], Iu = {
   inheritAttrs: !1
-}, Iu = /* @__PURE__ */ ue({
-  ...Au,
+}, Pu = /* @__PURE__ */ ue({
+  ...Iu,
   __name: "SelectInput",
   props: {
     status: {},
@@ -3677,7 +3681,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
         key: 0,
         for: e.id,
         class: g(`block text-sm font-medium text-gray-700 dark:text-gray-300 ${e.labelClass ?? ""}`)
-      }, T(n.value), 11, Mu)) : x("", !0),
+      }, T(n.value), 11, Su)) : x("", !0),
       s("select", Ce({
         id: e.id,
         name: e.id,
@@ -3689,27 +3693,27 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
       }, G(ft)(f.$attrs, ["class"])), [
         (a(!0), i(Ve, null, Se(u.value, (p) => (a(), i("option", {
           value: p.key
-        }, T(p.value), 9, Tu))), 256))
-      ], 16, Su),
+        }, T(p.value), 9, Fu))), 256))
+      ], 16, Tu),
       r.value ? (a(), i("p", {
         key: 1,
         class: "mt-2 text-sm text-red-500",
         id: `${e.id}-error`
-      }, T(r.value), 9, Fu)) : x("", !0)
+      }, T(r.value), 9, Au)) : x("", !0)
     ], 2));
   }
-}), Pu = { class: "flex items-center h-5" }, Du = ["id", "name", "checked"], Bu = { class: "ml-3 text-sm" }, ju = ["for"], Ou = {
+}), Du = { class: "flex items-center h-5" }, Bu = ["id", "name", "checked"], ju = { class: "ml-3 text-sm" }, Ou = ["for"], Hu = {
   key: 0,
   class: "mt-2 text-sm text-red-500",
   id: "`${id}-error`"
-}, Hu = {
+}, Ru = {
   key: 1,
   class: "mt-2 text-sm text-gray-500",
   id: "`${id}-description`"
-}, Ru = {
+}, Eu = {
   inheritAttrs: !1
-}, Eu = /* @__PURE__ */ ue({
-  ...Ru,
+}, Nu = /* @__PURE__ */ ue({
+  ...Eu,
   __name: "CheckboxInput",
   props: {
     modelValue: { type: Boolean },
@@ -3729,7 +3733,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
     return (d, f) => (a(), i("div", {
       class: g(["relative flex items-start", d.$attrs.class])
     }, [
-      s("div", Pu, [
+      s("div", Du, [
         s("input", Ce({
           id: e.id,
           name: e.id,
@@ -3737,24 +3741,24 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
           checked: e.modelValue,
           onInput: f[0] || (f[0] = (v) => d.$emit("update:modelValue", v.target.checked)),
           class: u.value
-        }, G(ft)(d.$attrs, ["class"])), null, 16, Du)
+        }, G(ft)(d.$attrs, ["class"])), null, 16, Bu)
       ]),
-      s("div", Bu, [
+      s("div", ju, [
         s("label", {
           for: e.id,
           class: g(`font-medium text-gray-700 dark:text-gray-300 ${e.labelClass ?? ""}`)
-        }, T(n.value), 11, ju),
-        r.value ? (a(), i("p", Ou, T(r.value), 1)) : e.help ? (a(), i("p", Hu, T(e.help), 1)) : x("", !0)
+        }, T(n.value), 11, Ou),
+        r.value ? (a(), i("p", Hu, T(r.value), 1)) : e.help ? (a(), i("p", Ru, T(e.help), 1)) : x("", !0)
       ])
     ], 2));
   }
-}), Nu = ["id"], zu = ["for"], Uu = { class: "mt-1 relative" }, qu = ["id", "name", "value"], Qu = { class: "flex flex-wrap pb-1.5" }, Ku = { class: "pt-1.5 pl-1" }, _u = { class: "inline-flex rounded-full items-center py-0.5 pl-2.5 pr-1 text-sm font-medium bg-indigo-100 dark:bg-indigo-800 text-indigo-700 dark:text-indigo-300" }, Zu = ["onClick"], Wu = { class: "pt-1.5 pl-1 shrink" }, Gu = ["type", "name", "id", "aria-invalid", "aria-describedby"], Ju = ["id"], Xu = ["onMouseover", "onClick"], Yu = { class: "block truncate" }, ed = {
+}), zu = ["id"], Uu = ["for"], qu = { class: "mt-1 relative" }, Qu = ["id", "name", "value"], Ku = { class: "flex flex-wrap pb-1.5" }, _u = { class: "pt-1.5 pl-1" }, Zu = { class: "inline-flex rounded-full items-center py-0.5 pl-2.5 pr-1 text-sm font-medium bg-indigo-100 dark:bg-indigo-800 text-indigo-700 dark:text-indigo-300" }, Wu = ["onClick"], Gu = { class: "pt-1.5 pl-1 shrink" }, Ju = ["type", "name", "id", "aria-invalid", "aria-describedby"], Xu = ["id"], Yu = ["onMouseover", "onClick"], ed = { class: "block truncate" }, td = {
   key: 1,
   class: "absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none"
-}, td = ["id"], ld = ["id"], sd = {
+}, ld = ["id"], sd = ["id"], nd = {
   inheritAttrs: !1
-}, nd = /* @__PURE__ */ ue({
-  ...sd,
+}, ad = /* @__PURE__ */ ue({
+  ...nd,
   __name: "TagInput",
   props: {
     status: {},
@@ -3890,23 +3894,23 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
         key: 0,
         for: e.id,
         class: g(`block text-sm font-medium text-gray-700 dark:text-gray-300 ${e.labelClass ?? ""}`)
-      }, T(y.value), 11, zu)) : x("", !0),
-      s("div", Uu, [
+      }, T(y.value), 11, Uu)) : x("", !0),
+      s("div", qu, [
         s("input", {
           type: "hidden",
           id: e.id,
           name: e.id,
           value: r.value.join(",")
-        }, null, 8, qu),
+        }, null, 8, Qu),
         s("button", {
           class: g(V.value),
           onClick: He(Y, ["prevent"]),
           onFocus: P[2] || (P[2] = (de) => d.value = !0),
           tabindex: "-1"
         }, [
-          s("div", Qu, [
-            (a(!0), i(Ve, null, Se(r.value, (de) => (a(), i("div", Ku, [
-              s("span", _u, [
+          s("div", Ku, [
+            (a(!0), i(Ve, null, Se(r.value, (de) => (a(), i("div", _u, [
+              s("span", Zu, [
                 he(T(de) + " ", 1),
                 s("button", {
                   type: "button",
@@ -3925,10 +3929,10 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                       d: "M1 1l6 6m0-6L1 7"
                     })
                   ], -1)
-                ])], 8, Zu)
+                ])], 8, Wu)
               ])
             ]))), 256)),
-            s("div", Wu, [
+            s("div", Gu, [
               Pt(s("input", Ce({
                 ref_key: "txtInput",
                 ref: p,
@@ -3951,7 +3955,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                 onFocus: Q,
                 onBlur: q,
                 onClick: P[1] || (P[1] = (de) => d.value = !0)
-              }, G(ft)(C.$attrs, ["class", "required"])), null, 16, Gu), [
+              }, G(ft)(C.$attrs, ["class", "required"])), null, 16, Ju), [
                 [ma, $.value]
               ])
             ])
@@ -3971,10 +3975,10 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
             role: "option",
             tabindex: "-1"
           }, [
-            s("span", Yu, T(de), 1)
-          ], 42, Xu))), 256))
-        ], 40, Ju)) : x("", !0),
-        k.value ? (a(), i("div", ed, [...P[4] || (P[4] = [
+            s("span", ed, T(de), 1)
+          ], 42, Yu))), 256))
+        ], 40, Xu)) : x("", !0),
+        k.value ? (a(), i("div", td, [...P[4] || (P[4] = [
           s("svg", {
             class: "h-5 w-5 text-red-500",
             xmlns: "http://www.w3.org/2000/svg",
@@ -3994,26 +3998,26 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
         key: 1,
         class: "mt-2 text-sm text-red-500",
         id: `${e.id}-error`
-      }, T(k.value), 9, td)) : e.help ? (a(), i("p", {
+      }, T(k.value), 9, ld)) : e.help ? (a(), i("p", {
         key: 2,
         class: "mt-2 text-sm text-gray-500",
         id: `${e.id}-description`
-      }, T(e.help), 9, ld)) : x("", !0)
-    ], 10, Nu));
+      }, T(e.help), 9, sd)) : x("", !0)
+    ], 10, zu));
   }
-}), ad = { class: "relative flex-grow mr-2 sm:mr-4" }, od = ["for"], id = { class: "block mt-2" }, rd = { class: "sr-only" }, ud = ["multiple", "name", "id", "placeholder", "aria-invalid", "aria-describedby"], dd = {
+}), od = { class: "relative flex-grow mr-2 sm:mr-4" }, id = ["for"], rd = { class: "block mt-2" }, ud = { class: "sr-only" }, dd = ["multiple", "name", "id", "placeholder", "aria-invalid", "aria-describedby"], cd = {
   key: 0,
   class: "absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none"
-}, cd = ["id"], fd = ["id"], vd = { key: 0 }, md = ["title"], gd = ["alt", "src"], pd = {
+}, fd = ["id"], vd = ["id"], md = { key: 0 }, gd = ["title"], pd = ["alt", "src"], yd = {
   key: 1,
   class: "mt-3"
-}, yd = { class: "w-full" }, hd = { class: "pr-6 align-bottom pb-2" }, bd = ["title"], wd = ["src", "onError"], xd = ["href"], kd = {
+}, hd = { class: "w-full" }, bd = { class: "pr-6 align-bottom pb-2" }, wd = ["title"], xd = ["src", "onError"], kd = ["href"], Cd = {
   key: 1,
   class: "overflow-hidden"
-}, Cd = { class: "align-top pb-2 whitespace-nowrap" }, $d = {
+}, $d = { class: "align-top pb-2 whitespace-nowrap" }, Ld = {
   key: 0,
   class: "text-gray-500 dark:text-gray-400 text-sm bg-white dark:bg-black"
-}, Ld = /* @__PURE__ */ ue({
+}, Vd = /* @__PURE__ */ ue({
   __name: "FileInput",
   props: {
     multiple: { type: Boolean },
@@ -4064,14 +4068,14 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
     return jt(vn), (D, Q) => (a(), i("div", {
       class: g(["flex", e.multiple ? "flex-col" : "justify-between"])
     }, [
-      s("div", ad, [
+      s("div", od, [
         v.value ? (a(), i("label", {
           key: 0,
           for: e.id,
           class: g(`block text-sm font-medium text-gray-700 dark:text-gray-300 ${e.labelClass ?? ""}`)
-        }, T(v.value), 11, od)) : x("", !0),
-        s("div", id, [
-          s("span", rd, T(e.help ?? v.value), 1),
+        }, T(v.value), 11, id)) : x("", !0),
+        s("div", rd, [
+          s("span", ud, T(e.help ?? v.value), 1),
           s("input", Ce({
             ref_key: "input",
             ref: l,
@@ -4083,8 +4087,8 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
             placeholder: p.value,
             "aria-invalid": b.value != null,
             "aria-describedby": `${e.id}-error`
-          }, D.$attrs, { onChange: h }), null, 16, ud),
-          b.value ? (a(), i("div", dd, [...Q[0] || (Q[0] = [
+          }, D.$attrs, { onChange: h }), null, 16, dd),
+          b.value ? (a(), i("div", cd, [...Q[0] || (Q[0] = [
             s("svg", {
               class: "h-5 w-5 text-red-500",
               xmlns: "http://www.w3.org/2000/svg",
@@ -4104,16 +4108,16 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
           key: 1,
           class: "mt-2 text-sm text-red-500",
           id: `${e.id}-error`
-        }, T(b.value), 9, cd)) : e.help ? (a(), i("p", {
+        }, T(b.value), 9, fd)) : e.help ? (a(), i("p", {
           key: 2,
           class: "mt-2 text-sm text-gray-500",
           id: `${e.id}-description`
-        }, T(e.help), 9, fd)) : x("", !0)
+        }, T(e.help), 9, vd)) : x("", !0)
       ]),
-      e.multiple ? (a(), i("div", pd, [
-        s("table", yd, [
+      e.multiple ? (a(), i("div", yd, [
+        s("table", hd, [
           (a(!0), i(Ve, null, Se(d.value, (q) => (a(), i("tr", null, [
-            s("td", hd, [
+            s("td", bd, [
               s("div", {
                 class: "flex w-full",
                 title: V(q.filePath) ? "" : q.filePath
@@ -4122,21 +4126,21 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                   src: r[G(Tt)(q.filePath)] || G(n)(G(Tt)(q.filePath)),
                   class: g(["mr-2 h-8 w-8", Y(q.filePath)]),
                   onError: (S) => r[G(Tt)(q.filePath)] = G(o)(G(Tt)(q.filePath))
-                }, null, 42, wd),
-                V(q.filePath) ? (a(), i("span", kd, T(q.fileName), 1)) : (a(), i("a", {
+                }, null, 42, xd),
+                V(q.filePath) ? (a(), i("span", Cd, T(q.fileName), 1)) : (a(), i("a", {
                   key: 0,
                   href: G(n)(q.filePath || ""),
                   target: "_blank",
                   class: "overflow-hidden"
-                }, T(q.fileName), 9, xd))
-              ], 8, bd)
+                }, T(q.fileName), 9, kd))
+              ], 8, wd)
             ]),
-            s("td", Cd, [
-              q.contentLength && q.contentLength > 0 ? (a(), i("span", $d, T(G(gs)(q.contentLength)), 1)) : x("", !0)
+            s("td", $d, [
+              q.contentLength && q.contentLength > 0 ? (a(), i("span", Ld, T(G(gs)(q.contentLength)), 1)) : x("", !0)
             ])
           ]))), 256))
         ])
-      ])) : (a(), i("div", vd, [
+      ])) : (a(), i("div", md, [
         M.value ? (a(), i("div", {
           key: 0,
           class: "shrink-0 cursor-pointer",
@@ -4148,16 +4152,16 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
             alt: `Current ${v.value ?? ""}`,
             src: u.value || G(n)(M.value),
             onError: E
-          }, null, 42, gd)
-        ], 8, md)) : x("", !0)
+          }, null, 42, pd)
+        ], 8, gd)) : x("", !0)
       ]))
     ], 2));
   }
-}), Vd = ["id"], Md = ["for"], Sd = { class: "relative mt-1" }, Td = ["id", "placeholder", "readonly"], Fd = ["id"], Ad = ["onMouseover", "onClick"], Id = {
+}), Md = ["id"], Sd = ["for"], Td = { class: "relative mt-1" }, Fd = ["id", "placeholder", "readonly"], Ad = ["id"], Id = ["onMouseover", "onClick"], Pd = {
   key: 2,
   class: "absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none",
   tabindex: "-1"
-}, Pd = ["id"], Dd = ["id"], Bd = /* @__PURE__ */ ue({
+}, Dd = ["id"], Bd = ["id"], jd = /* @__PURE__ */ ue({
   __name: "Autocomplete",
   props: {
     status: {},
@@ -4285,8 +4289,8 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
         key: 0,
         for: `${e.id}-text`,
         class: "block text-sm font-medium text-gray-700 dark:text-gray-300"
-      }, T(d.value), 9, Md)) : x("", !0),
-      s("div", Sd, [
+      }, T(d.value), 9, Sd)) : x("", !0),
+      s("div", Td, [
         Pt(s("input", Ce({
           ref_key: "txtInput",
           ref: $,
@@ -4306,7 +4310,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
           onClick: K,
           onPaste: D,
           required: !1
-        }, R.$attrs), null, 16, Td), [
+        }, R.$attrs), null, 16, Fd), [
           [ga, b.value]
         ]),
         s("button", {
@@ -4368,15 +4372,15 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                 })
               ], -1)
             ])], 2)) : x("", !0)
-          ], 42, Ad))), 256))
-        ], 40, Fd)) : !e.multiple && e.modelValue ? (a(), i("div", {
+          ], 42, Id))), 256))
+        ], 40, Ad)) : !e.multiple && e.modelValue ? (a(), i("div", {
           key: 1,
           onKeydown: S,
           class: "h-8 -mt-8 ml-3 pt-0.5 pointer-events-none"
         }, [
           typeof e.modelValue == "string" ? O(R.$slots, "item", $l(Ce({ key: 0 }, { key: e.modelValue, value: e.modelValue }))) : O(R.$slots, "item", $l(Ce({ key: 1 }, e.modelValue)))
         ], 32)) : x("", !0),
-        v.value ? (a(), i("div", Id, [...C[4] || (C[4] = [
+        v.value ? (a(), i("div", Pd, [...C[4] || (C[4] = [
           s("svg", {
             class: "h-5 w-5 text-red-500",
             xmlns: "http://www.w3.org/2000/svg",
@@ -4396,14 +4400,14 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
         key: 1,
         class: "mt-2 text-sm text-red-500",
         id: `${e.id}-error`
-      }, T(v.value), 9, Pd)) : e.help ? (a(), i("p", {
+      }, T(v.value), 9, Dd)) : e.help ? (a(), i("p", {
         key: 2,
         class: "mt-2 text-sm text-gray-500",
         id: `${e.id}-description`
-      }, T(e.help), 9, Dd)) : x("", !0)
-    ], 8, Vd));
+      }, T(e.help), 9, Bd)) : x("", !0)
+    ], 8, Md));
   }
-}), jd = ["id", "name", "value"], Od = { class: "block truncate" }, Hd = /* @__PURE__ */ ue({
+}), Od = ["id", "name", "value"], Hd = { class: "block truncate" }, Rd = /* @__PURE__ */ ue({
   __name: "Combobox",
   props: {
     id: {},
@@ -4444,7 +4448,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
           id: e.id,
           name: e.id,
           value: b.value
-        }, null, 8, jd),
+        }, null, 8, Od),
         pe(k, Ce({
           ref_key: "input",
           ref: d,
@@ -4460,14 +4464,14 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
           ]
         }), {
           item: we(({ key: V, value: M }) => [
-            s("span", Od, T(M), 1)
+            s("span", Hd, T(M), 1)
           ]),
           _: 1
         }, 16, ["id", "options", "multiple", "modelValue"])
       ], 64);
     };
   }
-}), Rd = /* @__PURE__ */ ue({
+}), Ed = /* @__PURE__ */ ue({
   __name: "DynamicInput",
   props: {
     input: {},
@@ -4577,16 +4581,16 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
       }, u.value), null, 16, ["type", "id", "modelValue", "status", "input-class", "label-class"]));
     };
   }
-}), Ed = { class: "lookup-field" }, Nd = ["name", "value"], zd = {
+}), Nd = { class: "lookup-field" }, zd = ["name", "value"], Ud = {
   key: 0,
   class: "flex justify-between"
-}, Ud = ["for"], qd = {
+}, qd = ["for"], Qd = {
   key: 0,
   class: "flex items-center"
-}, Qd = { class: "text-sm text-gray-500 dark:text-gray-400 pr-1" }, Kd = {
+}, Kd = { class: "text-sm text-gray-500 dark:text-gray-400 pr-1" }, _d = {
   key: 1,
   class: "mt-1 relative"
-}, _d = { class: "w-full inline-flex truncate" }, Zd = { class: "text-blue-700 dark:text-blue-300 flex cursor-pointer" }, Wd = ["id"], Gd = ["id"], Jd = /* @__PURE__ */ ue({
+}, Zd = { class: "w-full inline-flex truncate" }, Wd = { class: "text-blue-700 dark:text-blue-300 flex cursor-pointer" }, Gd = ["id"], Jd = ["id"], Xd = /* @__PURE__ */ ue({
   __name: "LookupInput",
   props: {
     id: {},
@@ -4668,19 +4672,19 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
       }
     }), (Q, q) => {
       const S = U("Icon");
-      return a(), i("div", Ed, [
+      return a(), i("div", Nd, [
         s("input", {
           type: "hidden",
           name: u.value,
           value: y.value
-        }, null, 8, Nd),
-        d.value ? (a(), i("div", zd, [
+        }, null, 8, zd),
+        d.value ? (a(), i("div", Ud, [
           s("label", {
             for: u.value,
             class: g(`block text-sm font-medium text-gray-700 dark:text-gray-300 ${e.labelClass ?? ""}`)
-          }, T(d.value), 11, Ud),
-          y.value ? (a(), i("div", qd, [
-            s("span", Qd, T(y.value), 1),
+          }, T(d.value), 11, qd),
+          y.value ? (a(), i("div", Qd, [
+            s("span", Kd, T(y.value), 1),
             s("button", {
               onClick: D,
               type: "button",
@@ -4706,7 +4710,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
             ])])
           ])) : x("", !0)
         ])) : x("", !0),
-        M.value ? (a(), i("div", Kd, [
+        M.value ? (a(), i("div", _d, [
           s("button", {
             type: "button",
             class: "lookup flex relative w-full bg-white dark:bg-black border border-gray-300 dark:border-gray-700 rounded-md shadow-sm pl-3 pr-10 py-2 text-left focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm",
@@ -4715,8 +4719,8 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
             "aria-expanded": "true",
             "aria-labelledby": "listbox-label"
           }, [
-            s("span", _d, [
-              s("span", Zd, [
+            s("span", Zd, [
+              s("span", Wd, [
                 pe(S, {
                   class: "mr-1 w-5 h-5",
                   image: k.value
@@ -4745,15 +4749,15 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
           key: 2,
           class: "mt-2 text-sm text-red-500",
           id: `${u.value}-error`
-        }, T(p.value), 9, Wd)) : e.help ? (a(), i("p", {
+        }, T(p.value), 9, Gd)) : e.help ? (a(), i("p", {
           key: 3,
           class: "mt-2 text-sm text-gray-500",
           id: `${u.value}-description`
-        }, T(e.help), 9, Gd)) : x("", !0)
+        }, T(e.help), 9, Jd)) : x("", !0)
       ]);
     };
   }
-}), Xd = /* @__PURE__ */ ue({
+}), Yd = /* @__PURE__ */ ue({
   __name: "AutoFormFields",
   props: {
     modelValue: {},
@@ -4854,13 +4858,13 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
       ], 64);
     };
   }
-}), Yd = { key: 0 }, ec = { class: "text-red-700" }, tc = { key: 0 }, lc = { key: 2 }, sc = ["innerHTML"], nc = { class: "flex justify-end" }, ac = {
+}), ec = { key: 0 }, tc = { class: "text-red-700" }, lc = { key: 0 }, sc = { key: 2 }, nc = ["innerHTML"], ac = { class: "flex justify-end" }, oc = {
   key: 2,
   class: "relative z-10",
   "aria-labelledby": "slide-over-title",
   role: "dialog",
   "aria-modal": "true"
-}, oc = { class: "fixed inset-0 overflow-hidden" }, ic = { class: "flex min-h-0 flex-1 flex-col overflow-auto" }, rc = { class: "flex-1" }, uc = { class: "bg-gray-50 dark:bg-gray-900 px-4 py-6 sm:px-6" }, dc = { class: "flex items-start justify-between space-x-3" }, cc = { class: "space-y-1" }, fc = { key: 0 }, vc = { key: 2 }, mc = ["innerHTML"], gc = { class: "flex h-7 items-center" }, pc = { class: "flex justify-end" }, yc = /* @__PURE__ */ ue({
+}, ic = { class: "fixed inset-0 overflow-hidden" }, rc = { class: "flex min-h-0 flex-1 flex-col overflow-auto" }, uc = { class: "flex-1" }, dc = { class: "bg-gray-50 dark:bg-gray-900 px-4 py-6 sm:px-6" }, cc = { class: "flex items-start justify-between space-x-3" }, fc = { class: "space-y-1" }, vc = { key: 0 }, mc = { key: 2 }, gc = ["innerHTML"], pc = { class: "flex h-7 items-center" }, yc = { class: "flex justify-end" }, hc = /* @__PURE__ */ ue({
   __name: "AutoForm",
   props: {
     type: {},
@@ -4967,13 +4971,13 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
               s("div", {
                 class: g(e.headerClass)
               }, [
-                B.$slots.heading ? (a(), i("div", tc, [
+                B.$slots.heading ? (a(), i("div", lc, [
                   O(B.$slots, "heading")
                 ])) : (a(), i("h3", {
                   key: 1,
                   class: g(S.value)
                 }, T(se.value), 3)),
-                B.$slots.subheading ? (a(), i("div", lc, [
+                B.$slots.subheading ? (a(), i("div", sc, [
                   O(B.$slots, "subheading")
                 ])) : e.subHeading ? (a(), i("p", {
                   key: 3,
@@ -4982,7 +4986,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                   key: 4,
                   class: g(["notes", L.value]),
                   innerHTML: j.value?.notes
-                }, null, 10, sc)) : x("", !0)
+                }, null, 10, nc)) : x("", !0)
               ], 2),
               O(B.$slots, "header", {
                 instance: Pe()?.exposed,
@@ -5021,7 +5025,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                 s("div", null, [
                   e.showLoading && te.value ? (a(), X(ae, { key: 0 })) : x("", !0)
                 ]),
-                s("div", nc, [
+                s("div", ac, [
                   ne[6] || (ne[6] = s("div", null, null, -1)),
                   pe(oe, {
                     disabled: te.value || (e.allowSubmit ? !e.allowSubmit(_.value) : !1)
@@ -5039,9 +5043,9 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
               ], 2)
             ])
           ], 34)
-        ], 2)) : (a(), i("div", ac, [
+        ], 2)) : (a(), i("div", oc, [
           ne[8] || (ne[8] = s("div", { class: "fixed inset-0" }, null, -1)),
-          s("div", oc, [
+          s("div", ic, [
             s("div", {
               onMousedown: J,
               class: "absolute inset-0 overflow-hidden"
@@ -5060,18 +5064,18 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                     class: g(q.value),
                     onSubmit: ne[1] || (ne[1] = He((Fe) => C(Fe.target), ["prevent"]))
                   }, [
-                    s("div", ic, [
-                      s("div", rc, [
-                        s("div", uc, [
-                          s("div", dc, [
-                            s("div", cc, [
-                              B.$slots.heading ? (a(), i("div", fc, [
+                    s("div", rc, [
+                      s("div", uc, [
+                        s("div", dc, [
+                          s("div", cc, [
+                            s("div", fc, [
+                              B.$slots.heading ? (a(), i("div", vc, [
                                 O(B.$slots, "heading")
                               ])) : (a(), i("h3", {
                                 key: 1,
                                 class: g(S.value)
                               }, T(se.value), 3)),
-                              B.$slots.subheading ? (a(), i("div", vc, [
+                              B.$slots.subheading ? (a(), i("div", mc, [
                                 O(B.$slots, "subheading")
                               ])) : e.subHeading ? (a(), i("p", {
                                 key: 3,
@@ -5080,9 +5084,9 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                                 key: 4,
                                 class: g(["notes", L.value]),
                                 innerHTML: j.value?.notes
-                              }, null, 10, mc)) : x("", !0)
+                              }, null, 10, gc)) : x("", !0)
                             ]),
-                            s("div", gc, [
+                            s("div", pc, [
                               pe(me, {
                                 "button-class": "bg-gray-50 dark:bg-gray-900",
                                 onClose: J
@@ -5123,7 +5127,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                       s("div", null, [
                         e.showLoading && te.value ? (a(), X(ae, { key: 0 })) : x("", !0)
                       ]),
-                      s("div", pc, [
+                      s("div", yc, [
                         pe(ce, {
                           onClick: J,
                           disabled: te.value
@@ -5153,8 +5157,8 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
               ], 32)
             ], 32)
           ])
-        ])) : (a(), i("div", Yd, [
-          s("p", ec, [
+        ])) : (a(), i("div", ec, [
+          s("p", tc, [
             ne[3] || (ne[3] = he("Could not create form for unknown ", -1)),
             ne[4] || (ne[4] = s("b", null, "type", -1)),
             he(" " + T(ee.value), 1)
@@ -5169,13 +5173,13 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
       ]);
     };
   }
-}), hc = { key: 0 }, bc = { class: "text-red-700" }, wc = { key: 0 }, xc = { key: 2 }, kc = ["innerHTML"], Cc = { class: "flex justify-end" }, $c = {
+}), bc = { key: 0 }, wc = { class: "text-red-700" }, xc = { key: 0 }, kc = { key: 2 }, Cc = ["innerHTML"], $c = { class: "flex justify-end" }, Lc = {
   key: 2,
   class: "relative z-10",
   "aria-labelledby": "slide-over-title",
   role: "dialog",
   "aria-modal": "true"
-}, Lc = { class: "fixed inset-0 overflow-hidden" }, Vc = { class: "flex min-h-0 flex-1 flex-col overflow-auto" }, Mc = { class: "flex-1" }, Sc = { class: "bg-gray-50 dark:bg-gray-900 px-4 py-6 sm:px-6" }, Tc = { class: "flex items-start justify-between space-x-3" }, Fc = { class: "space-y-1" }, Ac = { key: 0 }, Ic = { key: 2 }, Pc = ["innerHTML"], Dc = { class: "flex h-7 items-center" }, Bc = { class: "flex justify-end" }, jc = /* @__PURE__ */ ue({
+}, Vc = { class: "fixed inset-0 overflow-hidden" }, Mc = { class: "flex min-h-0 flex-1 flex-col overflow-auto" }, Sc = { class: "flex-1" }, Tc = { class: "bg-gray-50 dark:bg-gray-900 px-4 py-6 sm:px-6" }, Fc = { class: "flex items-start justify-between space-x-3" }, Ac = { class: "space-y-1" }, Ic = { key: 0 }, Pc = { key: 2 }, Dc = ["innerHTML"], Bc = { class: "flex h-7 items-center" }, jc = { class: "flex justify-end" }, Oc = /* @__PURE__ */ ue({
   __name: "AutoCreateForm",
   props: {
     type: {},
@@ -5265,13 +5269,13 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
               class: g(le.value)
             }, [
               s("div", null, [
-                z.$slots.heading ? (a(), i("div", wc, [
+                z.$slots.heading ? (a(), i("div", xc, [
                   O(z.$slots, "heading")
                 ])) : (a(), i("h3", {
                   key: 1,
                   class: g(ee.value)
                 }, T(te.value), 3)),
-                z.$slots.subheading ? (a(), i("div", xc, [
+                z.$slots.subheading ? (a(), i("div", kc, [
                   O(z.$slots, "subheading")
                 ])) : e.subHeading ? (a(), i("p", {
                   key: 3,
@@ -5280,7 +5284,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                   key: 4,
                   class: g(["notes", j.value]),
                   innerHTML: Q.value?.notes
-                }, null, 10, kc)) : x("", !0)
+                }, null, 10, Cc)) : x("", !0)
               ]),
               O(z.$slots, "header", {
                 formInstance: Pe()?.exposed,
@@ -5307,7 +5311,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
               s("div", null, [
                 e.showLoading && G(C) ? (a(), X(ie, { key: 0 })) : x("", !0)
               ]),
-              s("div", Cc, [
+              s("div", $c, [
                 e.showCancel ? (a(), X(ae, {
                   key: 0,
                   onClick: ve,
@@ -5331,9 +5335,9 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
               ])
             ], 2)
           ], 32)
-        ], 2)) : (a(), i("div", $c, [
+        ], 2)) : (a(), i("div", Lc, [
           B[7] || (B[7] = s("div", { class: "fixed inset-0" }, null, -1)),
-          s("div", Lc, [
+          s("div", Vc, [
             s("div", {
               onMousedown: ve,
               class: "absolute inset-0 overflow-hidden"
@@ -5350,18 +5354,18 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                     class: g(le.value),
                     onSubmit: He(P, ["prevent"])
                   }, [
-                    s("div", Vc, [
-                      s("div", Mc, [
-                        s("div", Sc, [
-                          s("div", Tc, [
-                            s("div", Fc, [
-                              z.$slots.heading ? (a(), i("div", Ac, [
+                    s("div", Mc, [
+                      s("div", Sc, [
+                        s("div", Tc, [
+                          s("div", Fc, [
+                            s("div", Ac, [
+                              z.$slots.heading ? (a(), i("div", Ic, [
                                 O(z.$slots, "heading")
                               ])) : (a(), i("h3", {
                                 key: 1,
                                 class: g(ee.value)
                               }, T(te.value), 3)),
-                              z.$slots.subheading ? (a(), i("div", Ic, [
+                              z.$slots.subheading ? (a(), i("div", Pc, [
                                 O(z.$slots, "subheading")
                               ])) : e.subHeading ? (a(), i("p", {
                                 key: 3,
@@ -5370,9 +5374,9 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                                 key: 4,
                                 class: g(["notes", j.value]),
                                 innerHTML: Q.value?.notes
-                              }, null, 10, Pc)) : x("", !0)
+                              }, null, 10, Dc)) : x("", !0)
                             ]),
-                            s("div", Dc, [
+                            s("div", Bc, [
                               pe(me, {
                                 "button-class": "bg-gray-50 dark:bg-gray-900",
                                 onClose: ve
@@ -5406,7 +5410,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                       s("div", null, [
                         e.showLoading && G(C) ? (a(), X(ie, { key: 0 })) : x("", !0)
                       ]),
-                      s("div", Bc, [
+                      s("div", jc, [
                         e.showCancel ? (a(), X(ae, {
                           key: 0,
                           onClick: ve,
@@ -5434,8 +5438,8 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
               ], 32)
             ], 32)
           ])
-        ])) : (a(), i("div", hc, [
-          s("p", bc, [
+        ])) : (a(), i("div", bc, [
+          s("p", wc, [
             B[1] || (B[1] = he("Could not create form for unknown ", -1)),
             B[2] || (B[2] = s("b", null, "type", -1)),
             he(" " + T(D.value), 1)
@@ -5450,13 +5454,13 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
       ]);
     };
   }
-}), Oc = { key: 0 }, Hc = { class: "text-red-700" }, Rc = { key: 0 }, Ec = { key: 2 }, Nc = ["innerHTML"], zc = { class: "flex justify-end" }, Uc = {
+}), Hc = { key: 0 }, Rc = { class: "text-red-700" }, Ec = { key: 0 }, Nc = { key: 2 }, zc = ["innerHTML"], Uc = { class: "flex justify-end" }, qc = {
   key: 2,
   class: "relative z-10",
   "aria-labelledby": "slide-over-title",
   role: "dialog",
   "aria-modal": "true"
-}, qc = { class: "fixed inset-0 overflow-hidden" }, Qc = { class: "flex min-h-0 flex-1 flex-col overflow-auto" }, Kc = { class: "flex-1" }, _c = { class: "bg-gray-50 dark:bg-gray-900 px-4 py-6 sm:px-6" }, Zc = { class: "flex items-start justify-between space-x-3" }, Wc = { class: "space-y-1" }, Gc = { key: 0 }, Jc = { key: 2 }, Xc = ["innerHTML"], Yc = { class: "flex h-7 items-center" }, e0 = { class: "flex justify-end" }, t0 = /* @__PURE__ */ ue({
+}, Qc = { class: "fixed inset-0 overflow-hidden" }, Kc = { class: "flex min-h-0 flex-1 flex-col overflow-auto" }, _c = { class: "flex-1" }, Zc = { class: "bg-gray-50 dark:bg-gray-900 px-4 py-6 sm:px-6" }, Wc = { class: "flex items-start justify-between space-x-3" }, Gc = { class: "space-y-1" }, Jc = { key: 0 }, Xc = { key: 2 }, Yc = ["innerHTML"], e0 = { class: "flex h-7 items-center" }, t0 = { class: "flex justify-end" }, l0 = /* @__PURE__ */ ue({
   __name: "AutoEditForm",
   props: {
     modelValue: {},
@@ -5585,13 +5589,13 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
               class: g(K.value)
             }, [
               s("div", null, [
-                ce.$slots.heading ? (a(), i("div", Rc, [
+                ce.$slots.heading ? (a(), i("div", Ec, [
                   O(ce.$slots, "heading")
                 ])) : (a(), i("h3", {
                   key: 1,
                   class: g(_.value)
                 }, T(C.value), 3)),
-                ce.$slots.subheading ? (a(), i("div", Ec, [
+                ce.$slots.subheading ? (a(), i("div", Nc, [
                   O(ce.$slots, "subheading")
                 ])) : e.subHeading ? (a(), i("p", {
                   key: 3,
@@ -5600,7 +5604,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                   key: 4,
                   class: g(["notes", te.value]),
                   innerHTML: L.value?.notes
-                }, null, 10, Nc)) : x("", !0)
+                }, null, 10, zc)) : x("", !0)
               ]),
               O(ce.$slots, "header", {
                 formInstance: Pe()?.exposed,
@@ -5633,7 +5637,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
               s("div", null, [
                 e.showLoading && G(m) ? (a(), X(xe, { key: 0 })) : x("", !0)
               ]),
-              s("div", zc, [
+              s("div", Uc, [
                 e.showCancel ? (a(), X($e, {
                   key: 0,
                   onClick: oe,
@@ -5657,9 +5661,9 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
               ])
             ], 2)
           ], 32)
-        ], 2)) : (a(), i("div", Uc, [
+        ], 2)) : (a(), i("div", qc, [
           fe[7] || (fe[7] = s("div", { class: "fixed inset-0" }, null, -1)),
-          s("div", qc, [
+          s("div", Qc, [
             s("div", {
               onMousedown: oe,
               class: "absolute inset-0 overflow-hidden"
@@ -5676,18 +5680,18 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                     class: g(K.value),
                     onSubmit: He(J, ["prevent"])
                   }, [
-                    s("div", Qc, [
-                      s("div", Kc, [
-                        s("div", _c, [
-                          s("div", Zc, [
-                            s("div", Wc, [
-                              ce.$slots.heading ? (a(), i("div", Gc, [
+                    s("div", Kc, [
+                      s("div", _c, [
+                        s("div", Zc, [
+                          s("div", Wc, [
+                            s("div", Gc, [
+                              ce.$slots.heading ? (a(), i("div", Jc, [
                                 O(ce.$slots, "heading")
                               ])) : (a(), i("h3", {
                                 key: 1,
                                 class: g(_.value)
                               }, T(C.value), 3)),
-                              ce.$slots.subheading ? (a(), i("div", Jc, [
+                              ce.$slots.subheading ? (a(), i("div", Xc, [
                                 O(ce.$slots, "subheading")
                               ])) : e.subHeading ? (a(), i("p", {
                                 key: 3,
@@ -5696,9 +5700,9 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                                 key: 4,
                                 class: g(["notes", te.value]),
                                 innerHTML: L.value?.notes
-                              }, null, 10, Xc)) : x("", !0)
+                              }, null, 10, Yc)) : x("", !0)
                             ]),
-                            s("div", Yc, [
+                            s("div", e0, [
                               pe(qe, {
                                 "button-class": "bg-gray-50 dark:bg-gray-900",
                                 onClose: oe
@@ -5738,7 +5742,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                       s("div", null, [
                         e.showLoading && G(m) ? (a(), X(xe, { key: 0 })) : x("", !0)
                       ]),
-                      s("div", e0, [
+                      s("div", t0, [
                         e.showCancel ? (a(), X($e, {
                           key: 0,
                           onClick: oe,
@@ -5766,8 +5770,8 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
               ], 32)
             ], 32)
           ])
-        ])) : (a(), i("div", Oc, [
-          s("p", Hc, [
+        ])) : (a(), i("div", Hc, [
+          s("p", Rc, [
             fe[1] || (fe[1] = he("Could not create form for unknown ", -1)),
             fe[2] || (fe[2] = s("b", null, "type", -1)),
             he(" " + T(S.value), 1)
@@ -5782,13 +5786,13 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
       ]);
     };
   }
-}), l0 = { key: 0 }, s0 = { class: "text-red-700" }, n0 = { key: 0 }, a0 = { key: 2 }, o0 = ["innerHTML"], i0 = {
+}), s0 = { key: 0 }, n0 = { class: "text-red-700" }, a0 = { key: 0 }, o0 = { key: 2 }, i0 = ["innerHTML"], r0 = {
   key: 2,
   class: "relative z-10",
   "aria-labelledby": "slide-over-title",
   role: "dialog",
   "aria-modal": "true"
-}, r0 = { class: "fixed inset-0 overflow-hidden" }, u0 = { class: "flex min-h-0 flex-1 flex-col overflow-auto" }, d0 = { class: "flex-1" }, c0 = { class: "bg-gray-50 dark:bg-gray-900 px-4 py-6 sm:px-6" }, f0 = { class: "flex items-start justify-between space-x-3" }, v0 = { class: "space-y-1" }, m0 = { key: 0 }, g0 = { key: 2 }, p0 = ["innerHTML"], y0 = { class: "flex h-7 items-center" }, h0 = /* @__PURE__ */ ue({
+}, u0 = { class: "fixed inset-0 overflow-hidden" }, d0 = { class: "flex min-h-0 flex-1 flex-col overflow-auto" }, c0 = { class: "flex-1" }, f0 = { class: "bg-gray-50 dark:bg-gray-900 px-4 py-6 sm:px-6" }, v0 = { class: "flex items-start justify-between space-x-3" }, m0 = { class: "space-y-1" }, g0 = { key: 0 }, p0 = { key: 2 }, y0 = ["innerHTML"], h0 = { class: "flex h-7 items-center" }, b0 = /* @__PURE__ */ ue({
   __name: "AutoViewForm",
   props: {
     model: {},
@@ -5848,13 +5852,13 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
             class: g($.value)
           }, [
             s("div", null, [
-              j.$slots.heading ? (a(), i("div", n0, [
+              j.$slots.heading ? (a(), i("div", a0, [
                 O(j.$slots, "heading")
               ])) : (a(), i("h3", {
                 key: 1,
                 class: g(b.value)
               }, T(h.value), 3)),
-              j.$slots.subheading ? (a(), i("div", a0, [
+              j.$slots.subheading ? (a(), i("div", o0, [
                 O(j.$slots, "subheading")
               ])) : e.subHeading ? (a(), i("p", {
                 key: 3,
@@ -5863,13 +5867,13 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                 key: 4,
                 class: g(["notes", y.value]),
                 innerHTML: v.value?.notes
-              }, null, 10, o0)) : x("", !0)
+              }, null, 10, i0)) : x("", !0)
             ]),
             pe(_, { value: e.model }, null, 8, ["value"])
           ], 2)
-        ], 2)) : (a(), i("div", i0, [
+        ], 2)) : (a(), i("div", r0, [
           K[4] || (K[4] = s("div", { class: "fixed inset-0" }, null, -1)),
-          s("div", r0, [
+          s("div", u0, [
             s("div", {
               onMousedown: le,
               class: "absolute inset-0 overflow-hidden"
@@ -5885,18 +5889,18 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                   s("div", {
                     class: g($.value)
                   }, [
-                    s("div", u0, [
-                      s("div", d0, [
-                        s("div", c0, [
-                          s("div", f0, [
-                            s("div", v0, [
-                              j.$slots.heading ? (a(), i("div", m0, [
+                    s("div", d0, [
+                      s("div", c0, [
+                        s("div", f0, [
+                          s("div", v0, [
+                            s("div", m0, [
+                              j.$slots.heading ? (a(), i("div", g0, [
                                 O(j.$slots, "heading")
                               ])) : (a(), i("h3", {
                                 key: 1,
                                 class: g(b.value)
                               }, T(h.value), 3)),
-                              j.$slots.subheading ? (a(), i("div", g0, [
+                              j.$slots.subheading ? (a(), i("div", p0, [
                                 O(j.$slots, "subheading")
                               ])) : e.subHeading ? (a(), i("p", {
                                 key: 3,
@@ -5905,9 +5909,9 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                                 key: 4,
                                 class: g(["notes", y.value]),
                                 innerHTML: v.value?.notes
-                              }, null, 10, p0)) : x("", !0)
+                              }, null, 10, y0)) : x("", !0)
                             ]),
-                            s("div", y0, [
+                            s("div", h0, [
                               pe(te, {
                                 "button-class": "bg-gray-50 dark:bg-gray-900",
                                 onClose: le
@@ -5949,8 +5953,8 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
               ], 32)
             ], 32)
           ])
-        ])) : (a(), i("div", l0, [
-          s("p", s0, [
+        ])) : (a(), i("div", s0, [
+          s("p", n0, [
             K[1] || (K[1] = he("Could not create view for unknown ", -1)),
             K[2] || (K[2] = s("b", null, "type", -1)),
             he(" " + T(f.value), 1)
@@ -5959,7 +5963,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
       ]);
     };
   }
-}), b0 = /* @__PURE__ */ ue({
+}), w0 = /* @__PURE__ */ ue({
   __name: "ConfirmDelete",
   emits: ["delete"],
   setup(e, { emit: t }) {
@@ -5993,10 +5997,10 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
       ], 16)
     ], 64));
   }
-}), w0 = {
+}), x0 = {
   class: "flex",
   title: "loading..."
-}, x0 = {
+}, k0 = {
   key: 0,
   xmlns: "http://www.w3.org/2000/svg",
   x: "0px",
@@ -6004,24 +6008,24 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   width: "24px",
   height: "30px",
   viewBox: "0 0 24 30"
-}, k0 = { class: "ml-2 mt-1 text-gray-400" }, C0 = /* @__PURE__ */ ue({
+}, C0 = { class: "ml-2 mt-1 text-gray-400" }, $0 = /* @__PURE__ */ ue({
   __name: "FormLoading",
   props: {
     icon: { type: Boolean, default: !0 },
     text: { default: "loading..." }
   },
   setup(e) {
-    return Ne("ApiState", void 0), (t, l) => (a(), i("div", w0, [
-      e.icon ? (a(), i("svg", x0, [...l[0] || (l[0] = [
+    return Ne("ApiState", void 0), (t, l) => (a(), i("div", x0, [
+      e.icon ? (a(), i("svg", k0, [...l[0] || (l[0] = [
         Sl('<rect x="0" y="10" width="4" height="10" fill="#333" opacity="0.2"><animate attributeName="opacity" attributeType="XML" values="0.2; 1; .2" begin="0s" dur="0.6s" repeatCount="indefinite"></animate><animate attributeName="height" attributeType="XML" values="10; 20; 10" begin="0s" dur="0.6s" repeatCount="indefinite"></animate><animate attributeName="y" attributeType="XML" values="10; 5; 10" begin="0s" dur="0.6s" repeatCount="indefinite"></animate></rect><rect x="8" y="10" width="4" height="10" fill="#333" opacity="0.2"><animate attributeName="opacity" attributeType="XML" values="0.2; 1; .2" begin="0.15s" dur="0.6s" repeatCount="indefinite"></animate><animate attributeName="height" attributeType="XML" values="10; 20; 10" begin="0.15s" dur="0.6s" repeatCount="indefinite"></animate><animate attributeName="y" attributeType="XML" values="10; 5; 10" begin="0.15s" dur="0.6s" repeatCount="indefinite"></animate></rect><rect x="16" y="10" width="4" height="10" fill="#333" opacity="0.2"><animate attributeName="opacity" attributeType="XML" values="0.2; 1; .2" begin="0.3s" dur="0.6s" repeatCount="indefinite"></animate><animate attributeName="height" attributeType="XML" values="10; 20; 10" begin="0.3s" dur="0.6s" repeatCount="indefinite"></animate><animate attributeName="y" attributeType="XML" values="10; 5; 10" begin="0.3s" dur="0.6s" repeatCount="indefinite"></animate></rect>', 3)
       ])])) : x("", !0),
-      s("span", k0, T(e.text), 1)
+      s("span", C0, T(e.text), 1)
     ]));
   }
-}), $0 = ["onClick"], L0 = {
+}), L0 = ["onClick"], V0 = {
   key: 3,
   class: "flex justify-between items-center"
-}, V0 = { class: "mr-1 select-none" }, M0 = ["onClick"], S0 = /* @__PURE__ */ ue({
+}, M0 = { class: "mr-1 select-none" }, S0 = ["onClick"], T0 = /* @__PURE__ */ ue({
   inheritAttrs: !1,
   __name: "DataGrid",
   props: {
@@ -6134,10 +6138,10 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                           key: 2,
                           column: J,
                           label: M(J)
-                        }) : (a(), i("div", L0, [
-                          s("span", V0, T(M(J)), 1)
+                        }) : (a(), i("div", V0, [
+                          s("span", M0, T(M(J)), 1)
                         ]))
-                      ], 8, $0)
+                      ], 8, L0)
                     ], 2))), 256))
                   ], 2)
                 ], 2),
@@ -6170,7 +6174,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                         modelValue: J
                       }, null, 8, ["value", "format", "modelValue"]))
                     ], 2))), 256))
-                  ], 14, M0))), 256))
+                  ], 14, S0))), 256))
                 ], 2)
               ], 2)
             ], 2)
@@ -6179,7 +6183,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
       ], 2)) : x("", !0);
     };
   }
-}), T0 = ue({
+}), F0 = ue({
   props: {
     type: Object,
     propType: Object,
@@ -6210,13 +6214,13 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
       ]);
     };
   }
-}), F0 = { key: 0 }, A0 = {
+}), A0 = { key: 0 }, I0 = {
   key: 0,
   class: "mr-2"
-}, I0 = ["innerHTML"], P0 = ["innerHTML"], D0 = {
+}, P0 = ["innerHTML"], D0 = ["innerHTML"], B0 = {
   inheritAttrs: !1
-}, B0 = /* @__PURE__ */ ue({
-  ...D0,
+}, j0 = /* @__PURE__ */ ue({
+  ...B0,
   __name: "PreviewFormat",
   props: {
     value: {},
@@ -6229,17 +6233,17 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   },
   setup(e) {
     const t = e, l = c(() => Array.isArray(t.value));
-    return (n, o) => G(rl)(e.value) ? (a(), i("span", F0, [
-      e.includeCount && l.value ? (a(), i("span", A0, T(e.value.length), 1)) : x("", !0),
+    return (n, o) => G(rl)(e.value) ? (a(), i("span", A0, [
+      e.includeCount && l.value ? (a(), i("span", I0, T(e.value.length), 1)) : x("", !0),
       s("span", {
         innerHTML: G(il)(e.value, e.format, n.$attrs)
-      }, null, 8, I0)
+      }, null, 8, P0)
     ])) : (a(), i("span", {
       key: 1,
       innerHTML: G(il)(e.value, e.format, n.$attrs)
-    }, null, 8, P0));
+    }, null, 8, D0));
   }
-}), j0 = ["innerHTML"], O0 = { key: 0 }, H0 = { key: 2 }, R0 = /* @__PURE__ */ ue({
+}), O0 = ["innerHTML"], H0 = { key: 0 }, R0 = { key: 2 }, E0 = /* @__PURE__ */ ue({
   __name: "HtmlFormat",
   props: {
     value: {},
@@ -6257,11 +6261,11 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
         l.value ? (a(), i("div", {
           key: 0,
           innerHTML: G(il)(e.value)
-        }, null, 8, j0)) : n.value ? (a(), i("div", {
+        }, null, 8, O0)) : n.value ? (a(), i("div", {
           key: 1,
           class: g(e.classes("array", "div", e.depth, G(ge).gridClass))
         }, [
-          G(Bt)(e.value[0]) ? (a(), i("div", O0, "[ " + T(e.value.join(", ")) + " ]", 1)) : (a(), i("div", {
+          G(Bt)(e.value[0]) ? (a(), i("div", H0, "[ " + T(e.value.join(", ")) + " ]", 1)) : (a(), i("div", {
             key: 1,
             class: g(e.classes("array", "div", e.depth, G(ge).grid2Class))
           }, [
@@ -6306,7 +6310,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
               ], 2)
             ], 2)
           ], 2))
-        ], 2)) : (a(), i("div", H0, [
+        ], 2)) : (a(), i("div", R0, [
           s("table", {
             class: g(e.classes("object", "table", e.depth, "table-object"))
           }, [
@@ -6332,7 +6336,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
       ], 2);
     };
   }
-}), E0 = ["href"], N0 = ["href", "title"], z0 = /* @__PURE__ */ ue({
+}), N0 = ["href"], z0 = ["href", "title"], U0 = /* @__PURE__ */ ue({
   __name: "MarkupFormat",
   props: {
     value: {},
@@ -6352,7 +6356,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
         key: 0,
         href: e.value,
         class: "text-indigo-600"
-      }, T(e.value), 9, E0)) : G(o) == "image" ? (a(), i("a", {
+      }, T(e.value), 9, N0)) : G(o) == "image" ? (a(), i("a", {
         key: 1,
         href: e.value,
         title: e.value,
@@ -6362,13 +6366,13 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
           src: e.value,
           class: g(e.imageClass)
         }, null, 8, ["src", "class"])
-      ], 8, N0)) : (a(), X(v, {
+      ], 8, z0)) : (a(), X(v, {
         key: 2,
         value: e.value
       }, null, 8, ["value"]));
     };
   }
-}), U0 = /* @__PURE__ */ ue({
+}), q0 = /* @__PURE__ */ ue({
   __name: "MarkupModel",
   props: {
     value: {},
@@ -6429,7 +6433,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
       ], 2);
     };
   }
-}), q0 = { class: "absolute top-0 right-0 pt-4 pr-4" }, Q0 = ["title"], K0 = /* @__PURE__ */ ue({
+}), Q0 = { class: "absolute top-0 right-0 pt-4 pr-4" }, K0 = ["title"], _0 = /* @__PURE__ */ ue({
   __name: "CloseButton",
   props: {
     buttonClass: { default: "bg-white dark:bg-black" },
@@ -6437,7 +6441,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   },
   emits: ["close"],
   setup(e, { emit: t }) {
-    return (l, n) => (a(), i("div", q0, [
+    return (l, n) => (a(), i("div", Q0, [
       s("button", {
         type: "button",
         onClick: n[0] || (n[0] = (o) => l.$emit("close")),
@@ -6460,16 +6464,16 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
             d: "M6 18L18 6M6 6l12 12"
           })
         ], -1)
-      ])], 10, Q0)
+      ])], 10, K0)
     ]));
   }
-}), _0 = ["id", "aria-labelledby"], Z0 = { class: "fixed inset-0 overflow-hidden" }, W0 = { class: "flex h-full flex-col bg-white dark:bg-black shadow-xl" }, G0 = { class: "flex min-h-0 flex-1 flex-col overflow-auto" }, J0 = { class: "flex-1" }, X0 = { class: "relative bg-gray-50 dark:bg-gray-900 px-4 py-6 sm:px-6" }, Y0 = { class: "flex items-start justify-between space-x-3" }, ef = { class: "space-y-1" }, tf = { key: 0 }, lf = ["id"], sf = {
+}), Z0 = ["id", "aria-labelledby"], W0 = { class: "fixed inset-0 overflow-hidden" }, G0 = { class: "flex h-full flex-col bg-white dark:bg-black shadow-xl" }, J0 = { class: "flex min-h-0 flex-1 flex-col overflow-auto" }, X0 = { class: "flex-1" }, Y0 = { class: "relative bg-gray-50 dark:bg-gray-900 px-4 py-6 sm:px-6" }, ef = { class: "flex items-start justify-between space-x-3" }, tf = { class: "space-y-1" }, lf = { key: 0 }, sf = ["id"], nf = {
   key: 2,
   class: "text-sm text-gray-500"
-}, nf = { class: "flex h-7 items-center" }, af = {
+}, af = { class: "flex h-7 items-center" }, of = {
   key: 0,
   class: "flex-shrink-0 border-t border-gray-200 dark:border-gray-700 px-4 py-5 sm:px-6"
-}, of = /* @__PURE__ */ ue({
+}, rf = /* @__PURE__ */ ue({
   __name: "SlideOver",
   props: {
     id: { default: "SlideOver" },
@@ -6498,7 +6502,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
         "aria-modal": "true"
       }, [
         v[1] || (v[1] = s("div", { class: "fixed inset-0" }, null, -1)),
-        s("div", Z0, [
+        s("div", W0, [
           s("div", {
             onMousedown: u,
             class: "absolute inset-0 overflow-hidden"
@@ -6511,25 +6515,25 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
               s("div", {
                 class: g(["panel pointer-events-auto w-screen xl:max-w-3xl md:max-w-xl max-w-lg", o.value])
               }, [
-                s("div", W0, [
-                  s("div", G0, [
-                    s("div", J0, [
-                      s("div", X0, [
-                        s("div", Y0, [
-                          s("div", ef, [
-                            f.$slots.title ? (a(), i("div", tf, [
+                s("div", G0, [
+                  s("div", J0, [
+                    s("div", X0, [
+                      s("div", Y0, [
+                        s("div", ef, [
+                          s("div", tf, [
+                            f.$slots.title ? (a(), i("div", lf, [
                               O(f.$slots, "title")
                             ])) : x("", !0),
                             e.title ? (a(), i("h2", {
                               key: 1,
                               class: "text-lg font-medium text-gray-900 dark:text-gray-50",
                               id: e.id + "-title"
-                            }, T(e.title), 9, lf)) : x("", !0),
-                            f.$slots.subtitle ? (a(), i("p", sf, [
+                            }, T(e.title), 9, sf)) : x("", !0),
+                            f.$slots.subtitle ? (a(), i("p", nf, [
                               O(f.$slots, "subtitle")
                             ])) : x("", !0)
                           ]),
-                          s("div", nf, [
+                          s("div", af, [
                             pe(p, {
                               "button-class": "bg-gray-50 dark:bg-gray-900",
                               onClose: u
@@ -6544,7 +6548,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                       ], 2)
                     ])
                   ]),
-                  f.$slots.footer ? (a(), i("div", af, [
+                  f.$slots.footer ? (a(), i("div", of, [
                     O(f.$slots, "footer")
                   ])) : x("", !0)
                 ])
@@ -6552,13 +6556,13 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
             ], 32)
           ], 32)
         ])
-      ], 8, _0);
+      ], 8, Z0);
     };
   }
-}), rf = ["id", "data-transition-for", "aria-labelledby"], uf = { class: "fixed inset-0 z-10 overflow-y-auto" }, df = { class: "flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0" }, cf = {
+}), uf = ["id", "data-transition-for", "aria-labelledby"], df = { class: "fixed inset-0 z-10 overflow-y-auto" }, cf = { class: "flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0" }, ff = {
   key: 1,
   class: "hidden sm:block absolute top-0 right-0 pt-4 pr-4 z-10"
-}, ff = /* @__PURE__ */ ue({
+}, vf = /* @__PURE__ */ ue({
   __name: "ModalDialog",
   props: {
     id: { default: "ModalDialog" },
@@ -6607,15 +6611,15 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
         s("div", {
           class: g(["fixed inset-0 bg-gray-500/75 transition-opacity", r.value])
         }, null, 2),
-        s("div", uf, [
-          s("div", df, [
+        s("div", df, [
+          s("div", cf, [
             s("div", {
               class: g([e.modalClass, e.sizeClass, d.value]),
               onMousedown: M[0] || (M[0] = He(() => {
               }, ["stop"]))
             }, [
               s("div", null, [
-                G(l).closebutton ? O(V.$slots, "createform", { key: 0 }) : (a(), i("div", cf, [
+                G(l).closebutton ? O(V.$slots, "createform", { key: 0 }) : (a(), i("div", ff, [
                   s("button", {
                     type: "button",
                     onClick: v,
@@ -6652,45 +6656,45 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
           onDone: h,
           configureField: e.configureField
         }, null, 8, ["ref-info", "configureField"])) : x("", !0)
-      ], 40, rf);
+      ], 40, uf);
     };
   }
-}), vf = {
+}), mf = {
   class: "pt-2 overflow-auto",
   style: { "min-height": "620px" }
-}, mf = { class: "mt-3 pl-5 flex flex-wrap items-center" }, gf = { class: "hidden sm:block text-xl leading-6 font-medium text-gray-900 dark:text-gray-50 mr-3" }, pf = { class: "hidden md:inline" }, yf = { class: "flex pb-1 sm:pb-0" }, hf = ["title"], bf = ["disabled"], wf = ["disabled"], xf = ["disabled"], kf = ["disabled"], Cf = {
+}, gf = { class: "mt-3 pl-5 flex flex-wrap items-center" }, pf = { class: "hidden sm:block text-xl leading-6 font-medium text-gray-900 dark:text-gray-50 mr-3" }, yf = { class: "hidden md:inline" }, hf = { class: "flex pb-1 sm:pb-0" }, bf = ["title"], wf = ["disabled"], xf = ["disabled"], kf = ["disabled"], Cf = ["disabled"], $f = {
   key: 0,
   class: "flex pb-1 sm:pb-0"
-}, $f = { class: "px-4 text-lg text-black dark:text-white" }, Lf = { key: 0 }, Vf = { key: 1 }, Mf = { key: 2 }, Sf = {
+}, Lf = { class: "px-4 text-lg text-black dark:text-white" }, Vf = { key: 0 }, Mf = { key: 1 }, Sf = { key: 2 }, Tf = {
   key: 1,
   class: "pl-2 mt-1"
-}, Tf = { class: "whitespace-nowrap" }, Ff = {
+}, Ff = { class: "whitespace-nowrap" }, Af = {
   key: 2,
   class: "pl-2"
-}, Af = { class: "flex pb-1 sm:pb-0" }, If = {
+}, If = { class: "flex pb-1 sm:pb-0" }, Pf = {
   key: 0,
   class: "pl-2"
-}, Pf = { class: "mr-1" }, Df = {
+}, Df = { class: "mr-1" }, Bf = {
   key: 0,
   class: "h-5 w-5 text-gray-400 dark:text-gray-500 group-hover:text-gray-500",
   xmlns: "http://www.w3.org/2000/svg",
   viewBox: "0 0 20 20",
   fill: "currentColor",
   "aria-hidden": "true"
-}, Bf = {
+}, jf = {
   key: 1,
   class: "h-5 w-5 text-gray-400 dark:text-gray-500 group-hover:text-gray-500",
   xmlns: "http://www.w3.org/2000/svg",
   viewBox: "0 0 20 20",
   fill: "currentColor",
   "aria-hidden": "true"
-}, jf = { key: 1 }, Of = { key: 4 }, Hf = { key: 0 }, Rf = {
+}, Of = { key: 1 }, Hf = { key: 4 }, Rf = { key: 0 }, Ef = {
   key: 0,
   class: "cursor-pointer flex justify-between items-center hover:text-gray-900 dark:hover:text-gray-50"
-}, Ef = { class: "mr-1 select-none" }, Nf = {
+}, Nf = { class: "mr-1 select-none" }, zf = {
   key: 1,
   class: "flex justify-between items-center"
-}, zf = { class: "mr-1 select-none" }, Ys = 25, Uf = /* @__PURE__ */ ue({
+}, Uf = { class: "mr-1 select-none" }, Ys = 25, qf = /* @__PURE__ */ ue({
   __name: "ModalLookup",
   props: {
     id: { default: "ModalLookup" },
@@ -6847,13 +6851,13 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
           onDone: qe
         }, {
           default: we(() => [
-            s("div", vf, [
-              s("div", mf, [
-                s("h3", gf, [
+            s("div", mf, [
+              s("div", gf, [
+                s("h3", pf, [
                   H[9] || (H[9] = he(" Select ", -1)),
-                  s("span", pf, T(G(De)(e.refInfo.model)), 1)
+                  s("span", yf, T(G(De)(e.refInfo.model)), 1)
                 ]),
-                s("div", yf, [
+                s("div", hf, [
                   e.showPreferences ? (a(), i("button", {
                     key: 0,
                     type: "button",
@@ -6876,7 +6880,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                         })
                       ])
                     ], -1)
-                  ])], 8, hf)) : x("", !0),
+                  ])], 8, bf)) : x("", !0),
                   e.showPagingNav ? (a(), i("button", {
                     key: 1,
                     type: "button",
@@ -6895,7 +6899,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                         fill: "currentColor"
                       })
                     ], -1)
-                  ])], 10, bf)) : x("", !0),
+                  ])], 10, wf)) : x("", !0),
                   e.showPagingNav ? (a(), i("button", {
                     key: 2,
                     type: "button",
@@ -6914,7 +6918,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                         fill: "currentColor"
                       })
                     ], -1)
-                  ])], 10, wf)) : x("", !0),
+                  ])], 10, xf)) : x("", !0),
                   e.showPagingNav ? (a(), i("button", {
                     key: 3,
                     type: "button",
@@ -6933,7 +6937,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                         fill: "currentColor"
                       })
                     ], -1)
-                  ])], 10, xf)) : x("", !0),
+                  ])], 10, kf)) : x("", !0),
                   e.showPagingNav ? (a(), i("button", {
                     key: 4,
                     type: "button",
@@ -6952,19 +6956,19 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                         fill: "currentColor"
                       })
                     ], -1)
-                  ])], 10, kf)) : x("", !0)
+                  ])], 10, Cf)) : x("", !0)
                 ]),
-                e.showPagingInfo ? (a(), i("div", Cf, [
-                  s("div", $f, [
-                    k.value ? (a(), i("span", Lf, "Querying...")) : x("", !0),
-                    L.value.length ? (a(), i("span", Vf, [
+                e.showPagingInfo ? (a(), i("div", $f, [
+                  s("div", Lf, [
+                    k.value ? (a(), i("span", Vf, "Querying...")) : x("", !0),
+                    L.value.length ? (a(), i("span", Mf, [
                       H[15] || (H[15] = s("span", { class: "hidden xl:inline" }, " Showing Results ", -1)),
                       he(" " + T(h.value + 1) + " - " + T(Math.min(h.value + L.value.length, le.value)) + " ", 1),
                       s("span", null, " of " + T(le.value), 1)
-                    ])) : y.value.completed ? (a(), i("span", Mf, "No Results")) : x("", !0)
+                    ])) : y.value.completed ? (a(), i("span", Sf, "No Results")) : x("", !0)
                   ])
                 ])) : x("", !0),
-                ve.value.Create && ne.value ? (a(), i("div", Sf, [
+                ve.value.Create && ne.value ? (a(), i("div", Tf, [
                   s("button", {
                     type: "button",
                     onClick: H[5] || (H[5] = (Be) => oe()),
@@ -6981,7 +6985,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                         fill: "currentColor"
                       })
                     ], -1)),
-                    s("span", Tf, T(B.value), 1)
+                    s("span", Ff, T(B.value), 1)
                   ], 2),
                   ae.value ? (a(), X(Ae, {
                     key: 0,
@@ -7013,7 +7017,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                     _: 3
                   }, 8, ["type", "configure"])) : x("", !0)
                 ])) : x("", !0),
-                se.value && e.showResetPreferences ? (a(), i("div", Ff, [
+                se.value && e.showResetPreferences ? (a(), i("div", Af, [
                   s("button", {
                     type: "button",
                     onClick: ot,
@@ -7033,8 +7037,8 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                     ], -1)
                   ])], 2)
                 ])) : x("", !0),
-                s("div", Af, [
-                  e.showFiltersView && R.value > 0 ? (a(), i("div", If, [
+                s("div", If, [
+                  e.showFiltersView && R.value > 0 ? (a(), i("div", Pf, [
                     s("button", {
                       type: "button",
                       onClick: H[6] || (H[6] = (Be) => V.value = V.value == "filters" ? null : "filters"),
@@ -7054,14 +7058,14 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                           "clip-rule": "evenodd"
                         })
                       ], -1)),
-                      s("span", Pf, T(R.value) + " " + T(R.value == 1 ? "Filter" : "Filters"), 1),
-                      V.value != "filters" ? (a(), i("svg", Df, [...H[18] || (H[18] = [
+                      s("span", Df, T(R.value) + " " + T(R.value == 1 ? "Filter" : "Filters"), 1),
+                      V.value != "filters" ? (a(), i("svg", Bf, [...H[18] || (H[18] = [
                         s("path", {
                           "fill-rule": "evenodd",
                           d: "M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z",
                           "clip-rule": "evenodd"
                         }, null, -1)
-                      ])])) : (a(), i("svg", Bf, [...H[19] || (H[19] = [
+                      ])])) : (a(), i("svg", jf, [...H[19] || (H[19] = [
                         s("path", {
                           "fill-rule": "evenodd",
                           d: "M5 10a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1z",
@@ -7080,7 +7084,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                 onDone: H[7] || (H[7] = (Be) => V.value = null),
                 onChange: Qe
               }, null, 8, ["definitions", "columns"])) : x("", !0),
-              m.value ? (a(), i("div", jf, [
+              m.value ? (a(), i("div", Of, [
                 pe(Ps, {
                   definitions: $.value,
                   column: m.value.column,
@@ -7092,8 +7096,8 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
               y.value.error ? (a(), X(Ie, {
                 key: 2,
                 status: y.value.error
-              }, null, 8, ["status"])) : k.value ? (a(), X(Ke, { key: 3 })) : (a(), i("div", Of, [
-                L.value.length ? (a(), i("div", Hf, [
+              }, null, 8, ["status"])) : k.value ? (a(), X(Ke, { key: 3 })) : (a(), i("div", Hf, [
+                L.value.length ? (a(), i("div", Rf, [
                   pe(Rt, {
                     id: e.id,
                     items: L.value,
@@ -7106,14 +7110,14 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                     onHeaderSelected: nt
                   }, us({
                     header: we(({ column: Be, label: yt }) => [
-                      e.allowFiltering && (!l.canFilter || l.canFilter(Be)) ? (a(), i("div", Rf, [
-                        s("span", Ef, T(yt), 1),
+                      e.allowFiltering && (!l.canFilter || l.canFilter(Be)) ? (a(), i("div", Ef, [
+                        s("span", Nf, T(yt), 1),
                         pe(it, {
                           column: te.value.find((st) => st.name.toLowerCase() === Be.toLowerCase()),
                           "is-open": m.value?.column.name === Be
                         }, null, 8, ["column", "is-open"])
-                      ])) : (a(), i("div", Nf, [
-                        s("span", zf, T(yt), 1)
+                      ])) : (a(), i("div", zf, [
+                        s("span", Uf, T(yt), 1)
                       ]))
                     ]),
                     _: 2
@@ -7141,10 +7145,10 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
       ], 64);
     };
   }
-}), qf = { class: "sm:hidden" }, Qf = ["for"], Kf = ["id", "name"], _f = ["value"], Zf = { class: "hidden sm:block" }, Wf = { class: "border-b border-gray-200" }, Gf = {
+}), Qf = { class: "sm:hidden" }, Kf = ["for"], _f = ["id", "name"], Zf = ["value"], Wf = { class: "hidden sm:block" }, Gf = { class: "border-b border-gray-200" }, Jf = {
   class: "-mb-px flex",
   "aria-label": "Tabs"
-}, Jf = ["onClick"], Xf = /* @__PURE__ */ ue({
+}, Xf = ["onClick"], Yf = /* @__PURE__ */ ue({
   __name: "Tabs",
   props: {
     tabs: {},
@@ -7175,11 +7179,11 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
         b && (u.value = b);
       }
     }), (p, $) => (a(), i("div", null, [
-      s("div", qf, [
+      s("div", Qf, [
         s("label", {
           for: o.value,
           class: "sr-only"
-        }, "Select a tab", 8, Qf),
+        }, "Select a tab", 8, Kf),
         s("select", {
           id: o.value,
           name: o.value,
@@ -7189,18 +7193,18 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
           (a(!0), i(Ve, null, Se(l.value, (b) => (a(), i("option", {
             key: b,
             value: b
-          }, T(n(b)), 9, _f))), 128))
-        ], 40, Kf)
+          }, T(n(b)), 9, Zf))), 128))
+        ], 40, _f)
       ]),
-      s("div", Zf, [
-        s("div", Wf, [
-          s("nav", Gf, [
+      s("div", Wf, [
+        s("div", Gf, [
+          s("nav", Jf, [
             (a(!0), i(Ve, null, Se(l.value, (b) => (a(), i("a", {
               href: "#",
               onClick: He((y) => d(b), ["prevent"]),
               style: is({ width: v.value }),
               class: g([f(b) ? "border-indigo-500 text-indigo-600 py-4 px-1 text-center border-b-2 font-medium text-sm" : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 py-4 px-1 text-center border-b-2 font-medium text-sm", e.tabClass])
-            }, T(n(b)), 15, Jf))), 256))
+            }, T(n(b)), 15, Xf))), 256))
           ])
         ])
       ]),
@@ -7211,7 +7215,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
       ], 2)
     ]));
   }
-}), Yf = /* @__PURE__ */ ue({
+}), ev = /* @__PURE__ */ ue({
   __name: "DarkModeToggle",
   setup(e) {
     const t = typeof document < "u" ? document.documentElement : null, l = () => !!t?.classList.contains("dark"), n = A(localStorage.getItem("color-scheme") == "dark");
@@ -7263,21 +7267,21 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
       ], 2)
     ]));
   }
-}), ev = { key: 0 }, tv = {
+}), tv = { key: 0 }, lv = {
   key: 1,
   class: "min-h-full flex flex-col justify-center py-12 sm:px-6 lg:px-8"
-}, lv = { class: "sm:mx-auto sm:w-full sm:max-w-md" }, sv = { class: "mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-gray-50" }, nv = {
+}, sv = { class: "sm:mx-auto sm:w-full sm:max-w-md" }, nv = { class: "mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-gray-50" }, av = {
   key: 0,
   class: "mt-4 text-center text-sm text-gray-600 dark:text-gray-300"
-}, av = { class: "relative z-0 inline-flex shadow-sm rounded-md" }, ov = ["onClick"], iv = { class: "mt-8 sm:mx-auto sm:w-full sm:max-w-md" }, rv = { class: "bg-white dark:bg-black py-8 px-4 shadow sm:rounded-lg sm:px-10" }, uv = { class: "mt-8" }, dv = {
+}, ov = { class: "relative z-0 inline-flex shadow-sm rounded-md" }, iv = ["onClick"], rv = { class: "mt-8 sm:mx-auto sm:w-full sm:max-w-md" }, uv = { class: "bg-white dark:bg-black py-8 px-4 shadow sm:rounded-lg sm:px-10" }, dv = { class: "mt-8" }, cv = {
   key: 1,
   class: "mt-6"
-}, cv = { class: "mt-6 grid grid-cols-3 gap-3" }, fv = ["href", "title"], vv = {
+}, fv = { class: "mt-6 grid grid-cols-3 gap-3" }, vv = ["href", "title"], mv = {
   key: 1,
   class: "h-5 w-5 text-gray-700 dark:text-gray-200",
   xmlns: "http://www.w3.org/2000/svg",
   viewBox: "0 0 32 32"
-}, mv = /* @__PURE__ */ ue({
+}, gv = /* @__PURE__ */ ue({
   __name: "SignIn",
   props: {
     provider: {},
@@ -7323,11 +7327,11 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
     }
     return (j, K) => {
       const _ = U("ErrorSummary"), te = U("AutoFormFields"), se = U("PrimaryButton"), R = U("Icon"), C = pa("href");
-      return G(p) ? (a(), i("div", tv, [
-        s("div", lv, [
-          s("h2", sv, T(e.title), 1),
-          Object.keys(L.value).length > 1 ? (a(), i("p", nv, [
-            s("span", av, [
+      return G(p) ? (a(), i("div", lv, [
+        s("div", sv, [
+          s("h2", nv, T(e.title), 1),
+          Object.keys(L.value).length > 1 ? (a(), i("p", av, [
+            s("span", ov, [
               (a(!0), i(Ve, null, Se(L.value, (P, de) => Pt((a(), i("a", {
                 onClick: (w) => k.value = P,
                 class: g([
@@ -7337,19 +7341,19 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                 ])
               }, [
                 he(T(de), 1)
-              ], 10, ov)), [
+              ], 10, iv)), [
                 [C, { provider: P }]
               ])), 256))
             ])
           ])) : x("", !0)
         ]),
-        s("div", iv, [
+        s("div", rv, [
           le.value ? (a(), X(_, {
             key: 0,
             class: "mb-3",
             errorSummary: le.value
           }, null, 8, ["errorSummary"])) : x("", !0),
-          s("div", rv, [
+          s("div", uv, [
             q.value.length ? (a(), i("form", {
               key: 0,
               onSubmit: He(ee, ["prevent"])
@@ -7362,7 +7366,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                 "divide-class": "",
                 "space-class": "space-y-6"
               }, null, 8, ["modelValue", "formLayout", "api"]),
-              s("div", uv, [
+              s("div", dv, [
                 pe(se, { class: "w-full" }, {
                   default: we(() => [...K[0] || (K[0] = [
                     he("Sign In", -1)
@@ -7371,9 +7375,9 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                 })
               ])
             ], 32)) : x("", !0),
-            S.value.length ? (a(), i("div", dv, [
+            S.value.length ? (a(), i("div", cv, [
               K[2] || (K[2] = Sl('<div class="relative"><div class="absolute inset-0 flex items-center"><div class="w-full border-t border-gray-300 dark:border-gray-600"></div></div><div class="relative flex justify-center text-sm"><span class="px-2 bg-white text-gray-500 dark:text-gray-400"> Or continue with </span></div></div>', 1)),
-              s("div", cv, [
+              s("div", fv, [
                 (a(!0), i(Ve, null, Se(S.value, (P) => (a(), i("div", null, [
                   s("a", {
                     href: G(b) + P.navItem.href + "?continue=" + G($),
@@ -7384,7 +7388,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                       key: 0,
                       image: P.icon,
                       class: "h-5 w-5 text-gray-700 dark:text-gray-200"
-                    }, null, 8, ["image"])) : (a(), i("svg", vv, [...K[1] || (K[1] = [
+                    }, null, 8, ["image"])) : (a(), i("svg", mv, [...K[1] || (K[1] = [
                       s("path", {
                         d: "M16 8a5 5 0 1 0 5 5a5 5 0 0 0-5-5z",
                         fill: "currentColor"
@@ -7394,22 +7398,22 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                         fill: "currentColor"
                       }, null, -1)
                     ])]))
-                  ], 8, fv)
+                  ], 8, vv)
                 ]))), 256))
               ])
             ])) : x("", !0)
           ])
         ])
-      ])) : (a(), i("div", ev, "No Auth Plugin"));
+      ])) : (a(), i("div", tv, "No Auth Plugin"));
     };
   }
-}), gv = ["for"], pv = {
+}), pv = ["for"], yv = {
   key: 1,
   class: "border border-gray-200 flex justify-between shadow-sm"
-}, yv = { class: "p-2 flex flex-wrap gap-x-4" }, hv = {
+}, hv = { class: "p-2 flex flex-wrap gap-x-4" }, bv = {
   key: 0,
   class: "p-2 flex flex-wrap gap-x-4"
-}, bv = ["href"], wv = { class: "" }, xv = ["name", "id", "label", "value", "rows", "disabled"], kv = ["id"], Cv = ["id"], Ye = "w-5 h-5 cursor-pointer select-none text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400", $v = /* @__PURE__ */ ue({
+}, wv = ["href"], xv = { class: "" }, kv = ["name", "id", "label", "value", "rows", "disabled"], Cv = ["id"], $v = ["id"], Ye = "w-5 h-5 cursor-pointer select-none text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400", Lv = /* @__PURE__ */ ue({
   __name: "MarkdownInput",
   props: {
     status: {},
@@ -7651,9 +7655,9 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
         key: 0,
         for: e.id,
         class: g(`mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300 ${e.labelClass ?? ""}`)
-      }, T(v.value), 11, gv)) : x("", !0),
-      e.disabled ? x("", !0) : (a(), i("div", pv, [
-        s("div", yv, [
+      }, T(v.value), 11, pv)) : x("", !0),
+      e.disabled ? x("", !0) : (a(), i("div", yv, [
+        s("div", hv, [
           b("bold") ? (a(), i("svg", {
             key: 0,
             class: g(Ye),
@@ -7839,7 +7843,7 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
             instance: Pe()?.exposed
           })
         ]),
-        b("help") && e.helpUrl ? (a(), i("div", hv, [
+        b("help") && e.helpUrl ? (a(), i("div", bv, [
           s("a", {
             title: "formatting help",
             target: "_blank",
@@ -7858,10 +7862,10 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                 d: "M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10s10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8s8 3.59 8 8s-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5c0-2.21-1.79-4-4-4z"
               }, null, -1)
             ])]))
-          ], 8, bv)
+          ], 8, wv)
         ])) : x("", !0)
       ])),
-      s("div", wv, [
+      s("div", xv, [
         s("textarea", {
           ref_key: "txt",
           ref: h,
@@ -7874,17 +7878,17 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
           disabled: e.disabled,
           onInput: m[0] || (m[0] = (W) => k(W.target?.value || "")),
           onKeydown: tn(de, ["tab"])
-        }, null, 42, xv)
+        }, null, 42, kv)
       ]),
       f.value ? (a(), i("p", {
         key: 2,
         class: "mt-2 text-sm text-red-500",
         id: `${e.id}-error`
-      }, T(f.value), 9, kv)) : e.help ? (a(), i("p", {
+      }, T(f.value), 9, Cv)) : e.help ? (a(), i("p", {
         key: 3,
         class: "mt-2 text-sm text-gray-500",
         id: `${e.id}-description`
-      }, T(e.help), 9, Cv)) : x("", !0),
+      }, T(e.help), 9, $v)) : x("", !0),
       O(w.$slots, "footer", Ce({
         inputElement: h.value,
         id: e.id,
@@ -7893,14 +7897,14 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
       }, w.$attrs))
     ]));
   }
-}), Lv = {
+}), Vv = {
   key: 0,
   class: "relative z-10 lg:hidden",
   role: "dialog",
   "aria-modal": "true"
-}, Vv = { class: "fixed inset-0 flex" }, Mv = { class: "flex grow flex-col gap-y-5 overflow-y-auto bg-white dark:bg-black px-6 pb-2" }, Sv = { class: "hidden lg:fixed lg:inset-y-0 lg:z-10 lg:flex lg:w-72 lg:flex-col" }, Tv = { class: "flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-black px-6" }, Fv = {
+}, Mv = { class: "fixed inset-0 flex" }, Sv = { class: "flex grow flex-col gap-y-5 overflow-y-auto bg-white dark:bg-black px-6 pb-2" }, Tv = { class: "hidden lg:fixed lg:inset-y-0 lg:z-10 lg:flex lg:w-72 lg:flex-col" }, Fv = { class: "flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-black px-6" }, Av = {
   class: /* @__PURE__ */ g(["sticky top-0 flex items-center gap-x-6 bg-white dark:bg-black px-4 py-4 shadow-sm sm:px-6 lg:hidden"])
-}, Av = /* @__PURE__ */ ue({
+}, Iv = /* @__PURE__ */ ue({
   __name: "SidebarLayout",
   setup(e, { expose: t }) {
     const { transition: l } = Gn(), n = A(!0), o = A(""), r = {
@@ -7923,11 +7927,11 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
       p(!1);
     }
     return t({ show: $, hide: b, toggle: p }), (y, h) => (a(), i("div", null, [
-      n.value ? (a(), i("div", Lv, [
+      n.value ? (a(), i("div", Vv, [
         s("div", {
           class: g(["fixed inset-0 bg-gray-900/80", o.value])
         }, null, 2),
-        s("div", Vv, [
+        s("div", Mv, [
           s("div", {
             class: g(["relative mr-16 flex w-full max-w-xs flex-1", u.value])
           }, [
@@ -7956,18 +7960,18 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
                 ], -1)
               ])])
             ], 2),
-            s("div", Mv, [
+            s("div", Sv, [
               O(y.$slots, "default")
             ])
           ], 2)
         ])
       ])) : x("", !0),
-      s("div", Sv, [
-        s("div", Tv, [
+      s("div", Tv, [
+        s("div", Fv, [
           O(y.$slots, "default")
         ])
       ]),
-      s("div", Fv, [
+      s("div", Av, [
         s("button", {
           type: "button",
           onClick: $,
@@ -7993,61 +7997,61 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
       ])
     ]));
   }
-}), Iv = Ho, Pv = Ko, Dv = Go, Bv = Xo, jv = Yn, Ov = ti, Hv = ni, Rv = ii, Ev = di, Nv = ci, zv = pi, Uv = wi, qv = Ci, Qv = Ii, Kv = ou, _v = cu, Zv = Ds, Wv = Ps, Gv = Bs, Jv = ea, Xv = fu, Yv = bu, em = Vu, tm = Iu, lm = Eu, sm = nd, nm = Ld, am = Bd, om = Hd, im = Rd, rm = Jd, um = Xd, dm = yc, cm = jc, fm = t0, vm = h0, mm = b0, gm = C0, pm = S0, ym = T0, hm = B0, bm = R0, wm = z0, xm = U0, km = K0, Cm = of, $m = ff, Lm = Uf, Vm = Xf, Mm = Yf, Sm = mv, Tm = $v, Fm = Av, Am = {
-  Alert: Iv,
-  AlertSuccess: Pv,
-  ErrorSummary: Dv,
-  InputDescription: Bv,
-  Icon: jv,
-  Loading: Ov,
-  OutlineButton: Hv,
-  PrimaryButton: Rv,
-  SecondaryButton: Ev,
-  TextLink: Nv,
-  Breadcrumbs: zv,
-  Breadcrumb: Uv,
-  NavList: qv,
-  NavListItem: Qv,
-  AutoQueryGrid: Kv,
-  SettingsIcons: _v,
-  FilterViews: Zv,
-  FilterColumn: Wv,
-  QueryPrefs: Gv,
-  EnsureAccess: Jv,
-  EnsureAccessDialog: Xv,
-  TextInput: Yv,
-  TextareaInput: em,
-  SelectInput: tm,
-  CheckboxInput: lm,
-  TagInput: sm,
-  FileInput: nm,
-  Autocomplete: am,
-  Combobox: om,
-  DynamicInput: im,
-  LookupInput: rm,
-  AutoFormFields: um,
-  AutoForm: dm,
-  AutoCreateForm: cm,
-  AutoEditForm: fm,
-  AutoViewForm: vm,
-  ConfirmDelete: mm,
-  FormLoading: gm,
-  DataGrid: pm,
-  CellFormat: ym,
-  PreviewFormat: hm,
-  HtmlFormat: bm,
-  MarkupFormat: wm,
-  MarkupModel: xm,
-  CloseButton: km,
-  SlideOver: Cm,
-  ModalDialog: $m,
-  ModalLookup: Lm,
-  Tabs: Vm,
-  DarkModeToggle: Mm,
-  SignIn: Sm,
-  MarkdownInput: Tm,
-  SidebarLayout: Fm
-}, _l = Am || {}, jm = {
+}), Pv = Ro, Dv = _o, Bv = Jo, jv = Yo, Ov = Yn, Hv = li, Rv = ai, Ev = ri, Nv = ci, zv = fi, Uv = yi, qv = xi, Qv = $i, Kv = Pi, _v = iu, Zv = fu, Wv = Ds, Gv = Ps, Jv = Bs, Xv = ea, Yv = vu, em = wu, tm = Mu, lm = Pu, sm = Nu, nm = ad, am = Vd, om = jd, im = Rd, rm = Ed, um = Xd, dm = Yd, cm = hc, fm = Oc, vm = l0, mm = b0, gm = w0, pm = $0, ym = T0, hm = F0, bm = j0, wm = E0, xm = U0, km = q0, Cm = _0, $m = rf, Lm = vf, Vm = qf, Mm = Yf, Sm = ev, Tm = gv, Fm = Lv, Am = Iv, Im = {
+  Alert: Pv,
+  AlertSuccess: Dv,
+  ErrorSummary: Bv,
+  InputDescription: jv,
+  Icon: Ov,
+  Loading: Hv,
+  OutlineButton: Rv,
+  PrimaryButton: Ev,
+  SecondaryButton: Nv,
+  TextLink: zv,
+  Breadcrumbs: Uv,
+  Breadcrumb: qv,
+  NavList: Qv,
+  NavListItem: Kv,
+  AutoQueryGrid: _v,
+  SettingsIcons: Zv,
+  FilterViews: Wv,
+  FilterColumn: Gv,
+  QueryPrefs: Jv,
+  EnsureAccess: Xv,
+  EnsureAccessDialog: Yv,
+  TextInput: em,
+  TextareaInput: tm,
+  SelectInput: lm,
+  CheckboxInput: sm,
+  TagInput: nm,
+  FileInput: am,
+  Autocomplete: om,
+  Combobox: im,
+  DynamicInput: rm,
+  LookupInput: um,
+  AutoFormFields: dm,
+  AutoForm: cm,
+  AutoCreateForm: fm,
+  AutoEditForm: vm,
+  AutoViewForm: mm,
+  ConfirmDelete: gm,
+  FormLoading: pm,
+  DataGrid: ym,
+  CellFormat: hm,
+  PreviewFormat: bm,
+  HtmlFormat: wm,
+  MarkupFormat: xm,
+  MarkupModel: km,
+  CloseButton: Cm,
+  SlideOver: $m,
+  ModalDialog: Lm,
+  ModalLookup: Vm,
+  Tabs: Mm,
+  DarkModeToggle: Sm,
+  SignIn: Tm,
+  MarkdownInput: Fm,
+  SidebarLayout: Am
+}, _l = Im || {}, Om = {
   install(e) {
     Object.keys(_l).forEach((l) => {
       e.component(l, _l[l]);
@@ -8067,68 +8071,69 @@ const Bm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   }
 };
 export {
-  Iv as Alert,
-  Pv as AlertSuccess,
-  cm as AutoCreateForm,
-  fm as AutoEditForm,
-  dm as AutoForm,
-  um as AutoFormFields,
-  Kv as AutoQueryGrid,
-  vm as AutoViewForm,
-  am as Autocomplete,
-  Uv as Breadcrumb,
-  zv as Breadcrumbs,
-  ym as CellFormat,
-  lm as CheckboxInput,
-  km as CloseButton,
-  om as Combobox,
-  Am as Components,
-  mm as ConfirmDelete,
-  Mm as DarkModeToggle,
-  pm as DataGrid,
-  im as DynamicInput,
-  Jv as EnsureAccess,
-  Xv as EnsureAccessDialog,
-  Dv as ErrorSummary,
-  nm as FileInput,
-  Wv as FilterColumn,
-  Zv as FilterViews,
-  gm as FormLoading,
-  bm as HtmlFormat,
-  jv as Icon,
-  Bv as InputDescription,
-  Ov as Loading,
-  rm as LookupInput,
-  Tm as MarkdownInput,
-  wm as MarkupFormat,
-  xm as MarkupModel,
+  Pv as Alert,
+  Dv as AlertSuccess,
+  fm as AutoCreateForm,
+  vm as AutoEditForm,
+  cm as AutoForm,
+  dm as AutoFormFields,
+  _v as AutoQueryGrid,
+  mm as AutoViewForm,
+  om as Autocomplete,
+  qv as Breadcrumb,
+  Uv as Breadcrumbs,
+  hm as CellFormat,
+  sm as CheckboxInput,
+  Cm as CloseButton,
+  im as Combobox,
+  Im as Components,
+  gm as ConfirmDelete,
+  Sm as DarkModeToggle,
+  ym as DataGrid,
+  rm as DynamicInput,
+  Xv as EnsureAccess,
+  Yv as EnsureAccessDialog,
+  Bv as ErrorSummary,
+  am as FileInput,
+  Gv as FilterColumn,
+  Wv as FilterViews,
+  pm as FormLoading,
+  wm as HtmlFormat,
+  Ov as Icon,
+  jv as InputDescription,
+  Hv as Loading,
+  um as LookupInput,
+  Fm as MarkdownInput,
+  xm as MarkupFormat,
+  km as MarkupModel,
   Ra as MetadataApp,
-  $m as ModalDialog,
-  Lm as ModalLookup,
-  qv as NavList,
-  Qv as NavListItem,
-  Hv as OutlineButton,
-  hm as PreviewFormat,
-  Rv as PrimaryButton,
-  Gv as QueryPrefs,
-  Ev as SecondaryButton,
-  tm as SelectInput,
-  _v as SettingsIcons,
-  Fm as SidebarLayout,
-  Sm as SignIn,
-  Cm as SlideOver,
-  Vm as Tabs,
-  sm as TagInput,
-  Yv as TextInput,
-  Nv as TextLink,
-  em as TextareaInput,
-  Bm as css,
-  jm as default,
+  Lm as ModalDialog,
+  Vm as ModalLookup,
+  Qv as NavList,
+  Kv as NavListItem,
+  Rv as OutlineButton,
+  bm as PreviewFormat,
+  Ev as PrimaryButton,
+  Jv as QueryPrefs,
+  Nv as SecondaryButton,
+  lm as SelectInput,
+  Zv as SettingsIcons,
+  Am as SidebarLayout,
+  Tm as SignIn,
+  $m as SlideOver,
+  Mm as Tabs,
+  nm as TagInput,
+  em as TextInput,
+  zv as TextLink,
+  tm as TextareaInput,
+  jm as css,
+  Om as default,
+  Xa as initMetadata,
   Is as useAuth,
   fl as useClient,
   Ot as useConfig,
   Ha as useFiles,
-  Dm as useFormatters,
+  Bm as useFormatters,
   vt as useMetadata,
   Gn as useUtils
 };
