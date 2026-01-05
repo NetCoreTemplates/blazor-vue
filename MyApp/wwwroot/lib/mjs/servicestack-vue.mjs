@@ -7220,7 +7220,7 @@ const jm = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   setup(e) {
     const t = typeof document < "u" ? document.documentElement : null, l = () => !!t?.classList.contains("dark"), n = A(localStorage.getItem("color-scheme") == "dark");
     function o() {
-      l() ? t?.classList.remove("dark") : t?.classList.add("dark"), n.value = l(), localStorage.setItem("color-scheme", n.value ? "dark" : "light");
+      l() ? t?.classList.remove("dark") : t?.classList.add("dark"), n.value = l(), t?.style.setProperty("color-scheme", n.value ? "dark" : null), localStorage.setItem("color-scheme", n.value ? "dark" : "light");
     }
     return (r, u) => (a(), i("button", {
       type: "button",
