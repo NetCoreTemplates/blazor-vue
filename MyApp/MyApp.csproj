@@ -61,7 +61,6 @@
     <MakeDir Directories="$(PublishDir)App_Data" Condition="!Exists('$(PublishDir)App_Data')" />
     <Exec Command="npm install" />
     <Exec Command="npm run ui:build" />
-    <RemoveDir Directories="$(PublishDir)wwwroot" />
     <ItemGroup>
       <CopyDist Include="./wwwroot/**/*.*" />
     </ItemGroup>
