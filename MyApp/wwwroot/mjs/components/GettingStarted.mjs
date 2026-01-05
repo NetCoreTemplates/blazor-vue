@@ -32,7 +32,7 @@ export default {
            </div>
            <div class="mb-2">
               <div class="flex justify-center text-center">
-                 <a class="archive-url hover:no-underline netcoretemplates_empty" :href="zipUrl('NetCoreTemplates/blazor-vue')">
+                 <a class="archive-url hover:no-underline" :href="zipUrl('NetCoreTemplates/blazor-vue')">
                     <div class="bg-white dark:bg-gray-800 px-4 py-4 mr-4 mb-4 rounded-lg shadow-lg text-center items-center justify-center hover:shadow-2xl dark:border-2 dark:border-pink-600 dark:hover:border-blue-600" style="min-width:150px">
                        <div class="text-center font-extrabold flex items-center justify-center mb-2">
                           <div class="text-4xl text-blue-400 my-3">
@@ -49,8 +49,7 @@ export default {
            </div>
         </section>
 
-      <ShellCommand class="mb-2">dotnet tool install -g x</ShellCommand>
-      <ShellCommand class="mb-2">x new {{template}} {{project}}</ShellCommand>
+      <ShellCommand class="mb-2">npx create-net {{template}} {{project}}</ShellCommand>
 
       <h4 class="py-6 text-center text-xl">In <span class="font-semibold text-indigo-700">/MyApp</span>, Run Tailwind</h4>
       <ShellCommand class="mb-2">npm run ui:dev</ShellCommand>
