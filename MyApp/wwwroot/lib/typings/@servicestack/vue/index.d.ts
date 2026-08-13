@@ -20,6 +20,14 @@ declare const a: {
     indigo: string;
 };
 
+export declare const ACTIONS: {
+    query: string;
+    create: string;
+    update: string;
+    delete: string;
+    save: string;
+};
+
 export declare interface AdminDatabaseInfo {
     queryLimit: number;
     databases: DatabaseInfo[];
@@ -81,6 +89,45 @@ export declare interface ApiFormat {
     assumeUtc?: boolean;
     number?: FormatInfo;
     date?: FormatInfo;
+}
+
+export declare const ApiFormSchema: DefineComponentWithEmits<ApiFormSchemaProps, ApiFormSchemaEmits>;
+
+export declare interface ApiFormSchemaEmits {
+    (e: 'update:modelValue', value: any): void;
+    (e: 'success', value: {
+        json: any;
+        result: any;
+    }): void;
+    (e: 'error', value: {
+        error: any;
+        result: any;
+    }): void;
+    (e: 'execute', value: {
+        request: any;
+        data: any;
+    }): void;
+    (e: 'reset'): void;
+}
+
+export declare interface ApiFormSchemaProps {
+    schema: JsonSchema;
+    client?: any;
+    modelValue?: any;
+    autoExecute?: boolean;
+    syncUrl?: boolean;
+}
+
+export declare const ApiKeyDialog: DefineComponentWithEmits<ApiKeyDialogProps, ApiKeyDialogEmits>;
+
+export declare interface ApiKeyDialogEmits {
+    (e: 'done'): void;
+    (e: 'save', key: string): void;
+}
+
+export declare interface ApiKeyDialogProps {
+    title?: string;
+    client?: any;
 }
 
 /** Resolve Request DTO {MetadataOperationType} by name */
@@ -492,6 +539,15 @@ export declare interface AutoQueryInfo {
     };
 }
 
+export declare const AutoQuerySchema: DefineComponent<AutoQuerySchemaProps>;
+
+export declare interface AutoQuerySchemaProps {
+    schema?: JsonSchema | null;
+    auth?: AuthenticateResponse | null;
+    client?: any;
+    take?: number;
+}
+
 export declare const AutoViewForm: DefineComponentWithEmits<AutoViewFormProps, AutoViewFormEmits>;
 
 export declare type AutoViewFormEmits = EmitsDone & EmitsSave & EmitsDelete & EmitsError;
@@ -512,6 +568,12 @@ export declare interface AutoViewFormProps {
     deleteType?: string | InstanceType<any> | Function;
 }
 
+/** Which variant the current value looks most like - discriminator consts win, then required, then props */
+export declare function bestVariant(branches: any, value: any, root: any): number;
+
+/** A value matching the schema, for a new array item or a property the data is missing */
+export declare function blankFor(schema: any, root: any, seen?: Set<unknown>): any;
+
 export declare const Breadcrumb: DefineComponent<BreadcrumbProps>;
 
 export declare interface BreadcrumbProps {
@@ -528,8 +590,37 @@ export declare interface BreadcrumbsProps {
 
 export declare type Breakpoint = "xs" | "sm" | "md" | "lg" | "xl" | "2xl";
 
+export declare function buildModel({ name, json, schema }?: {
+    name?: string | undefined;
+}): {
+    types: any;
+    root: any;
+};
+
+/**
+ * Everything needed to call an API, from its schema and the form's values: the resolved URL,
+ * the method and the payload that goes on the wire. Split out of send() so a UI can show
+ * exactly what it is about to send without a second copy of these rules to drift from.
+ */
+export declare function buildRequest(schema: any, data: any, formEl: any, { original, primaryKey, client }?: {
+    original?: null | undefined;
+    primaryKey?: null | undefined;
+    client?: null | undefined;
+}): {
+    method: any;
+    url: any;
+    headers: {
+        Accept: string;
+    };
+    body: {};
+    payload: string | FormData | null;
+    uploads: any[];
+};
+
 /** Format number in human readable disk size */
 declare function bytes(val: number, attrs?: any): string;
+
+export declare const camel: (s: any) => any;
 
 /** Check if Auth Session has access to API */
 declare function canAccess(op?: MetadataOperationType | null): boolean;
@@ -566,6 +657,9 @@ export declare interface CheckboxInputProps {
     labelClass?: string;
     help?: string;
 }
+
+/** [{ value, label }] when the schema constrains a field to a fixed set, else null */
+export declare function choicesOf(schema: any): any;
 
 /** Delete AppMetadata and remove from localStorage */
 declare function clearMetadata(): void;
@@ -671,6 +765,16 @@ export declare const Components: {
     SignIn: DefineComponentWithEmits<SignInProps, SignInEmits>;
     MarkdownInput: DefineComponentWithEmits<MarkdownInputProps, MarkdownInputEmits>;
     SidebarLayout: DefineComponent<{}, SidebarLayoutExpose>;
+    ApiKeyDialog: DefineComponentWithEmits<ApiKeyDialogProps, ApiKeyDialogEmits>;
+    AutoQuerySchema: DefineComponent<AutoQuerySchemaProps>;
+    ApiFormSchema: DefineComponentWithEmits<ApiFormSchemaProps, ApiFormSchemaEmits>;
+    JsonSchemaForm: DefineComponentWithEmits<JsonSchemaFormProps, JsonSchemaFormEmits>;
+    JsonView: DefineComponent<JsonViewProps>;
+    SchemaGrid: DefineComponentWithEmits<SchemaGridProps, SchemaGridEmits>;
+    SchemaLookup: DefineComponentWithEmits<SchemaLookupProps, SchemaLookupEmits>;
+    SchemaResults: DefineComponentWithEmits<SchemaResultsProps, SchemaResultsEmits>;
+    SortableColumn: DefineComponent<SortableColumnProps>;
+    SchemaInput: DefineComponent<any>;
 };
 
 export declare interface ConfigInfo {
@@ -689,6 +793,16 @@ export declare interface ConfirmDeleteEmits {
 export declare interface ConfirmDeleteProps {
 }
 
+/**
+ * JsonSchemaForm - renders a JSON Schema as an editable form.
+ *
+ *     <JsonSchemaForm :schema="schema" v-model="data" :status="responseStatus" @change="save" />
+ *     <JsonSchemaForm v-model="data">{ "type":"object", "properties":{ ... } }</JsonSchemaForm>
+ *
+ * Shared by JsonSchemaForm.vue and its recursive JsonSchemaNode.vue renderer.
+ */
+export declare const CONTEXT: unique symbol;
+
 declare function copyText(text: string): void;
 
 declare function createDebounce(fn: Function, delayMs?: number): (...args: any[]) => void;
@@ -702,6 +816,7 @@ declare function createFormLayout(metaType?: MetadataType | null): InputProp[];
 declare namespace css {
     export {
         filterClass,
+        isWideSchemaField,
         a,
         input,
         card,
@@ -709,7 +824,8 @@ declare namespace css {
         modal,
         form,
         grid,
-        dummy
+        dummy,
+        defaultFieldClass
     }
 }
 export { css }
@@ -781,6 +897,8 @@ declare const _default: {
     component(name: string, component?: Component): any;
 };
 export default _default;
+
+declare const defaultFieldClass = "col-span-12 sm:col-span-6 3xl:col-span-4";
 
 declare type DefaultFormats = ApiFormat & {
     maxFieldLength?: number;
@@ -932,6 +1050,12 @@ export declare interface FieldCss {
     input: string;
     label: string;
 }
+
+/**
+ * First ResponseError for this path. An unqualified fieldName (`qty`) matches the leaf only when the
+ * schema has exactly one field with that name, so ambiguous names never light up several inputs.
+ */
+export declare function fieldError(status: any, path: any, leafCounts: any): any;
 
 /** Resolve image preview URL for file */
 declare function fileImageUri(file: any | {
@@ -1085,6 +1209,22 @@ declare function formValues(form: HTMLFormElement, props?: MetadataPropertyType[
 
 declare function fromCache(key: string): any;
 
+/**
+ * @param {object} opts
+ * @param {string} opts.name    source file name, used to name the root type and the output file
+ * @param {*}      opts.json    the JSON document (parsed, or a string)
+ * @param {object} [opts.schema] its JSON Schema - richer output when supplied
+ * @param {string} opts.language one of TYPE_LANGUAGES
+ * @returns {{ path:string, content:string, language:string }}
+ */
+export declare function generateTypes({ name, json, schema, language }?: {
+    name?: string | undefined;
+}): {
+    path: string;
+    content: any;
+    language: any;
+};
+
 /** Resolve File extension from file name or path */
 declare function getExt(path?: string | null): string | null;
 
@@ -1160,6 +1300,7 @@ export declare interface HtmlFormatProps {
     depth?: number;
     fieldAttrs?: (k: string) => any;
     classes?: (type: 'object' | 'array', tag: 'div' | 'table' | 'thead' | 'th' | 'tr' | 'td', depth: number, cls: string, index?: number) => string;
+    formatText?: (text: string) => string;
 }
 
 /** HTML Tag builder */
@@ -1213,6 +1354,22 @@ declare const input: {
     base: string;
     invalid: string;
     valid: string;
+};
+
+export declare const INPUT_TYPES: {
+    date: string;
+    'date-time': string;
+    time: string;
+    month: string;
+    week: string;
+    email: string;
+    uri: string;
+    url: string;
+    password: string;
+    color: string;
+    tel: string;
+    search: string;
+    uuid: string;
 };
 
 export declare const InputDescription: DefineComponent<InputDescriptionProps>;
@@ -1306,13 +1463,143 @@ declare function isComplexProp(prop?: MetadataPropertyType): boolean;
 /** Check if value is a non-scalar type */
 declare function isComplexType(value: any): boolean;
 
+export declare const isNullable: (schema: any) => any;
+
+export declare const isPlainObject: (v: any) => boolean;
+
 /** Check if value is a scalar type */
 declare function isPrimitive(value: any): boolean;
+
+declare function isWideSchemaField(prop: any): boolean;
+
+export declare type JsonSchema = Record<string, any>;
+
+export declare const JsonSchemaForm: DefineComponentWithEmits<JsonSchemaFormProps, JsonSchemaFormEmits>;
+
+export declare interface JsonSchemaFormEmits {
+    (e: 'update:modelValue', value: any): void;
+    (e: 'change', value: any): void;
+}
+
+export declare interface JsonSchemaFormProps {
+    schema?: JsonSchema | null;
+    modelValue?: any;
+    data?: any;
+    status?: ResponseStatus | null;
+    readOnly?: boolean;
+    showTitle?: boolean;
+    wrapper?: boolean;
+    validateOn?: 'submit' | 'change';
+}
+
+export declare const JsonSchemaNode: {
+    name: string;
+    props: {
+        schema: {
+            type: ObjectConstructor;
+            default: () => {};
+        };
+        model: {
+            type: (ObjectConstructor | ArrayConstructor)[];
+            required: boolean;
+        };
+        field: {
+            type: (NumberConstructor | StringConstructor)[];
+            required: boolean;
+        };
+        path: {
+            type: StringConstructor;
+            default: string;
+        };
+        label: {
+            type: StringConstructor;
+            default: string;
+        };
+        required: {
+            type: BooleanConstructor;
+            default: boolean;
+        };
+        /** render the object's fields without the surrounding panel, header and collapse toggle */
+        bare: {
+            type: BooleanConstructor;
+            default: boolean;
+        };
+    };
+    setup(props: any): {
+        newKey: Ref<string, string>;
+        value: ComputedRef<any>;
+        schema: ComputedRef<any>;
+        widget: ComputedRef<any>;
+        choices: ComputedRef<any>;
+        itemChoices: ComputedRef<any>;
+        heading: ComputedRef<any>;
+        readOnly: ComputedRef<any>;
+        error: ComputedRef<any>;
+        id: ComputedRef<string>;
+        expanded: Ref<boolean, boolean>;
+        items: ComputedRef<any[]>;
+        container: ComputedRef<any>;
+        properties: ComputedRef<    {
+        key: any;
+        schema: any;
+        order: any;
+        label: any;
+        wide: boolean;
+        removable: boolean;
+        hidden: boolean;
+        }[]>;
+        allowsNewKeys: ComputedRef<boolean>;
+        tuple: ComputedRef<any>;
+        tupleEntries: ComputedRef<any>;
+        extraIndexes: ComputedRef<number[]>;
+        firstExtra: ComputedRef<any>;
+        atMax: ComputedRef<boolean>;
+        atMin: ComputedRef<boolean>;
+        variants: ComputedRef<any>;
+        variant: Ref<number, number>;
+        variantLabels: ComputedRef<any>;
+        nullable: ComputedRef<any>;
+        fixed: ComputedRef<boolean>;
+        step: ComputedRef<any>;
+        inputType: ComputedRef<any>;
+        describedBy: ComputedRef<string | undefined>;
+        panelClass: string;
+        headerClass: string;
+        headerBorderClass: string;
+        smallBtnClass: string;
+        iconBtnClass: string;
+        inputClass: string;
+        errorClass: string;
+        isRequired: (key: any) => any;
+        childPath: (key: any) => any;
+        toggle: () => boolean;
+        itemLabel(i: any): any;
+        setVariant(i: any): void;
+        coerce(raw: any): any;
+        setValue: (v: any) => void;
+        toggleChoice(choice: any, on: any): void;
+        addItem(): void;
+        removeItem(i: any): void;
+        move(i: any, by: any): void;
+        addKey(): void;
+        removeKey(key: any): void;
+    };
+};
+
+export declare const JsonView: DefineComponent<JsonViewProps>;
+
+export declare interface JsonViewProps {
+    value?: any;
+    depth?: number;
+}
 
 export declare interface KeyValuePair<TKey, TValue> {
     key: TKey;
     value: TValue;
 }
+
+/** How many fields in the schema share each leaf name, for the ambiguity check above */
+export declare function leafNameCounts(schema: any, root: any, seen?: Set<unknown>, counts?: Map<any, any>): Map<any, any>;
 
 /** Format URL as <a> link */
 declare function link(href: string, opt?: {
@@ -1724,6 +2011,9 @@ export declare interface NavListProps {
     title?: string;
 }
 
+/** items[0].qty -> items.0.qty, so the different notations compare equal */
+export declare const normalizePath: (path: any) => string;
+
 /** Create and track Image URL for an uploaded file */
 declare function objectUrl(file: Blob | MediaSource): string;
 
@@ -1738,6 +2028,8 @@ export declare interface Pair {
     key: string;
     value?: any;
 }
+
+export declare const pascal: (s: any) => any;
 
 export declare interface PluginInfo {
     loaded: string[];
@@ -1797,6 +2089,11 @@ declare function propertyOptions(prop: MetadataPropertyType): {
     [name: string]: string;
 } | null;
 
+export declare const propsOf: (schema: any) => {
+    name: string;
+    prop: unknown;
+}[];
+
 declare function pushState(args: Record<string, any>, clear?: boolean): void;
 
 export declare const QueryPrefs: DefineComponentWithEmits<QueryPrefsProps, QueryPrefsEmits>;
@@ -1852,6 +2149,13 @@ export declare interface RequestLogsInfo {
     };
 }
 
+export declare function requirementText(auth: any): string;
+
+export declare const resolvePath: (path: any, data: any) => any;
+
+/** $ref + allOf + OpenAPI `nullable` resolved into a plain schema, memoised per schema object */
+export declare function resolveSchema(schema: any, root: any): any;
+
 export declare interface ResponseError {
     errorCode?: string;
     fieldName?: string;
@@ -1871,10 +2175,77 @@ export declare interface ResponseStatus {
     };
 }
 
+/**
+ * The schema describing the rows a Model's Query API returns. IQueryDb<From,Into> projects
+ * into a different shape to the table it reads, and the server emits that as `viewModel`;
+ * everything else queries the Data Model itself. Grids, column lists and cell formatting all
+ * describe rows, so they all go through here - only the write forms use `model`.
+ */
+export declare const rowSchema: (auto: any) => any;
+
+export declare const SchemaGrid: DefineComponentWithEmits<SchemaGridProps, SchemaGridEmits>;
+
+export declare interface SchemaGridEmits {
+    (e: 'rowSelected', row: any, ev?: Event): void;
+    (e: 'headerSelected', name: string, ev?: Event): void;
+}
+
+export declare interface SchemaGridProps {
+    items?: any[];
+    schema?: JsonSchema | null;
+    selectedColumns?: string[] | null;
+    headerTitles?: Record<string, string> | null;
+    isSelected?: ((row: any) => boolean) | null;
+}
+
 export declare interface SchemaInfo {
     alias: string;
     name: string;
     tables: string[];
+}
+
+export declare const SchemaInput: DefineComponent<any>;
+
+export declare const SchemaLookup: DefineComponentWithEmits<SchemaLookupProps, SchemaLookupEmits>;
+
+export declare interface SchemaLookupEmits {
+    (e: 'update:modelValue', model: Record<string, any>): void;
+}
+
+export declare interface SchemaLookupProps {
+    id: string;
+    prop: JsonSchema;
+    model: Record<string, any>;
+    status?: ResponseStatus | null;
+    label?: string | null;
+    help?: string | null;
+}
+
+export declare interface SchemaQuery {
+    filters?: Record<string, any>;
+    orderBy?: string;
+    skip?: number;
+}
+
+export declare const SchemaResults: DefineComponentWithEmits<SchemaResultsProps, SchemaResultsEmits>;
+
+export declare interface SchemaResultsEmits {
+    (e: 'update:query', query: SchemaQuery): void;
+    (e: 'rowSelected', row: any, ev?: Event): void;
+    (e: 'loaded', result: {
+        results: any[];
+        total: number;
+    }): void;
+}
+
+export declare interface SchemaResultsProps {
+    schema: JsonSchema;
+    query?: SchemaQuery | null;
+    take?: number;
+    prefsKey?: string | null;
+    columnOrder?: string[] | null;
+    selectable?: boolean;
+    filterDefinitions?: AutoQueryConvention[];
 }
 
 declare function scopedExpr(src: string, ctx: Record<string, any>): any;
@@ -1913,6 +2284,15 @@ export declare interface SelectInputProps {
         value: string;
     }[];
 }
+
+/**
+ * @param schema  the API schema to call
+ * @param data    the edited values
+ * @param formEl  the <form>, so any picked files can be sent as multipart
+ * @param original    the row the form started from, for the Patch handling above
+ * @param primaryKey  always sent on a Patch, since it's what identifies the row
+ */
+export declare function send(schema: any, data: any, formEl: any, opts?: {}): Promise<any>;
 
 declare function setAutoQueryGridDefaults(config: AutoQueryGridDefaults): void;
 
@@ -1978,6 +2358,9 @@ export declare interface SignInProps {
 /** Sign Out currently Authenticated User */
 declare function signOut(): void;
 
+/** items -> Item, addresses -> Address, status -> Status */
+export declare function singular(name: any): any;
+
 export declare const SlideOver: DefineComponentWithEmits<SlideOverProps, SlideOverEmits>;
 
 declare const slideOver: {
@@ -1996,6 +2379,8 @@ export declare interface SlideOverProps {
     title?: string;
     contentClass?: string;
 }
+
+export declare const snake: (s: any) => any;
 
 declare class Sole {
     static config: UiConfig;
@@ -2029,13 +2414,24 @@ declare class Sole {
     roles?: string[] | undefined;
     permissions?: string[] | undefined;
     } | null>;
+    static apiKey: Ref<string, string>;
     static metadata: ShallowRef<AppMetadata | null, AppMetadata | null>;
+    static filterDefinitions: AutoQueryConvention[];
     static components: {
         [k: string]: Component;
     };
     static component(name: string): Component | null;
     static interceptors: Interceptors;
 }
+
+export declare const SortableColumn: DefineComponent<SortableColumnProps>;
+
+export declare interface SortableColumnProps {
+    name?: string;
+    alias?: string;
+}
+
+export declare const subtitle: (schema: any) => any;
 
 /** Check if a supported HTML Input exists for {MetadataPropertyType} */
 declare function supportsProp(prop?: MetadataPropertyType): boolean;
@@ -2153,6 +2549,8 @@ declare function toAuth(auth?: AuthenticateResponse): any;
 /** Mutates Request DTO values to supported HTML Input values */
 declare function toFormValues(dto: any, metaType?: MetadataType | null): any;
 
+export declare const toOp: (schema: any) => any;
+
 /** Update reactive `transition` class based on Tailwind animation transition rule-set */
 declare function transition(rule: TransitionRules, transition: Ref<string>, show: boolean): void;
 
@@ -2170,6 +2568,23 @@ export declare type TransitionRules = {
 /** Truncate text that exceeds maxLength with an ellipsis */
 declare function truncate(str: string, maxLength: number): string;
 
+/**
+ * jsonTypes - generate typed classes from a JSON document or a JSON Schema.
+ *
+ *     generateTypes({ name:'invoice.json', json, language:'csharp' })
+ *     generateTypes({ name:'invoice.json', json, schema, language:'csharp' })   // schema wins
+ *
+ * Deterministic, dependency free and instant - no model required. A JSON example only carries JSON's six
+ * types, so passing the matching JSON Schema produces better output: `required` becomes non-nullable,
+ * `multipleOf: 0.01` becomes `decimal`, `format` becomes date/uuid types, `enum` becomes a real enum and
+ * `description` becomes doc comments.
+ */
+export declare const TYPE_LANGUAGES: {
+    id: string;
+    label: string;
+    ext: string;
+}[];
+
 /** Metadata Types refer to same type */
 declare function typeEquals(a?: MetadataType | MetadataTypeName | null, b?: MetadataType | MetadataTypeName | null): boolean | null | undefined;
 
@@ -2181,12 +2596,15 @@ declare function typeName(metaType?: MetadataTypeName): string | undefined;
  */
 declare function typeName2(name: string, genericArgs?: string[]): string;
 
+/** `type` may be a union like ["string","null"] - the first non-null entry drives the widget */
+export declare function typeOf(schema: any, value: any): any;
+
 /**
  * Resolve {MetadataType} for DTO name
  * @param name        - Find MetadataType by name
  * @param [namespace] - Find MetadataType by name and namespace
  */
-declare function typeOf(name?: string | null, namespace?: string | null): MetadataType | null;
+declare function typeOf_2(name?: string | null, namespace?: string | null): MetadataType | null;
 
 /** Resolve {MetadataType} by {MetadataTypeName} */
 declare function typeOfRef(ref?: {
@@ -2237,12 +2655,30 @@ declare function uniqueIgnoreCase(list: string[]): string[];
 /** Returns a dto with all Refs unwrapped */
 declare function unRefs(o: any): any;
 
+/**
+ * ServiceStack APIs answer with the payload under `Result` or `Results` by convention, alongside
+ * envelope fields (offset, total, meta, responseStatus) that aren't the answer. Returns which of
+ * those carried it, so a UI can show the payload and say where it came from.
+ */
+export declare function unwrapResponse(json: any): {
+    data: any;
+    key: null;
+    envelope?: undefined;
+} | {
+    data: any;
+    key: string;
+    envelope: any;
+};
+
 export declare interface UploadedFile {
     fileName?: string;
     filePath?: string;
     contentType?: string;
     contentLength?: number;
 }
+
+/** Access global in-memory API key ref */
+export declare function useApiKey(): Ref<string, string>;
 
 export declare function useAuth(): {
     signIn: typeof signIn;
@@ -2349,7 +2785,7 @@ export declare function useMetadata(): {
     metadataApp: ComputedRef<AppInfo | null>;
     metadataApi: ComputedRef<MetadataTypes | null>;
     filterDefinitions: ComputedRef<AutoQueryConvention[]>;
-    typeOf: typeof typeOf;
+    typeOf: typeof typeOf_2;
     typeOfRef: typeof typeOfRef;
     typeEquals: typeof typeEquals;
     apiOf: typeof apiOf;
@@ -2393,6 +2829,15 @@ export declare function useMetadata(): {
     enumFlagsConverter: typeof enumFlagsConverter;
 };
 
+export declare function useSchemas(): {
+    /** the Model's schema, or undefined while it loads - starts the fetch on first ask */
+    model(name: any): any;
+    /** the API's schema, or undefined while it loads */
+    api(request: any): any;
+    loadModel: (name: any) => any;
+    loadApi: (request: any) => any;
+};
+
 export declare function useUtils(): {
     dateInputFormat: typeof dateInputFormat;
     dateTimeInputFormat: typeof dateTimeInputFormat;
@@ -2423,6 +2868,12 @@ export declare function useUtils(): {
     uniqueIgnoreCase: typeof uniqueIgnoreCase;
 };
 
+/**
+ * Pragmatic client-side validation of the keywords the form renders, returning ResponseStatus errors
+ * whose fieldName matches the rendered field paths.
+ */
+export declare function validateValue(schema: any, value: any, root: any, path?: string, label?: string, out?: never[]): never[];
+
 export declare interface ValidationInfo {
     hasValidationSource?: boolean;
     hasValidationSourceAdmin?: boolean;
@@ -2436,5 +2887,10 @@ export declare interface ValidationInfo {
         [index: string]: string;
     };
 }
+
+/** oneOf/anyOf branches that need a variant picker (const-only branches are a select instead) */
+export declare function variantsOf(schema: any): any;
+
+export declare function widgetOf(schema: any, value: any): any;
 
 export { }
