@@ -1,6 +1,6 @@
 /* Options:
-Date: 2024-12-27 15:27:37
-Version: 8.53
+Date: 2026-09-09 15:08:17
+Version: 10.15
 Tip: To override a DTO option, remove "//" prefix before updating
 BaseUrl: https://localhost:5001
 
@@ -20,15 +20,15 @@ export class QueryBase {
     skip;
     /** @type {?number} */
     take;
-    /** @type {string} */
+    /** @type {?string} */
     orderBy;
-    /** @type {string} */
+    /** @type {?string} */
     orderByDesc;
-    /** @type {string} */
+    /** @type {?string} */
     include;
-    /** @type {string} */
+    /** @type {?string} */
     fields;
-    /** @type {{ [index:string]: string; }} */
+    /** @type {?{ [index:string]: string; }} */
     meta;
 }
 /** @typedef T {any} */
@@ -49,7 +49,7 @@ export class AuditBase {
     modifiedBy;
     /** @type {?string} */
     deletedDate;
-    /** @type {string} */
+    /** @type {?string} */
     deletedBy;
 }
 /** @typedef {'Single'|'Double'|'Queen'|'Twin'|'Suite'} */
@@ -134,7 +134,7 @@ export class ResponseError {
     fieldName;
     /** @type {string} */
     message;
-    /** @type {{ [index:string]: string; }} */
+    /** @type {?{ [index:string]: string; }} */
     meta;
 }
 export class ResponseStatus {
@@ -142,13 +142,13 @@ export class ResponseStatus {
     constructor(init) { Object.assign(this, init) }
     /** @type {string} */
     errorCode;
-    /** @type {string} */
+    /** @type {?string} */
     message;
-    /** @type {string} */
+    /** @type {?string} */
     stackTrace;
-    /** @type {ResponseError[]} */
+    /** @type {?ResponseError[]} */
     errors;
-    /** @type {{ [index:string]: string; }} */
+    /** @type {?{ [index:string]: string; }} */
     meta;
 }
 /** @typedef T {any} */
@@ -160,10 +160,10 @@ export class QueryResponse {
     /** @type {number} */
     total;
     /** @type {T[]} */
-    results;
-    /** @type {{ [index:string]: string; }} */
+    results = [];
+    /** @type {?{ [index:string]: string; }} */
     meta;
-    /** @type {ResponseStatus} */
+    /** @type {?ResponseStatus} */
     responseStatus;
 }
 export class HelloResponse {
@@ -181,33 +181,33 @@ export class AdminDataResponse {
 export class AuthenticateResponse {
     /** @param {{userId?:string,sessionId?:string,userName?:string,displayName?:string,referrerUrl?:string,bearerToken?:string,refreshToken?:string,refreshTokenExpiry?:string,profileUrl?:string,roles?:string[],permissions?:string[],authProvider?:string,responseStatus?:ResponseStatus,meta?:{ [index:string]: string; }}} [init] */
     constructor(init) { Object.assign(this, init) }
-    /** @type {string} */
+    /** @type {?string} */
     userId;
-    /** @type {string} */
+    /** @type {?string} */
     sessionId;
-    /** @type {string} */
+    /** @type {?string} */
     userName;
-    /** @type {string} */
+    /** @type {?string} */
     displayName;
-    /** @type {string} */
+    /** @type {?string} */
     referrerUrl;
-    /** @type {string} */
+    /** @type {?string} */
     bearerToken;
-    /** @type {string} */
+    /** @type {?string} */
     refreshToken;
     /** @type {?string} */
     refreshTokenExpiry;
-    /** @type {string} */
+    /** @type {?string} */
     profileUrl;
-    /** @type {string[]} */
+    /** @type {?string[]} */
     roles;
-    /** @type {string[]} */
+    /** @type {?string[]} */
     permissions;
-    /** @type {string} */
+    /** @type {?string} */
     authProvider;
-    /** @type {ResponseStatus} */
+    /** @type {?ResponseStatus} */
     responseStatus;
-    /** @type {{ [index:string]: string; }} */
+    /** @type {?{ [index:string]: string; }} */
     meta;
 }
 export class IdResponse {
@@ -215,7 +215,7 @@ export class IdResponse {
     constructor(init) { Object.assign(this, init) }
     /** @type {string} */
     id;
-    /** @type {ResponseStatus} */
+    /** @type {?ResponseStatus} */
     responseStatus;
 }
 export class Hello {
@@ -237,24 +237,24 @@ export class Authenticate {
     /** @param {{provider?:string,userName?:string,password?:string,rememberMe?:boolean,accessToken?:string,accessTokenSecret?:string,returnUrl?:string,errorView?:string,meta?:{ [index:string]: string; }}} [init] */
     constructor(init) { Object.assign(this, init) }
     /**
-     * @type {string}
+     * @type {?string}
      * @description AuthProvider, e.g. credentials */
     provider;
-    /** @type {string} */
+    /** @type {?string} */
     userName;
-    /** @type {string} */
+    /** @type {?string} */
     password;
     /** @type {?boolean} */
     rememberMe;
-    /** @type {string} */
+    /** @type {?string} */
     accessToken;
-    /** @type {string} */
+    /** @type {?string} */
     accessTokenSecret;
-    /** @type {string} */
+    /** @type {?string} */
     returnUrl;
-    /** @type {string} */
+    /** @type {?string} */
     errorView;
-    /** @type {{ [index:string]: string; }} */
+    /** @type {?{ [index:string]: string; }} */
     meta;
     getTypeName() { return 'Authenticate' }
     getMethod() { return 'POST' }
@@ -275,6 +275,15 @@ export class QueryCoupons extends QueryDb {
     /** @type {string} */
     id;
     getTypeName() { return 'QueryCoupons' }
+    getMethod() { return 'GET' }
+    createResponse() { return new QueryResponse() }
+}
+export class QueryUsers extends QueryDb {
+    /** @param {{id?:string,skip?:number,take?:number,orderBy?:string,orderByDesc?:string,include?:string,fields?:string,meta?:{ [index:string]: string; }}} [init] */
+    constructor(init) { super(init); Object.assign(this, init) }
+    /** @type {?string} */
+    id;
+    getTypeName() { return 'QueryUsers' }
     getMethod() { return 'GET' }
     createResponse() { return new QueryResponse() }
 }
@@ -340,8 +349,10 @@ export class DeleteBooking {
     createResponse() { }
 }
 export class CreateCoupon {
-    /** @param {{description?:string,discount?:number,expiryDate?:string}} [init] */
+    /** @param {{id?:string,description?:string,discount?:number,expiryDate?:string}} [init] */
     constructor(init) { Object.assign(this, init) }
+    /** @type {string} */
+    id;
     /** @type {string} */
     description;
     /** @type {number} */
