@@ -37,13 +37,13 @@ public class AdditionalUserClaimsPrincipalFactory(
             claims.Add(new Claim(JwtClaimTypes.Picture, user.ProfileUrl));
         }
         
-        // Add Users latest API Key to Auth Cookie (Allows [ValidateApiKey] with User Auth)
+        // Add Users latest API Key Id to Auth Cookie (Allows [ValidateApiKey] with User Auth)
         var latestApiKey = (await apiKeySource.GetApiKeysByUserIdAsync(user.Id))
             .OrderByDescending(x => x.CreatedDate)
             .FirstOrDefault();
         if (latestApiKey != null)
         {
-            claims.Add(new Claim(JwtClaimTypes.ApiKey, latestApiKey.Key));
+            claims.Add(new Claim(JwtClaimTypes.ApiKey, latestApiKey.Id));
         }
 
         identity.AddClaims(claims);
